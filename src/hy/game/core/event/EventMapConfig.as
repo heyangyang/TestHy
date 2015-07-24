@@ -1,0 +1,91 @@
+//------------------------------------------------------------------------------
+//  Copyright (c) 2009-2013 the original author or authors. All Rights Reserved. 
+// 
+//  NOTICE: You are permitted to use, modify, and distribute this file 
+//  in accordance with the terms of the license agreement accompanying it. 
+//------------------------------------------------------------------------------
+
+package hy.game.core.event
+{
+	/**
+	 * @private
+	 */
+	public class EventMapConfig
+	{
+
+		/*============================================================================*/
+		/* Public Properties                                                          */
+		/*============================================================================*/
+
+		private var _dispatcher : SEventDispatcher;
+
+		/**
+		 * @private
+		 */
+		public function get dispatcher() : SEventDispatcher
+		{
+			return _dispatcher;
+		}
+
+		private var _eventString : String;
+
+		/**
+		 * @private
+		 */
+		public function get eventString() : String
+		{
+			return _eventString;
+		}
+
+		private var _listener : Function;
+
+		/**
+		 * @private
+		 */
+		public function get listener() : Function
+		{
+			return _listener;
+		}
+
+		private var _eventClass : Class;
+
+		/**
+		 * @private
+		 */
+		public function get eventClass() : Class
+		{
+			return _eventClass;
+		}
+
+		private var _callback : Function;
+
+		/**
+		 * @private
+		 */
+		public function get callback() : Function
+		{
+			return _callback;
+		}
+
+		/*============================================================================*/
+		/* Constructor                                                                */
+		/*============================================================================*/
+
+		/**
+		 * @private
+		 */
+		public function EventMapConfig(dispatcher : SEventDispatcher, eventString : String, listener : Function, eventClass : Class, callback : Function)
+		{
+			_dispatcher = dispatcher;
+			_eventString = eventString;
+			_listener = listener;
+			_eventClass = eventClass;
+			_callback = callback;
+		}
+
+		public function equalTo(dispatcher : SEventDispatcher, eventString : String, listener : Function, eventClass : Class) : Boolean
+		{
+			return _eventString == eventString && _eventClass == eventClass && _dispatcher == dispatcher && _listener == listener;
+		}
+	}
+}
