@@ -40,7 +40,7 @@ package hy.game.render
 
 		public function SGameRender()
 		{
-			m_render = new SBitmap();
+			m_render = new SRenderBitmap();
 		}
 
 		public function notifyAddedToRender() : void

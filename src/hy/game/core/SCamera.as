@@ -151,6 +151,7 @@ package hy.game.core
 				m_sceneY += m_velocityY * Time.deltaTime;
 			}
 
+			//检测是否超出边界
 			if (m_sceneX < 0)
 				m_sceneX = 0;
 			else if (m_sceneX > m_sceneW - m_screenW)

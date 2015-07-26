@@ -1,11 +1,14 @@
 package hy.game.manager
 {
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.resources.SResource;
 	import hy.game.sound.SoundReference;
+	import hy.rpg.pak.SDirectAnimationDecoder;
+	import hy.rpg.parser.SImageResourceParser;
+	import hy.rpg.parser.SMapResourceParser;
 
 	/**
 	 * 游戏中有所实例的管理
@@ -251,7 +254,6 @@ package hy.game.manager
 			id = id.replace(/\\/g, "/");
 			//如果没有则需要初始化
 			var isInit : Boolean = getReference(LOADER, id) == null;
-			var res : SResource = createReference(LOADER, id, SResource, id) as SResource;
 			if (isInit)
 			{
 				if (root == null)
@@ -260,9 +262,9 @@ package hy.game.manager
 					root = root + "/";
 				root = root + id;
 				root = root.replace(/\\/g, "/");
-				res.url = root;
 				print("create resource:" + root);
 			}
+			var res : SResource = createReference(LOADER, id, SResource, version) as SResource;
 			return res;
 		}
 
@@ -299,5 +301,28 @@ package hy.game.manager
 		}
 
 		//*********************************声音****************************
+		
+		//*********************************动画解析器****************************
+		public function createDirectAnimationDeocder(id : String) : SDirectAnimationDecoder
+		{
+			return createReference(PARSER, id, SDirectAnimationDecoder, id) as SDirectAnimationDecoder;
+		}
+		//*********************************动画解析器****************************
+		
+		//*********************************image****************************
+		public function createImageParser(id : String, priority : int = int.MIN_VALUE) : SImageResourceParser
+		{
+			return createReference(IMAGE, id, SImageResourceParser, id, null, priority) as SImageResourceParser;
+		}
+		
+		//*********************************image****************************
+		
+		//*********************************地图****************************
+		public function createMapResourceParser(parserClass : Class, id : String, resId : String, prioprty : int, version : String = null) : SMapResourceParser
+		{
+			return createReference(MAP, id, parserClass, resId, version, prioprty) as SMapResourceParser;
+		}
+		
+		//*********************************地图****************************
 	}
 }

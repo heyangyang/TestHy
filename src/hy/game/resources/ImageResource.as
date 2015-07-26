@@ -17,17 +17,17 @@ package hy.game.resources
 	 * @author hyy
 	 *
 	 */
-	public class IMGResource extends SResource
+	public class ImageResource extends SResource
 	{
 		private var loader : Loader;
-		public var bitmapData : BitmapData = null;
+		private var bitmapData : BitmapData = null;
 
-		public function IMGResource(res_url : String, version : String)
+		public function ImageResource(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
 
-		public function get image() : Bitmap
+		override public function get data():*
 		{
 			if (bitmapData != null)
 				return new Bitmap(bitmapData);

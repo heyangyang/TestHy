@@ -5,24 +5,24 @@ package hy.game.resources
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
-	import flash.system.System;
-	import flash.utils.ByteArray;
 	
 	import hy.game.namespaces.name_part;
 
 	/**
-	 * 加载xml
+	 * 加载文本
+	 * 以2进制进行加载。
+	 * 可以加载文本和2进制文件
 	 * @author hyy
 	 *
 	 */
-	public class XMLResource extends SResource
+	public class BytesResource extends SResource
 	{
-		public var xml : XML;
 		private var loader : URLLoader;
-
-		public function XMLResource(res_url : String, version : String)
+private var m_data:*;
+		public function BytesResource(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
@@ -40,6 +40,7 @@ package hy.game.resources
 			}
 
 			loader = new URLLoader();
+			loader.dataFormat = URLLoaderDataFormat.BINARY;
 			loader.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
 			loader.addEventListener(Event.COMPLETE, onDownLoadComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
@@ -54,23 +55,14 @@ package hy.game.resources
 			}
 		}
 
+		override public function get data():*
+		{
+			return m_data;
+		}
+		
 		override protected function onDownLoadComplete(evt : Event) : void
 		{
-			var data : Object = ((evt.target) as URLLoader).data
-
-			if (data is ByteArray)
-				data = (data as ByteArray).readUTFBytes((data as ByteArray).length);
-
-			try
-			{
-				xml = new XML(data);
-				if (data is ByteArray)
-					(data as ByteArray).clear();
-			}
-			catch (e : TypeError)
-			{
-
-			}
+			m_data= ((evt.target) as URLLoader).data
 			super.onDownLoadComplete(evt);
 		}
 
@@ -88,13 +80,9 @@ package hy.game.resources
 
 		override protected function destroy() : void
 		{
-			if (xml)
-			{
-				System.disposeXML(xml);
-				xml = null;
-			}
 			super.destroy();
 			loader = null;
+			im_data=null;
 		}
 	}
 }

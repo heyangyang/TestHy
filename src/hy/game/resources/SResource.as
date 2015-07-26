@@ -23,11 +23,11 @@ package hy.game.resources
 		/**
 		 *优先级别
 		 */
-		public var priority : int;
+		private var m_priority : int;
 		/**
 		 * 加载地址
 		 */
-		public var url : String;
+		private var m_url : String;
 
 		public var version : String;
 		/**
@@ -69,7 +69,7 @@ package hy.game.resources
 
 		public function SResource(res_url : String, version : String)
 		{
-			this.url = res_url;
+			this.m_url = res_url;
 			this.version = version;
 			if (version)
 				res_url += "?" + version;
@@ -83,7 +83,7 @@ package hy.game.resources
 		 */
 		public function load() : void
 		{
-			if (SResourceMagnger.getInstance().addLoader(this))
+			if ( SResourceMagnger.getInstance().addLoader(this))
 				this.m_isLoading = true;
 		}
 
@@ -109,6 +109,17 @@ package hy.game.resources
 			return m_isStartLoad;
 		}
 
+		public function get url() : String
+		{
+			return m_url;
+		}
+		
+		public function priority(value:int) : SResource
+		{
+			m_priority=value;
+			return this;
+		}
+		
 		/**
 		 * 正在加载
 		 * @return
@@ -269,17 +280,23 @@ package hy.game.resources
 			}
 			removeLoader();
 			m_isLoading = false;
-			error("load error: ", this.url);
+			error("load error: ", this.m_url);
 			cleanListeners();
 			invokeNotifyByArray(m_notifyIOErrors);
 		}
 
+		public function get data():*
+		{
+			
+		}
+			
 		/**
 		 * 从加载队列中移除
 		 *
 		 */
 		private function removeLoader() : void
 		{
+			m_isLoading=false;
 			m_isStartLoad && SResourceMagnger.getInstance().removeLoader(this);
 		}
 

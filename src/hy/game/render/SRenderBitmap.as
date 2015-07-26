@@ -8,9 +8,9 @@ package hy.game.render
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IContainer;
 
-	public class SBitmap extends Bitmap implements IBitmap
+	public class SRenderBitmap extends Bitmap implements IBitmap
 	{
-		public function SBitmap(bitmapData : BitmapData = null, pixelSnapping : String = "auto", smoothing : Boolean = false)
+		public function SRenderBitmap(bitmapData : BitmapData = null, pixelSnapping : String = "auto", smoothing : Boolean = false)
 		{
 			super(bitmapData, pixelSnapping, smoothing);
 		}

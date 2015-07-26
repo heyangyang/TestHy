@@ -1,10 +1,31 @@
 package hy.game.cfg
 {
 	import flash.display.Stage;
-	import flash.geom.Rectangle;
 
 	public class Config
 	{
+		/**
+		 * 分块宽度
+		 */
+		public static var TILE_WIDTH : int = 200;
+		/**
+		 * 分块高度
+		 */
+		public static var TILE_HEIGHT : int = 200;
+		
+		/**
+		 * 格子宽度
+		 */
+		public static var GRID_WIDTH : int = 50;
+		/**
+		 * 格子高度
+		 */
+		public static var GRID_HEIGHT : int = 50;
+		/**
+		 * 小地图相对场景地图缩放比例
+		 */
+		public static const SMALL_MAP_SCALE : Number = 0.1;
+		
 		/**
 		 * 当前游戏帧率
 		 */

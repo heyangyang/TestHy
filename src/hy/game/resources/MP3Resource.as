@@ -17,11 +17,11 @@ package hy.game.resources
 	 * @author hyy
 	 *
 	 */
-	public class MP3Resource extends SResource
+	public class Mp3Resource extends SResource
 	{
-		public var sound : Sound;
+		private var sound : Sound;
 
-		public function MP3Resource(res_url : String, version : String)
+		public function Mp3Resource(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
@@ -53,6 +53,11 @@ package hy.game.resources
 			}
 		}
 
+		override public function get data():*
+		{
+			return sound;
+		}
+		
 		override public function stop() : void
 		{
 			try
