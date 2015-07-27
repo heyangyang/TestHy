@@ -13,9 +13,9 @@ package hy.game.core
 
 	/**
 	 * 游戏对象
-	 * 相当于一个容器 
+	 * 相当于一个容器
 	 * @author hyy
-	 * 
+	 *
 	 */
 	public class GameObject extends SUpdate implements IGameObject
 	{
@@ -181,7 +181,6 @@ package hy.game.core
 		name_part function set owner(value : IGameContainer) : void
 		{
 			m_owner = value;
-			m_owner.addRender(m_render);
 		}
 
 		public function get depth() : int
@@ -212,7 +211,21 @@ package hy.game.core
 		override public function registerd(priority : int = PriorityType.PRIORITY_0) : void
 		{
 			super.registerd(priority);
-			owner && owner.changePrioritySort();
+			if (m_owner)
+			{
+				owner.changePrioritySort();
+				m_owner.addObject(this);
+				m_owner.addRender(m_render);
+			}
+		}
+
+		override public function unRegisterd() : void
+		{
+			if (m_owner)
+			{
+				m_owner.removeObject(this);
+				m_owner.removeRender(m_render);
+			}
 		}
 
 		override public function update() : void
@@ -329,12 +342,8 @@ package hy.game.core
 		{
 			if (m_isDisposed)
 				return;
-			if (owner)
-			{
-				owner.removeObject(this);
-				owner.removeRender(m_render);
-				owner = null;
-			}
+			unRegisterd();
+			m_owner = null;
 			clearComponents();
 			tag = null;
 			name = null;

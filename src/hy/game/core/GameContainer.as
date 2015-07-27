@@ -2,7 +2,7 @@ package hy.game.core
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-
+	
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameRender;
 	import hy.game.namespaces.name_part;
@@ -150,6 +150,11 @@ package hy.game.core
 		{
 			m_priority = value;
 		}
+
+		public function get priority() : int
+		{
+			return m_priority;
+		}
 		/**
 		 * 深度排序
 		 *
@@ -207,7 +212,7 @@ package hy.game.core
 			return 0;
 		}
 
-		name_part function update() : void
+		public function update() : void
 		{
 			m_prioritySort && onUpdateSort();
 			var object : GameObject;

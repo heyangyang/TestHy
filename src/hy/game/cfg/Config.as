@@ -12,20 +12,20 @@ package hy.game.cfg
 		 * 分块高度
 		 */
 		public static var TILE_HEIGHT : int = 200;
-		
+
 		/**
 		 * 格子宽度
 		 */
-		public static var GRID_WIDTH : int = 50;
+		public static const GRID_WIDTH : int = 50;
 		/**
 		 * 格子高度
 		 */
-		public static var GRID_HEIGHT : int = 50;
+		public static const GRID_HEIGHT : int = 50;
 		/**
 		 * 小地图相对场景地图缩放比例
 		 */
 		public static const SMALL_MAP_SCALE : Number = 0.1;
-		
+
 		/**
 		 * 当前游戏帧率
 		 */
@@ -40,6 +40,12 @@ package hy.game.cfg
 		 * 舞台
 		 */
 		public static var stage : Stage;
+
+		/**
+		 * 屏幕的宽高
+		 */
+		public static var screenWidth : int;
+		public static var screenHeight : int;
 		/**
 		 * 资源根目录
 		 */

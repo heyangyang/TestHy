@@ -4,7 +4,7 @@ package hy.game.manager
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-
+	
 	import hy.game.cfg.Time;
 	import hy.game.core.GameContainer;
 	import hy.game.core.interfaces.IGameContainer;
@@ -42,8 +42,8 @@ package hy.game.manager
 		private var m_dictionary : Dictionary;
 		private var m_stage : Stage;
 		private var m_needSort : Boolean;
-		private var elapsedTime : int;
-		private var passedTime : int;
+		private var m_elapsedTime : int;
+		private var m_passedTime : int;
 
 		public function SLayerManager()
 		{
@@ -81,26 +81,35 @@ package hy.game.manager
 
 		private function start() : void
 		{
-			elapsedTime = getTimer();
+			m_elapsedTime = getTimer();
 			m_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
 		private function onEnterFrame(evt : Event) : void
 		{
-			Time.deltaTime = getTimer() - elapsedTime;
-			passedTime = elapsedTime = getTimer();
+			Time.deltaTime = getTimer() - m_elapsedTime;
+			m_passedTime = m_elapsedTime = getTimer();
 			m_needSort && onSort();
 			for (var i : int = m_list.length - 1; i >= 0; i--)
 			{
 				m_list[i].update();
 			}
-			Time.passedTime = getTimer() - passedTime;
+			Time.passedTime = getTimer() - m_passedTime;
 		}
 
 		private function onSort() : void
 		{
-			m_list.sort("priority");
+			m_list.sort(onPrioritySortFun);
 			m_needSort = false;
+		}
+
+		private function onPrioritySortFun(a : IGameContainer, b : IGameContainer) : int
+		{
+			if (a.priority > b.priority)
+				return 1;
+			if (a.priority < b.priority)
+				return -1;
+			return 0;
 		}
 	}
 }

@@ -13,7 +13,7 @@ package hy.game.core
 	{
 		private static var instance : SCamera;
 
-		private static function getInstance() : SCamera
+		public static function getInstance() : SCamera
 		{
 			if (instance)
 				instance = new SCamera();
@@ -90,7 +90,7 @@ package hy.game.core
 		 * @param h
 		 *
 		 */
-		public function updateSceneSize(w : int, h : int) : void
+		public function setSceneSize(w : int, h : int) : void
 		{
 			m_sceneW = w;
 			m_sceneH = h;
@@ -162,5 +162,16 @@ package hy.game.core
 			else if (m_sceneY > m_sceneH - m_screenH)
 				m_sceneY = m_sceneH - m_screenH;
 		}
+
+		public function get sceneX() : int
+		{
+			return m_sceneX;
+		}
+
+		public function get sceneY() : int
+		{
+			return m_sceneY;
+		}
+
 	}
 }

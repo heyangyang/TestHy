@@ -6,6 +6,7 @@ package hy.game.core.interfaces
 	{
 		function set tag(value : String) : void;
 		function set priority(value : int) : void;
+		function get priority() : int;
 
 		function addObject(object : GameObject) : void;
 		function removeObject(object : GameObject) : void;
@@ -17,5 +18,7 @@ package hy.game.core.interfaces
 
 		function changePrioritySort() : void;
 		function changeDepthSort() : void;
+		
+		function update() : void;
 	}
 }
