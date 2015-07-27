@@ -1,4 +1,5 @@
 package hy.game
+
 {
 	import flash.display.Stage;
 
