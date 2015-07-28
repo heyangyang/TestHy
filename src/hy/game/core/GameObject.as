@@ -2,6 +2,7 @@ package hy.game.core
 {
 	import flash.utils.Dictionary;
 
+	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameObject;
 	import hy.game.data.STransform;
@@ -127,7 +128,6 @@ package hy.game.core
 		 */
 		public function onActive() : void
 		{
-			m_isActive = true;
 		}
 
 		/**
@@ -136,7 +136,6 @@ package hy.game.core
 		 */
 		public function onDeActive() : void
 		{
-			m_isActive = false;
 		}
 
 		/**
@@ -213,7 +212,8 @@ package hy.game.core
 			super.registerd(priority);
 			if (m_owner)
 			{
-				owner.changePrioritySort();
+				m_isActive = true;
+				m_owner.changePrioritySort();
 				m_owner.addObject(this);
 				m_owner.addRender(m_render);
 			}
@@ -223,6 +223,7 @@ package hy.game.core
 		{
 			if (m_owner)
 			{
+				m_isActive = false;
 				m_owner.removeObject(this);
 				m_owner.removeRender(m_render);
 			}
@@ -324,6 +325,11 @@ package hy.game.core
 		public function getComponentByType(type : *) : Component
 		{
 			return m_componentTypes[type];
+		}
+
+		public function addContainer(container : IContainer) : void
+		{
+			m_owner.addContainer(container, m_owner.numChildren);
 		}
 
 		private function clearComponents() : void

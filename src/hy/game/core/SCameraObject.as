@@ -3,20 +3,21 @@ package hy.game.core
 	import hy.game.cfg.Time;
 	import hy.game.data.SCameraRectangle;
 	import hy.game.data.STransform;
+	import hy.game.enum.PriorityType;
 
 	/**
 	 * 摄像机
 	 * @author hyy
 	 *
 	 */
-	public class SCamera extends GameObject
+	public class SCameraObject extends GameObject
 	{
-		private static var instance : SCamera;
+		private static var instance : SCameraObject;
 
-		public static function getInstance() : SCamera
+		public static function getInstance() : SCameraObject
 		{
-			if (instance)
-				instance = new SCamera();
+			if (instance == null)
+				instance = new SCameraObject();
 			return instance;
 		}
 
@@ -52,11 +53,17 @@ package hy.game.core
 
 		private var m_isChange : Boolean;
 
-		public function SCamera()
+		public function SCameraObject()
 		{
 			if (instance)
 				error(this, "only one");
 			m_rectangle = new SCameraRectangle();
+		}
+
+		override public function registerd(priority : int = PriorityType.PRIORITY_0) : void
+		{
+			super.registerd(priority);
+			removeRender(m_render);
 		}
 
 		/**

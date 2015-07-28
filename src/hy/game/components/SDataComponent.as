@@ -9,7 +9,7 @@ package hy.game.components
 	 */
 	public class SDataComponent extends Component
 	{
-		public function SDataComponent(type : *)
+		public function SDataComponent(type : * = null)
 		{
 			super(type);
 		}

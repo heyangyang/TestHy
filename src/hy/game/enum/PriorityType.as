@@ -12,6 +12,7 @@ package hy.game.enum
 		public static const PRIORITY_6 : int = 6;
 		public static const PRIORITY_7 : int = 7;
 		public static const PRIORITY_8 : int = 8;
+		public static const PRIORITY_9 : int = 9;
 		public static const PRIORITY_MAX : int = 32;
 
 		public function PriorityType()

@@ -3,6 +3,7 @@ package hy.game.core
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	
+	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameRender;
 	import hy.game.namespaces.name_part;
@@ -39,6 +40,13 @@ package hy.game.core
 			if (index > numChildren)
 				index = numChildren;
 			addChildAt(render.render as DisplayObject, index);
+		}
+
+		public function addContainer(container : IContainer, index : int) : void
+		{
+			if (index > numChildren)
+				index = numChildren;
+			addChildAt(container as DisplayObject, index);
 		}
 
 		/**
@@ -128,8 +136,17 @@ package hy.game.core
 		 */
 		protected function onUpdateSort() : void
 		{
-			m_objects.sort("priority");
+			m_objects.sort(onPrioritySortFun);
 			m_prioritySort = false;
+		}
+
+		private function onPrioritySortFun(a : GameObject, b : GameObject) : int
+		{
+			if (a.priority > b.priority)
+				return 1;
+			if (a.priority < b.priority)
+				return -1;
+			return 0;
 		}
 
 		/**

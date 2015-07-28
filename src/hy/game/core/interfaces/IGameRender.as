@@ -2,7 +2,7 @@ package hy.game.core.interfaces
 {
 	import flash.geom.ColorTransform;
 
-	public interface IGameRender
+	public interface IGameRender extends IDisplay
 	{
 		function get name() : String;
 		function set name(value : String) : void;
@@ -65,6 +65,9 @@ package hy.game.core.interfaces
 
 		function set container(value : IGameContainer) : void;
 
+		function set bitmapData(value : IBitmapData) : void;
+		function get bitmapData() : IBitmapData;
+		
 		function dispose() : void;
 	}
 }

@@ -1,8 +1,9 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.core.interfaces.IBitmap;
+	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameRender;
 	import hy.game.core.interfaces.IRecycle;
@@ -12,9 +13,9 @@ package hy.game.render
 	use namespace name_part;
 
 	/**
-	 * 游戏显示对象 
+	 * 游戏显示对象
 	 * @author hyy
-	 * 
+	 *
 	 */
 	public class SGameRender implements IGameRender, IRecycle
 	{
@@ -375,6 +376,16 @@ package hy.game.render
 		public function get render() : IBitmap
 		{
 			return m_render;
+		}
+
+		public function set bitmapData(value : IBitmapData) : void
+		{
+			render.data = value;
+		}
+
+		public function get bitmapData() : IBitmapData
+		{
+			return render.data;
 		}
 
 		/**

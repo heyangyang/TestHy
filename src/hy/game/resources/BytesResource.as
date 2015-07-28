@@ -1,6 +1,7 @@
 package hy.game.resources
 {
 	import flash.events.Event;
+	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
@@ -8,8 +9,10 @@ package hy.game.resources
 	import flash.net.URLLoaderDataFormat;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
-	
+
 	import hy.game.namespaces.name_part;
+
+	use namespace name_part;
 
 	/**
 	 * 加载文本
@@ -21,7 +24,8 @@ package hy.game.resources
 	public class BytesResource extends SResource
 	{
 		private var loader : URLLoader;
-private var m_data:*;
+		private var m_data : *;
+
 		public function BytesResource(res_url : String, version : String)
 		{
 			super(res_url, version);
@@ -29,8 +33,11 @@ private var m_data:*;
 
 		override name_part function startLoad(context : LoaderContext = null) : void
 		{
-			if (isLoading || isLoaded || isDestroy)
+			if (isStartLoad || isLoaded || isDestroy)
+			{
+				warning(url, "isLoaded", isStartLoad, isLoaded, isDestroy);
 				return;
+			}
 			super.startLoad(context);
 
 			if (context == null)
@@ -52,18 +59,33 @@ private var m_data:*;
 			}
 			catch (e : Error)
 			{
+				onDownloadError(null);
 			}
 		}
 
-		override public function get data():*
+		override public function get data() : *
 		{
 			return m_data;
 		}
-		
+
 		override protected function onDownLoadComplete(evt : Event) : void
 		{
-			m_data= ((evt.target) as URLLoader).data
+			m_data = ((evt.target) as URLLoader).data
 			super.onDownLoadComplete(evt);
+		}
+
+		/**
+		 * 清除监听
+		 *
+		 */
+		override public function cleanListeners() : void
+		{
+			if (!loader)
+				return;
+			loader.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			loader.removeEventListener(Event.COMPLETE, onDownLoadComplete);
+			loader.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 		}
 
 		override public function stop() : void
@@ -82,7 +104,7 @@ private var m_data:*;
 		{
 			super.destroy();
 			loader = null;
-			im_data=null;
+			m_data = null;
 		}
 	}
 }

@@ -3,7 +3,7 @@ package hy.game.resources
 	import flash.system.ApplicationDomain;
 	import flash.system.ImageDecodingPolicy;
 	import flash.system.LoaderContext;
-	
+
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.namespaces.name_part;
@@ -118,8 +118,8 @@ package hy.game.resources
 		name_part function updateProgress(res : SResource) : void
 		{
 			//先减去上一次的进度
-			m_bytesLoaded += res.old_bytesLoaded;
-			m_bytesTotal += res.old_bytesTotal;
+			m_bytesLoaded -= res.old_bytesLoaded;
+			m_bytesTotal -= res.old_bytesTotal;
 			//加上更新后的进度
 			m_bytesLoaded += res.bytesLoaded;
 			m_bytesTotal += res.bytesTotal;
@@ -139,13 +139,29 @@ package hy.game.resources
 		{
 			if (loading_list.length >= m_maxLoadCount || waitLoad_list.length == 0)
 				return;
-			m_sort && waitLoad_list.sort("priority");
+			m_sort && waitLoad_list.sort(onPrioritySortFun);
 			var res : SResource = waitLoad_list.pop();
-			res.isStartLoad = true;
+			res.addNotifyCompleted(onCompleted);
+			res.addNotifyIOError(onCompleted);
 			loading_list.push(res);
 			m_bytesLoaded += res.bytesLoaded;
 			m_bytesTotal += res.bytesTotal;
 			res.startLoad(context);
+			res.isStartLoad = true;
+		}
+
+		private function onCompleted(res : SResource) : void
+		{
+			loadNext();
+		}
+
+		private function onPrioritySortFun(a : SResource, b : SResource) : int
+		{
+			if (a.priority > b.priority)
+				return 1;
+			if (a.priority < b.priority)
+				return -1;
+			return 0;
 		}
 
 		public function createResource(id : String, version : String = null, root : String = null) : SResource

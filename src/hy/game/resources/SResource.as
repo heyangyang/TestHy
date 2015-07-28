@@ -6,10 +6,12 @@ package hy.game.resources
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
-	
+	import flash.utils.ByteArray;
+
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.namespaces.name_part;
+	import hy.game.utils.SByteArrayUtil;
 
 	use namespace name_part;
 
@@ -72,7 +74,7 @@ package hy.game.resources
 			this.m_url = res_url;
 			this.version = version;
 			if (version)
-				res_url += "?" + version;
+				res_url += "?v=" + version;
 			this.request = new URLRequest(encodeURI(res_url));
 		}
 
@@ -83,7 +85,14 @@ package hy.game.resources
 		 */
 		public function load() : void
 		{
-			if ( SResourceMagnger.getInstance().addLoader(this))
+			if (m_isLoading)
+				return;
+			if (m_isLoaded)
+			{
+				invokeNotifyByArray(m_notifyCompleteds);
+				return;
+			}
+			if (SResourceMagnger.getInstance().addLoader(this))
 				this.m_isLoading = true;
 		}
 
@@ -113,13 +122,13 @@ package hy.game.resources
 		{
 			return m_url;
 		}
-		
-		public function priority(value:int) : SResource
+
+		public function priority(value : int) : SResource
 		{
-			m_priority=value;
+			m_priority = value;
 			return this;
 		}
-		
+
 		/**
 		 * 正在加载
 		 * @return
@@ -174,6 +183,8 @@ package hy.game.resources
 		 */
 		public function addNotifyCompleted(notifyFunction : Function) : SResource
 		{
+			if (notifyFunction == null)
+				return this;
 			if (!m_notifyCompleteds)
 				m_notifyCompleteds = new Vector.<Function>();
 			if (m_notifyCompleteds.indexOf(notifyFunction) == -1)
@@ -189,6 +200,8 @@ package hy.game.resources
 		 */
 		public function addNotifyIOError(notifyFunction : Function) : SResource
 		{
+			if (notifyFunction == null)
+				return this;
 			if (!m_notifyIOErrors)
 				m_notifyIOErrors = new Vector.<Function>();
 			if (m_notifyIOErrors.indexOf(notifyFunction) == -1)
@@ -204,6 +217,8 @@ package hy.game.resources
 		 */
 		public function addNotifyProgress(notifyFunction : Function) : SResource
 		{
+			if (notifyFunction == null)
+				return this;
 			if (!m_notifyProgresses)
 				m_notifyProgresses = new Vector.<Function>();
 			if (m_notifyProgresses.indexOf(notifyFunction) == -1)
@@ -285,18 +300,26 @@ package hy.game.resources
 			invokeNotifyByArray(m_notifyIOErrors);
 		}
 
-		public function get data():*
+		public function get data() : *
 		{
-			
+
 		}
-			
+
+		public function getBinary() : *
+		{
+			var bytes : ByteArray = data;
+			if (bytes == null)
+				return null;
+			return SByteArrayUtil.decryptByteArray(bytes);
+		}
+
 		/**
 		 * 从加载队列中移除
 		 *
 		 */
 		private function removeLoader() : void
 		{
-			m_isLoading=false;
+			m_isLoading = false;
 			m_isStartLoad && SResourceMagnger.getInstance().removeLoader(this);
 		}
 

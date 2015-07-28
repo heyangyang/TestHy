@@ -3,11 +3,16 @@ package hy.game.components
 	import hy.game.core.FrameComponent;
 	import hy.game.render.SGameRender;
 
+	/**
+	 * 渲染基本组件
+	 * @author hyy
+	 *
+	 */
 	public class SRenderComponent extends FrameComponent
 	{
 		private var m_render : SGameRender;
 
-		public function SRenderComponent(type : *)
+		public function SRenderComponent(type : * = null)
 		{
 			super(type);
 		}
@@ -31,6 +36,7 @@ package hy.game.components
 
 		override public function update() : void
 		{
+			updateRenderProperty();
 			updateRender();
 		}
 

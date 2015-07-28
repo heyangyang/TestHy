@@ -16,6 +16,9 @@
 	 */
 	public class SDebug extends Sprite
 	{
+		public static var TRACE_INFO : Boolean = false;
+		public static var TRACE_WARN : Boolean = true;
+		public static var TRACE_ERROR : Boolean = true;
 		/**
 		 * 输入文本
 		 */
@@ -250,6 +253,7 @@
 		 */
 		public static function error(... arg) : void
 		{
+			TRACE_ERROR && trace("[error] " + arg.join(" "))
 			write(arg, ERROR_INFOR_COLOR);
 		}
 
@@ -260,6 +264,7 @@
 		 */
 		public static function warning(... arg) : void
 		{
+			TRACE_WARN && trace("[warn] " + arg.join(" "))
 			write(arg, WARN_INFOR_COLOR);
 		}
 
@@ -269,6 +274,7 @@
 		 */
 		public static function print(... arg) : void
 		{
+			TRACE_INFO && trace("[info] " + arg.join(" "))
 			write(arg, NORMAL_INFOR_COLOR);
 		}
 
@@ -322,7 +328,6 @@
 			{
 				_infor = _infor.replace(/.*\n/, "");
 			}
-
 			printField.htmlText = formatText(_infor);
 		}
 

@@ -2,8 +2,11 @@ package hy.game
 
 {
 	import flash.display.Stage;
-	
-	import hy.game.core.SCamera;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
+	import flash.events.Event;
+
+	import hy.game.cfg.Config;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.net.SGameSocket;
@@ -32,7 +35,16 @@ package hy.game
 
 		private function init(stage : Stage) : void
 		{
-			this.current_stage = current_stage;
+			if (m_current)
+				SDebug.error("m_current != null");
+			this.current_stage = stage;
+
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
+			stage.frameRate = Config.frameRate;
+			stage.color = 0x000000;
+			stage.addEventListener(Event.RESIZE, onResizeHandler);
+			onResizeHandler(null);
 			m_current = this;
 			SDebug.init(stage);
 			SLayerManager.getInstance().init(stage);
@@ -45,6 +57,11 @@ package hy.game
 			SGameManager.getInstance();
 		}
 
+		protected function onResizeHandler(event : Event) : void
+		{
+			Config.screenWidth = current_stage.stageWidth;
+			Config.screenHeight = current_stage.stageHeight;
+		}
 
 	}
 }

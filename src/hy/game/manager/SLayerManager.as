@@ -4,9 +4,10 @@ package hy.game.manager
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-	
+
 	import hy.game.cfg.Time;
 	import hy.game.core.GameContainer;
+	import hy.game.core.GameObject;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.enum.PriorityType;
 	import hy.game.namespaces.name_part;
@@ -57,12 +58,12 @@ package hy.game.manager
 			m_list = new Vector.<IGameContainer>();
 			m_dictionary = new Dictionary();
 			//添加默认层级
-			addLayer(LAYER_MAP, PriorityType.PRIORITY_MAX);
-			addLayer(LAYER_GAME, PriorityType.PRIORITY_MAX);
-			addLayer(LAYER_WEATHER, PriorityType.PRIORITY_MAX);
-			addLayer(LAYER_UI, PriorityType.PRIORITY_MAX);
-			addLayer(LAYER_ALERT, PriorityType.PRIORITY_MAX);
-			addLayer(LAYER_GUIDE, PriorityType.PRIORITY_MAX);
+			addLayer(LAYER_MAP, PriorityType.PRIORITY_9);
+			addLayer(LAYER_GAME, PriorityType.PRIORITY_8);
+			addLayer(LAYER_WEATHER, PriorityType.PRIORITY_7);
+			addLayer(LAYER_UI, PriorityType.PRIORITY_6);
+			addLayer(LAYER_ALERT, PriorityType.PRIORITY_5);
+			addLayer(LAYER_GUIDE, PriorityType.PRIORITY_4);
 			start();
 		}
 
@@ -110,6 +111,17 @@ package hy.game.manager
 			if (a.priority < b.priority)
 				return -1;
 			return 0;
+		}
+
+		public function addObjectByType(type : String, object : GameObject) : void
+		{
+			var gameContainer : IGameContainer = m_dictionary[type];
+			if (!gameContainer)
+			{
+				error("layer is not find :" + type);
+				return;
+			}
+			object.owner = gameContainer;
 		}
 	}
 }

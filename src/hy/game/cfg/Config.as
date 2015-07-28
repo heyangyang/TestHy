@@ -49,7 +49,7 @@ package hy.game.cfg
 		/**
 		 * 资源根目录
 		 */
-		public static var webRoot : String = "..";
+		public static var webRoot : String = ".";
 		/**
 		 * 最大重复加载次数
 		 */

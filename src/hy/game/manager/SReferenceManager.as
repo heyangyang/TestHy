@@ -2,11 +2,16 @@ package hy.game.manager
 {
 	import flash.utils.Dictionary;
 	
+	import hy.game.avatar.SAnimationDescription;
+	import hy.game.avatar.SAvatarAnimationLibrary;
+	import hy.game.avatar.SAvatarDescription;
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
+	import hy.game.resources.BytesResource;
 	import hy.game.resources.SResource;
 	import hy.game.sound.SoundReference;
 	import hy.rpg.pak.SDirectAnimationDecoder;
+	import hy.rpg.parser.SAnimationResourceParser;
 	import hy.rpg.parser.SImageResourceParser;
 	import hy.rpg.parser.SMapResourceParser;
 
@@ -264,7 +269,7 @@ package hy.game.manager
 				root = root.replace(/\\/g, "/");
 				print("create resource:" + root);
 			}
-			var res : SResource = createReference(LOADER, id, SResource, version) as SResource;
+			var res : SResource = createReference(LOADER, id, BytesResource, root, version) as SResource;
 			return res;
 		}
 
@@ -301,28 +306,47 @@ package hy.game.manager
 		}
 
 		//*********************************声音****************************
+
+		//*********************************avatar帧****************************
+		public function createAvatarCollection(priority : int, partName : String, avatarDesc : SAvatarDescription, needReversal : Boolean) : SAvatarAnimationLibrary
+		{
+			if (avatarDesc == null)
+				return null;
+			return createReference(ANIMATION, partName + "," + avatarDesc.name, SAvatarAnimationLibrary, priority, partName, avatarDesc, needReversal) as SAvatarAnimationLibrary;
+		}
+		
+		//*********************************avatar帧****************************
 		
 		//*********************************动画解析器****************************
 		public function createDirectAnimationDeocder(id : String) : SDirectAnimationDecoder
 		{
 			return createReference(PARSER, id, SDirectAnimationDecoder, id) as SDirectAnimationDecoder;
 		}
+
 		//*********************************动画解析器****************************
+
+		//*********************************懒加载动画****************************
+		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int, isDirect : Boolean) : SAnimationResourceParser
+		{
+			return createReference(ANIMATION_LOAD, desc.id, SAnimationResourceParser, desc, prioprty, isDirect) as SAnimationResourceParser;
+		}
+		
+		//*********************************懒加载动画****************************
 		
 		//*********************************image****************************
 		public function createImageParser(id : String, priority : int = int.MIN_VALUE) : SImageResourceParser
 		{
 			return createReference(IMAGE, id, SImageResourceParser, id, null, priority) as SImageResourceParser;
 		}
-		
+
 		//*********************************image****************************
-		
+
 		//*********************************地图****************************
 		public function createMapResourceParser(parserClass : Class, id : String, resId : String, prioprty : int, version : String = null) : SMapResourceParser
 		{
 			return createReference(MAP, id, parserClass, resId, version, prioprty) as SMapResourceParser;
 		}
-		
+
 		//*********************************地图****************************
 	}
 }
