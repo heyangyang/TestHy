@@ -3,31 +3,30 @@ package hy.game.avatar
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
-	import hy.game.render.SGameRender;
-	import hy.game.utils.SDebug;
+	import hy.game.animation.SAnimation;
+	import hy.game.animation.SAnimationFrame;
+	import hy.game.data.SObject;
 	import hy.rpg.enmu.SDirection;
 
 	/**
 	 * 纸娃娃
 	 *
 	 */
-	public class SAvatar
+	public class SAvatar extends SObject
 	{
 		/**
 		 * 默认的模型
 		 */
 		public static var default_avatar : SAvatar;
-		private var _isLoaded : Boolean;
+		private var m_isLoaded : Boolean;
 		/**
 		 * 是否显示预览模型
 		 */
-		public var isShowModel : Boolean;
+		public var defaultAvatar : Boolean;
 		/**
 		 * 所有部件对应的各自动画
 		 */
 		private var _animationsByPart : SAvatarAnimationLibrary;
-
-		public var parts : String;
 
 		/**
 		 * 当前avatar的描述
@@ -35,10 +34,6 @@ package hy.game.avatar
 		public var avatarDesc : SAvatarDescription;
 		private var _width : int;
 		private var _height : int;
-		/**
-		 * 正在需要更新的动画
-		 */
-		private var _updateAnimationFrame : SAnimationFrame;
 		//当前动画
 		private var _curAnimation : SAnimation;
 		private var _curAnimationFrame : SAnimationFrame;
@@ -50,7 +45,6 @@ package hy.game.avatar
 		private var _correctDir : uint = SDirection.EAST;
 		private var _dirMode : uint = SDirection.DIR_MODE_HOR_ONE;
 
-		public var render : SGameRender;
 		public var mouseRect : Rectangle = new Rectangle();
 
 		public var loaderComplement : Function;
@@ -63,8 +57,6 @@ package hy.game.avatar
 			this.avatarDesc = desc;
 			_width = Math.abs(desc.rightBorder - desc.leftBorder);
 			_height = Math.abs(desc.bottomBorder - desc.topBorder);
-			render = new SGameRender();
-			render.name = desc.name;
 		}
 
 
@@ -80,7 +72,7 @@ package hy.game.avatar
 		{
 			if (avatarDesc == null)
 			{
-				SDebug.warning(this, "avatarDesc=null");
+				warning(this, "avatarDesc=null");
 				return null;
 			}
 			if (action != 0)
@@ -275,53 +267,6 @@ package hy.game.avatar
 			return _curAnimationFrame;
 		}
 
-		public function updateRenderProperty() : void
-		{
-			if (!render)
-				return;
-			//检测是否所有部件加载完成
-//			if (!_isLoaded && _animationsByPart.isLoaded)
-//			{
-//				onLoadCompleteAnimation();
-//			}
-
-			//没有加载完成，则用默认形象
-			if ( /*!_isLoaded && */isShowModel && default_avatar && (_curAnimation == null || !_curAnimation.isLoaded))
-				_curAnimationFrame = default_avatar.gotoAnimation(_curAction, _curKind, _correctDir, (_curFrameIndex >= 4 ? _curFrameIndex / 2 : _curFrameIndex) + 1, 0);
-			else if (!isShowModel && (_curAnimation == null || !_curAnimation.isLoaded))
-				_curAnimationFrame = null;
-			if (_curAnimation == null || _curAnimationFrame == null)
-			{
-				render.bitmapData = null;
-				return;
-			}
-
-			if (_curAnimationFrame.frameData && render.bitmapData != _curAnimationFrame.frameData)
-			{
-				_updateAnimationFrame = _curAnimationFrame;
-				if (_curAnimationFrame.needReversal) //需要反转
-					_curAnimationFrame.reverseData();
-//				render.scaleX = _curAnimationFrame.needReversal ? -scaleX : scaleX;
-				render.bitmapData = _curAnimationFrame.frameData;
-				if (_curAnimationFrame.rect)
-				{
-					mouseRect.left = _curAnimationFrame.x - (_curAnimationFrame.needReversal ? mouseRect.width : 0);
-					mouseRect.top = _curAnimationFrame.y;
-					mouseRect.width = _curAnimationFrame.rect.width;
-					mouseRect.height = _curAnimationFrame.rect.height;
-				}
-			}
-		}
-
-		public function updateRender(bufferX : Number, bufferY : Number) : void
-		{
-			if (_updateAnimationFrame)
-			{
-				render.x = bufferX + _updateAnimationFrame.x;
-				render.y = bufferY + _updateAnimationFrame.y;
-			}
-		}
-
 		public function gotoFrame(frame : int) : SAnimationFrame
 		{
 			if (!_curAnimation)
@@ -448,11 +393,6 @@ package hy.game.avatar
 			return _curAnimation ? _curAnimation.getFrameDurations(frame) : 0;
 		}
 
-		public function get currRender() : SGameRender
-		{
-			return render;
-		}
-
 		public function get curDir() : int
 		{
 			return _curDir;
@@ -556,12 +496,6 @@ package hy.game.avatar
 			}
 			avatarDesc = null;
 			_curAnimation = null;
-			parts = null;
-			if (render)
-			{
-				render.dispose();
-				render = null;
-			}
 		}
 
 		/**
@@ -591,7 +525,7 @@ package hy.game.avatar
 
 		private function onLoadCompleteAnimation() : void
 		{
-			_isLoaded = true;
+			m_isLoaded = true;
 			_width = Math.abs(avatarDesc.rightBorder - avatarDesc.leftBorder);
 			_height = Math.abs(avatarDesc.bottomBorder - avatarDesc.topBorder);
 
@@ -681,7 +615,7 @@ package hy.game.avatar
 		 */
 		public function get isLoaded() : Boolean
 		{
-			return _isLoaded;
+			return m_isLoaded;
 		}
 
 		/**

@@ -1,4 +1,4 @@
-package hy.game.avatar
+package hy.game.animation
 {
 	import flash.geom.Rectangle;
 	

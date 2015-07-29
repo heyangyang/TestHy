@@ -25,6 +25,8 @@ package hy.game.cfg
 		 * 小地图相对场景地图缩放比例
 		 */
 		public static const SMALL_MAP_SCALE : Number = 0.1;
+		
+		public static var BIG_MAP_SCALE : Number = 0.1;
 
 		/**
 		 * 当前游戏帧率

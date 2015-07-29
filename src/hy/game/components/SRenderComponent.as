@@ -10,7 +10,7 @@ package hy.game.components
 	 */
 	public class SRenderComponent extends FrameComponent
 	{
-		private var m_render : SGameRender;
+		protected var m_render : SGameRender;
 
 		public function SRenderComponent(type : * = null)
 		{
@@ -36,17 +36,7 @@ package hy.game.components
 
 		override public function update() : void
 		{
-			updateRenderProperty();
-			updateRender();
-		}
-
-		protected function updateRenderProperty() : void
-		{
-		}
-
-		protected function updateRender() : void
-		{
-
+			
 		}
 
 		protected function addRender(render : SGameRender) : void

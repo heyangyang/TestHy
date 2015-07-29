@@ -167,7 +167,7 @@ package hy.game.core
 			trace(args.join(","));
 		}
 		
-		public function waring(... args) : void
+		public function warning(... args) : void
 		{
 			trace(args.join(","));
 		}

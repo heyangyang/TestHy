@@ -1,7 +1,7 @@
 package hy.game.avatar
 {
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.utils.SDebug;
 	import hy.rpg.enmu.SDirection;
 
@@ -172,7 +172,7 @@ package hy.game.avatar
 				if (version == "2")
 				{
 					partDesc.kind = partKind;
-//					partDesc.id = SAvatarPartType.getPartNameByType(partDesc.type) + partDesc.kind;
+					partDesc.id = SAvatarPartType.getPartNameByType(partDesc.type) + partDesc.kind;
 				}
 				else
 					partDesc.id = String(partKind);
@@ -185,14 +185,20 @@ package hy.game.avatar
 						var copyKind : String = String(partXML.@copy);
 						if (copyKind)
 							animKind = uint(copyKind);
-						partDesc.addAnimationIdByDir(dir, SAvatarUtil.getAnimationId(name, partDesc.type, animKind, actionDesc.type, actionDesc.kind, dir));
+						partDesc.addAnimationIdByDir(dir, getAnimationId(name, partDesc.type, animKind, actionDesc.type, actionDesc.kind, dir));
 					}
-//					else
+					else
+						SDebug.error(this);
 //						partDesc.addAnimationIdByDir(dir, SPrintf.printf('$avatarId$/$partType$/$partName$/$action$/$dir$', name, partName, partDesc.id, actionDesc.name, dir));
 				}
 				actionDesc.partDescByName[partDesc.id] = partDesc;
 				partDesc.directions = actionDesc.directions;
 			}
+		}
+
+		private function getAnimationId(avatarId : String, part : uint, kind : uint, action : uint, actionKind : uint, direction : uint) : String
+		{
+			return "avatar." + avatarId + "." + part + "." + kind + "." + action + "." + actionKind + "." + direction;
 		}
 
 		private function getDirections(dirs : String) : Array

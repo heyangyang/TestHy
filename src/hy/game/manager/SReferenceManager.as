@@ -2,7 +2,7 @@ package hy.game.manager
 {
 	import flash.utils.Dictionary;
 	
-	import hy.game.avatar.SAnimationDescription;
+	import hy.game.animation.SAnimationDescription;
 	import hy.game.avatar.SAvatarAnimationLibrary;
 	import hy.game.avatar.SAvatarDescription;
 	import hy.game.cfg.Config;
@@ -326,9 +326,9 @@ package hy.game.manager
 		//*********************************动画解析器****************************
 
 		//*********************************懒加载动画****************************
-		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int, isDirect : Boolean) : SAnimationResourceParser
+		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int) : SAnimationResourceParser
 		{
-			return createReference(ANIMATION_LOAD, desc.id, SAnimationResourceParser, desc, prioprty, isDirect) as SAnimationResourceParser;
+			return createReference(ANIMATION_LOAD, desc.id, SAnimationResourceParser, desc, prioprty) as SAnimationResourceParser;
 		}
 		
 		//*********************************懒加载动画****************************

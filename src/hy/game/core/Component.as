@@ -26,6 +26,8 @@ package hy.game.core
 
 		public function Component(type : * = null)
 		{
+			if (type == null)
+				type = this["constructor"];
 			m_type = type;
 			onStart();
 		}

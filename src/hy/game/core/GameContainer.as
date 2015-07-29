@@ -57,7 +57,7 @@ package hy.game.core
 		 */
 		public function getRenderIndex(render : IGameRender) : int
 		{
-			return getChildIndex(render as DisplayObject);
+			return getChildIndex(render.render as DisplayObject);
 		}
 
 		/**

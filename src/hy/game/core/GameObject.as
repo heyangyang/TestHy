@@ -245,6 +245,8 @@ package hy.game.core
 				m_render.alpha = transform.alpha;
 				m_render.scale = transform.scale;
 				m_render.depth = transform.y;
+				m_render.x = transform.x;
+				m_render.y = transform.y;
 				transform.update();
 				updateRenderDepthSort();
 			}
@@ -256,8 +258,17 @@ package hy.game.core
 		 */
 		protected function onSort() : void
 		{
-			m_components.sort("priority");
+			m_components.sort(onPrioritySortFun);
 			m_prioritySort = false;
+		}
+
+		private function onPrioritySortFun(a : GameObject, b : GameObject) : int
+		{
+			if (a.priority > b.priority)
+				return 1;
+			if (a.priority < b.priority)
+				return -1;
+			return 0;
 		}
 
 		/**
@@ -289,7 +300,7 @@ package hy.game.core
 				m_components.push(component);
 			}
 
-			if (m_componentTypes[component.type] == null)
+			if (m_componentTypes[component.type])
 				error("type :" + component.type + "重复");
 			m_componentTypes[component.type] = component;
 			component.owner = this;

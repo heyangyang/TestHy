@@ -1,7 +1,7 @@
-package hy.game.avatar
+package hy.game.animation
 {
 	import flash.geom.Point;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
@@ -9,13 +9,18 @@ package hy.game.avatar
 	import hy.rpg.parser.SAnimationResourceParser;
 	import hy.rpg.parser.SResourceParser;
 
+	/**
+	 * 动画加载器 
+	 * @author hyy
+	 * 
+	 */
 	public class SLazyAnimation extends SAnimation
 	{
-		protected var _currAccessFrame : int;
+		protected var m_currAccessFrame : int;
 		/**
 		 * 该动画用到的资源解析器
 		 */
-		protected var _parser : SAnimationResourceParser;
+		protected var m_parser : SAnimationResourceParser;
 
 		/**
 		 * 加完完成后处理,只实行一次
@@ -31,18 +36,18 @@ package hy.game.avatar
 
 		override public function constructFrames(currAccessFrame : int) : void
 		{
-			_currAccessFrame = currAccessFrame;
-			if (!_parser)
+			m_currAccessFrame = currAccessFrame;
+			if (!m_parser)
 			{
-				parser = SReferenceManager.getInstance().createAnimationResourceParser(_description, priority, Config.supportDirectX);
+				parser = SReferenceManager.getInstance().createAnimationResourceParser(m_description, priority);
 			}
-			if (_parser.isLoaded)
+			if (m_parser.isLoaded)
 			{
 				constructFromParser();
 			}
-			else if (!_parser.isLoading)
+			else if (!m_parser.isLoading)
 			{
-				_parser.onComplete(onCreateFrameData).load();
+				m_parser.onComplete(onCreateFrameData).load();
 			}
 		}
 
@@ -63,21 +68,21 @@ package hy.game.avatar
 		 */
 		private function constructFromParser() : void
 		{
-			if (_currAccessFrame > 0 && _currAccessFrame <= totalFrame)
+			if (m_currAccessFrame > 0 && m_currAccessFrame <= totalFrame)
 			{
-				if (_parser && _parser.isLoaded)
+				if (m_parser && m_parser.isLoaded)
 				{
-					if (_animationFrames.length == 0)
+					if (m_animationFrames.length == 0)
 						error(index + "null frames=0 " + id);
-					width = _parser.width;
-					height = _parser.height;
-					var index : int = _currAccessFrame - 1;
-					var frame : SAnimationFrame = _animationFrames[index];
+					m_width = m_parser.width;
+					m_height = m_parser.height;
+					var index : int = m_currAccessFrame - 1;
+					var frame : SAnimationFrame = m_animationFrames[index];
 					if (frame.frameData)
 						return;
 					frame.clear();
 					frame.frameData = getBitmapDataByIndex(index);
-					var offset : Point = _parser.getOffset(index);
+					var offset : Point = m_parser.getOffset(index);
 					if (offset)
 					{
 						frame.frameX = offset.x;
@@ -97,13 +102,13 @@ package hy.game.avatar
 		 */
 		private function getBitmapDataByIndex(index : int) : IBitmapData
 		{
-			if (index >= 0 && index < _description.totalFrame)
+			if (index >= 0 && index < m_description.totalFrame)
 			{
-				for each (var frameDesc : SFrameDescription in _description.frameDescriptionByIndex)
+				for each (var frameDesc : SFrameDescription in m_description.frameDescriptionByIndex)
 				{
 					if (frameDesc.index == index + 1)
 					{
-						return _parser.getBitmapDataByDir(frameDesc.frame);
+						return m_parser.getBitmapDataByDir(frameDesc.frame);
 					}
 				}
 			}
@@ -121,7 +126,7 @@ package hy.game.avatar
 		 */
 		override public function get isLoaded() : Boolean
 		{
-			return _parser && _parser.isLoaded;
+			return m_parser && m_parser.isLoaded;
 		}
 
 		/**
@@ -131,9 +136,8 @@ package hy.game.avatar
 		 */
 		private function set parser(value : SAnimationResourceParser) : void
 		{
-			if (_parser)
-				_parser.release();
-			_parser = value;
+			m_parser && m_parser.release();
+			m_parser = value;
 		}
 
 		override public function destroy() : void

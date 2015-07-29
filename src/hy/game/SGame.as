@@ -5,7 +5,7 @@ package hy.game
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;

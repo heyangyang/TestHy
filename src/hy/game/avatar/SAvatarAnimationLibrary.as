@@ -4,6 +4,9 @@ package hy.game.avatar
 	
 	import hy.game.core.SReference;
 	import hy.rpg.enmu.SDirection;
+	import hy.game.animation.SAnimation;
+	import hy.game.animation.SAnimationManager;
+	import hy.game.animation.SLazyAnimation;
 
 
 
@@ -16,28 +19,27 @@ package hy.game.avatar
 	 */
 	public class SAvatarAnimationLibrary extends SReference
 	{
-		private var _animationByActionAndDir : Dictionary;
+		private var m_animationByActionAndDir : Dictionary;
 		/**
 		 * 部件名称
 		 */
-		private var _partName : String;
-		public var depth : int;
+		private var m_partName : String;
 
 		public function SAvatarAnimationLibrary(priority : int, partName : String, avatarDesc : SAvatarDescription, needReversal : Boolean)
 		{
-			_partName = partName;
-			_animationByActionAndDir = new Dictionary();
+			m_partName = partName;
+			m_animationByActionAndDir = new Dictionary();
 			createSinglePartAnimations(priority, avatarDesc, needReversal);
 		}
 
 		private function setAnimationByActionAndDir(action : uint, kind : uint, animationByDir : Dictionary) : void
 		{
-			_animationByActionAndDir[action + "." + kind] = animationByDir;
+			m_animationByActionAndDir[action + "." + kind] = animationByDir;
 		}
 
 		private function getAnimationByActionAndDir(action : uint, kind : uint) : Dictionary
 		{
-			return _animationByActionAndDir[action + "." + kind];
+			return m_animationByActionAndDir[action + "." + kind];
 		}
 
 		/**
@@ -67,7 +69,7 @@ package hy.game.avatar
 			var animation : SLazyAnimation;
 			var animationByDir : Dictionary;
 			loader_count = loader_index = 0;
-			for each (animationByDir in _animationByActionAndDir)
+			for each (animationByDir in m_animationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
@@ -97,7 +99,7 @@ package hy.game.avatar
 		{
 			var animation : SAnimation;
 			var animationByDir : Dictionary;
-			for each (animationByDir in _animationByActionAndDir)
+			for each (animationByDir in m_animationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
@@ -113,7 +115,7 @@ package hy.game.avatar
 		{
 			var animation : SAnimation;
 			var animationByDir : Dictionary;
-			for each (animationByDir in _animationByActionAndDir)
+			for each (animationByDir in m_animationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
@@ -121,21 +123,8 @@ package hy.game.avatar
 				}
 			}
 			onReturnHanlder = null;
-			_animationByActionAndDir = null;
+			m_animationByActionAndDir = null;
 			super.destroy();
-		}
-
-		public function updateCenter(centerX : int, centerY : int) : void
-		{
-			var animation : SAnimation;
-			var animationByDir : Dictionary;
-			for each (animationByDir in _animationByActionAndDir)
-			{
-				for each (animation in animationByDir)
-				{
-					animation.updateCenter(centerX, centerY);
-				}
-			}
 		}
 
 		/**
@@ -148,7 +137,7 @@ package hy.game.avatar
 		 */
 		private function createSinglePartAnimations(priority : int, avatarDesc : SAvatarDescription, allNeedReversalPart : Boolean) : void
 		{
-			if (!_partName || avatarDesc == null)
+			if (!m_partName || avatarDesc == null)
 				return;
 
 			var needReversalPart : Boolean;
@@ -167,7 +156,7 @@ package hy.game.avatar
 				needReversalPart = allNeedReversalPart;
 				animationByDir = new Dictionary();
 				setAnimationByActionAndDir(actionDesc.type, actionDesc.kind, animationByDir);
-				partDesc = actionDesc.partDescByName[_partName];
+				partDesc = actionDesc.partDescByName[m_partName];
 				if (!partDesc)
 					continue;
 				dirs = actionDesc.directions; //当前有的方向数据
@@ -240,11 +229,6 @@ package hy.game.avatar
 				}
 			}
 			return descs;
-		}
-
-		public function get partName() : String
-		{
-			return _partName;
 		}
 	}
 }

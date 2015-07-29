@@ -164,11 +164,6 @@ package hy.game.resources
 			return 0;
 		}
 
-		public function createResource(id : String, version : String = null, root : String = null) : SResource
-		{
-			return SReferenceManager.getInstance().createResource(id, version, root);
-		}
-
 		public function getClass(name : String) : Class
 		{
 			if (ApplicationDomain.currentDomain.hasDefinition(name))

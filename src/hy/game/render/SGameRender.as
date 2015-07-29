@@ -198,7 +198,28 @@ package hy.game.render
 				return;
 			m_x = value;
 			if (m_render)
+			{
 				m_render.x = m_x + m_parentX;
+				updateChildByField("parentX", m_x);
+			}
+		}
+
+		name_part function set parentX(value : Number) : void
+		{
+			if (m_parentX == value)
+				return;
+			m_parentX = value;
+			if (m_render)
+				m_render.x = m_x + m_parentX;
+		}
+
+		name_part function set parentY(value : Number) : void
+		{
+			if (m_parentY == value)
+				return;
+			m_parentY = value;
+			if (m_render)
+				m_render.y = m_y + m_parentY;
 		}
 
 		public function get y() : Number
@@ -213,7 +234,10 @@ package hy.game.render
 			m_y = value;
 
 			if (m_render)
+			{
 				m_render.y = m_y + m_parentY;
+				updateChildByField("parentY", m_y);
+			}
 		}
 
 		public function get width() : Number
@@ -386,6 +410,14 @@ package hy.game.render
 		public function get bitmapData() : IBitmapData
 		{
 			return render.data;
+		}
+
+		private function updateChildByField(field : String, value : *) : void
+		{
+			for (var i : int = 0; i < m_numChildren; i++)
+			{
+				m_childs[i][field] = value;
+			}
 		}
 
 		/**
