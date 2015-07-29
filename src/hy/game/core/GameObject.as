@@ -1,7 +1,7 @@
 package hy.game.core
 {
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameObject;
@@ -210,13 +210,12 @@ package hy.game.core
 		override public function registerd(priority : int = PriorityType.PRIORITY_0) : void
 		{
 			super.registerd(priority);
-			if (m_owner)
-			{
+			if (!m_owner)
+				error(this,"m_owner=null");
 				m_isActive = true;
 				m_owner.changePrioritySort();
 				m_owner.addObject(this);
 				m_owner.addRender(m_render);
-			}
 		}
 
 		override public function unRegisterd() : void
@@ -240,13 +239,13 @@ package hy.game.core
 					continue;
 				component.update();
 			}
-			if (transform.isChange)
+			if (transform.isChange || SCameraObject.updateAble)
 			{
 				m_render.alpha = transform.alpha;
 				m_render.scale = transform.scale;
 				m_render.depth = transform.y;
-				m_render.x = transform.x;
-				m_render.y = transform.y;
+				m_render.x = transform.x-SCameraObject.sceneX;
+				m_render.y = transform.y-SCameraObject.sceneY;
 				transform.update();
 				updateRenderDepthSort();
 			}
@@ -262,7 +261,7 @@ package hy.game.core
 			m_prioritySort = false;
 		}
 
-		private function onPrioritySortFun(a : GameObject, b : GameObject) : int
+		private function onPrioritySortFun(a : FrameComponent, b : FrameComponent) : int
 		{
 			if (a.priority > b.priority)
 				return 1;

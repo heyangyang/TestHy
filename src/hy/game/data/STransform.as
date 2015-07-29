@@ -24,6 +24,9 @@ package hy.game.data
 
 		private var m_blendMode : String;
 
+		private var m_width:int;
+		private var m_height:int;
+		
 		private var m_isChange : Boolean;
 
 		public function STransform()
@@ -126,6 +129,26 @@ package hy.game.data
 			return m_isChange;
 		}
 
+		public function set width(value : int) : void
+		{
+			m_width = value;
+		}
+		
+		public function get width():int
+		{
+			return m_width;
+		}
+		
+		public function set height(value : int) : void
+		{
+			m_height = value;
+		}
+		
+		public function get height():int
+		{
+			return m_height;
+		}
+		
 		name_part function update() : void
 		{
 			m_isChange = false;

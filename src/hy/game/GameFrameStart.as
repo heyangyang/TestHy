@@ -13,25 +13,34 @@ package hy.game
 	import hy.game.resources.SPreLoad;
 	import hy.game.resources.SResourceMagnger;
 	import hy.game.sound.SoundManager;
+	import hy.game.starter.SGameStartBase;
 	import hy.game.utils.SDebug;
 	import hy.game.utils.STimeControl;
 	import hy.rpg.manager.SGameManager;
 
-	public class SGame
+	/**
+	 * 游戏运行入口
+	 * @author wait
+	 * 
+	 */
+	public class GameFrameStart
 	{
-		private static var m_current : SGame;
+		private static var m_current : GameFrameStart;
 
-		public static function get current() : SGame
+		public static function get current() : GameFrameStart
 		{
 			return m_current
 		}
 
-		public function SGame(stage : Stage)
+		public function GameFrameStart(stage : Stage,sarter:SGameStartBase)
 		{
+			gameStarter=sarter;
 			init(stage);
+			sarter.onStart();
 		}
 
 		private var current_stage : Stage;
+		private var gameStarter:SGameStartBase;
 
 		private function init(stage : Stage) : void
 		{

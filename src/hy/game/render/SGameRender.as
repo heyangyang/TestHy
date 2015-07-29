@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
@@ -25,9 +25,9 @@ package hy.game.render
 		name_part var m_parentY : int;
 		protected var m_x : int;
 		protected var m_y : int;
-		protected var m_scale : int;
+		protected var m_scale : Number;
 		protected var m_numChildren : int;
-		protected var m_alpha : int;
+		protected var m_alpha : Number;
 		protected var m_rotation : int;
 		protected var m_zDepth : int;
 		protected var m_layer : int;

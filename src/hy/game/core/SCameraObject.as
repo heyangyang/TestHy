@@ -38,8 +38,9 @@ package hy.game.core
 		/**
 		 * 物体在场景的位置
 		 */
-		private var m_sceneX : int;
-		private var m_sceneY : int;
+		public static var sceneX : int;
+		public static  var sceneY : int;
+		public static var updateAble:Boolean;
 		/**
 		 * 场景大小
 		 */
@@ -48,11 +49,11 @@ package hy.game.core
 		/**
 		 * x，y 移动速度
 		 */
-		protected var m_velocityX : Number;
-		protected var m_velocityY : Number;
+		protected var m_velocityX : Number=0;
+		protected var m_velocityY : Number=0;
 
 		private var m_isChange : Boolean;
-
+		
 		public function SCameraObject()
 		{
 			if (instance)
@@ -118,67 +119,57 @@ package hy.game.core
 
 		override public function update() : void
 		{
+			updateAble=false;
 			if (m_transform == null)
 				return;
-			if (m_velocityX == 0 && m_velocityY == 0)
+			if (!m_isChange && m_velocityX == 0 && m_velocityY == 0)
 				return;
+			
 			if (m_isChange)
 			{
 				m_isChange = false;
-				m_sceneX = m_transform.x - m_screenH * .5;
-				m_sceneY = m_transform.y - m_screenH * .5;
+				sceneX = m_transform.x - m_screenW * .5;
+				sceneY = m_transform.y - m_screenH * .5;
 			}
 
-			if (m_velocityY == 0 && m_velocityY == 0)
-				return;
-
+			updateAble=true;
+			
 			//屏幕相对位置
-			m_screenX = m_sceneX - m_transform.x;
-			m_screenY = m_sceneY - m_transform.y;
+			m_screenX =   m_transform.x-sceneX;
+			m_screenY =   m_transform.y-sceneY;
 
 			//往左走
 			if (m_screenX < m_rectangle.x)
 			{
-				m_sceneX += -m_velocityX * Time.deltaTime;
+				sceneX += -m_velocityX * Time.deltaTime;
 			}
 			//往右走
 			else if (m_screenX > m_rectangle.x + m_rectangle.width)
 			{
-				m_sceneX += m_velocityX * Time.deltaTime;
+				sceneX += m_velocityX * Time.deltaTime;
 			}
 
 			//往上走
 			if (m_screenY < m_rectangle.y)
 			{
-				m_sceneY += -m_velocityY * Time.deltaTime;
+				sceneY += -m_velocityY * Time.deltaTime;
 			}
 			//往下走
 			else if (m_screenY > m_rectangle.y + m_rectangle.height)
 			{
-				m_sceneY += m_velocityY * Time.deltaTime;
+				sceneY += m_velocityY * Time.deltaTime;
 			}
 
 			//检测是否超出边界
-			if (m_sceneX < 0)
-				m_sceneX = 0;
-			else if (m_sceneX > m_sceneW - m_screenW)
-				m_sceneX = m_sceneW - m_screenW;
+			if (sceneX < 0)
+				sceneX = 0;
+			else if (sceneX > m_sceneW - m_screenW)
+				sceneX = m_sceneW - m_screenW;
 
-			if (m_sceneY < 0)
-				m_sceneY = 0;
-			else if (m_sceneY > m_sceneH - m_screenH)
-				m_sceneY = m_sceneH - m_screenH;
+			if (sceneY < 0)
+				sceneY = 0;
+			else if (sceneY > m_sceneH - m_screenH)
+				sceneY = m_sceneH - m_screenH;
 		}
-
-		public function get sceneX() : int
-		{
-			return m_sceneX;
-		}
-
-		public function get sceneY() : int
-		{
-			return m_sceneY;
-		}
-
 	}
 }

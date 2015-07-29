@@ -3,13 +3,13 @@ package hy.game.components
 	import hy.game.core.Component;
 
 	/**
-	 * 数据组件
+	 * 数据组件基类
 	 * @author hyy
 	 *
 	 */
-	public class SDataComponent extends Component
+	public class SComponentData extends Component
 	{
-		public function SDataComponent(type : * = null)
+		public function SComponentData(type : * = null)
 		{
 			super(type);
 		}
