@@ -44,7 +44,7 @@ package hy.game.components
 			m_render.x = animationFrame.x;
 			m_render.y = animationFrame.y;
 		}
-
+		
 		public function setAvatarId(avatarId : String) : void
 		{
 			m_lazyAvatar.setAvatarId(avatarId);

@@ -1,7 +1,7 @@
 package hy.game.manager
 {
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.avatar.SAvatarAnimationLibrary;
 	import hy.game.avatar.SAvatarDescription;
@@ -14,6 +14,7 @@ package hy.game.manager
 	import hy.rpg.parser.SAnimationResourceParser;
 	import hy.rpg.parser.SImageResourceParser;
 	import hy.rpg.parser.SMapResourceParser;
+	import hy.rpg.render.SNameParser;
 
 	/**
 	 * 游戏中有所实例的管理
@@ -314,9 +315,9 @@ package hy.game.manager
 				return null;
 			return createReference(ANIMATION, partName + "," + avatarDesc.name, SAvatarAnimationLibrary, priority, partName, avatarDesc, needReversal) as SAvatarAnimationLibrary;
 		}
-		
+
 		//*********************************avatar帧****************************
-		
+
 		//*********************************动画解析器****************************
 		public function createDirectAnimationDeocder(id : String) : SDirectAnimationDecoder
 		{
@@ -330,9 +331,9 @@ package hy.game.manager
 		{
 			return createReference(ANIMATION_LOAD, desc.id, SAnimationResourceParser, desc, prioprty) as SAnimationResourceParser;
 		}
-		
+
 		//*********************************懒加载动画****************************
-		
+
 		//*********************************image****************************
 		public function createImageParser(id : String, priority : int = int.MIN_VALUE) : SImageResourceParser
 		{
@@ -348,5 +349,13 @@ package hy.game.manager
 		}
 
 		//*********************************地图****************************
+
+		//*********************************名字****************************
+		public function createRoleName(name : String, nameTextFontSize : int = 13, nameTextColor : uint = 0xffffff) : SNameParser
+		{
+			return createReference(NAME, name + "." + nameTextColor, SNameParser, name, nameTextFontSize, nameTextColor) as SNameParser;
+		}
+
+		//*********************************名字****************************
 	}
 }
