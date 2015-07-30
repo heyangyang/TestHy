@@ -16,12 +16,12 @@ package hy.game.resources
 	 * @author hyy
 	 *
 	 */
-	public class SwfResource extends SResource
+	public class SWFResource11 extends SResource
 	{
 		private var loader : Loader;
 		private var appDomain : ApplicationDomain;
 
-		public function SwfResource(res_url : String, version : String)
+		public function SWFResource11(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
