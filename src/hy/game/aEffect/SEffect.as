@@ -321,7 +321,7 @@ package hy.game.aEffect
 		{
 			return _curAnimationDurations;
 		}
-
+		
 		public function getFrameDurations(frame : int = 1) : int
 		{
 			return _curAnimation ? _curAnimation.getFrameDurations(frame) : 0;
@@ -389,6 +389,11 @@ package hy.game.aEffect
 		public function get hasAnimation() : Boolean
 		{
 			return _curAnimation != null;
+		}
+		
+		public function get depth() : int
+		{
+			return _curAnimation?_curAnimation.depth:0;
 		}
 
 		public function get correctDir() : uint

@@ -28,6 +28,8 @@ package hy.game.data
 		private var m_height:int;
 		
 		private var m_isChange : Boolean;
+		
+		public var dir:int;
 
 		public function STransform()
 		{

@@ -2,7 +2,7 @@ package hy.game.animation
 {
 	import flash.display.BlendMode;
 	import flash.filters.BitmapFilter;
-
+	
 	import hy.game.data.SObject;
 
 
@@ -49,6 +49,8 @@ package hy.game.animation
 		private var m_blendMode : String = BlendMode.NORMAL;
 
 		public var filter : BitmapFilter;
+		
+		protected var m_depth:int;
 
 		public function SAnimation(id : String, desc : SAnimationDescription, needReversal : Boolean)
 		{
@@ -68,6 +70,7 @@ package hy.game.animation
 			m_centerY = desc.centerY;
 			m_width = desc.width;
 			m_height = desc.height;
+			m_depth=desc.depth;
 			filter = desc.filter;
 			m_blendMode = desc.blendMode;
 
@@ -159,6 +162,13 @@ package hy.game.animation
 		{
 			return m_height;
 		}
+		
+		
+		public function get depth() : int
+		{
+			return m_depth;
+		}
+		
 
 		/**
 		 * 销毁所有帧

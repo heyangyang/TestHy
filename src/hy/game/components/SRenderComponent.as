@@ -58,6 +58,12 @@ package hy.game.components
 			super.destroy();
 		}
 
+		public function setOffsetXY(x:int,y:int):void
+		{
+			m_offsetX=x;
+			m_offsetY=y;
+		}
+		
 		public function set offsetX(value:int):void
 		{
 			m_offsetX = value;

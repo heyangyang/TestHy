@@ -5,7 +5,6 @@ package hy.game.components
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SLazyAvatar;
 	import hy.game.cfg.Time;
-	import hy.rpg.enmu.SDirection;
 	import hy.rpg.enmu.SLoadPriorityType;
 
 	/**
@@ -59,7 +58,7 @@ package hy.game.components
 			m_avatar = avatar;
 			m_owner.transform.width = avatar.width;
 			m_owner.transform.height = avatar.height;
-			m_avatar.gotoAnimation(SActionType.IDLE, 0, SDirection.SOUTH, 0, 0);
+			m_avatar.gotoAnimation(SActionType.IDLE, 0, m_transform.dir, 0, 0);
 		}
 
 		override public function destroy() : void

@@ -150,6 +150,11 @@ package hy.game.aEffect
 		 */
 		public function destroy() : void
 		{
+			if(m_effect)
+			{
+				m_effect.dispose();
+				m_effect=null;
+			}
 			m_notifyCompleteds = null;
 		}
 	}

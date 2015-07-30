@@ -2,9 +2,8 @@ package hy.game.components
 {
 	import hy.game.aEffect.SEffect;
 	import hy.game.aEffect.SLazyEffect;
-	import hy.game.avatar.SActionType;
-	import hy.game.avatar.SAvatar;
-	import hy.rpg.enmu.SDirection;
+	import hy.game.animation.SAnimationFrame;
+	import hy.game.cfg.Time;
 	import hy.rpg.enmu.SLoadPriorityType;
 
 	/**
@@ -16,7 +15,9 @@ package hy.game.components
 	{
 		private var lazyEffect : SLazyEffect;
 		private var m_effect : SEffect;
-
+		private var m_loops:int;
+		private var animationFrame : SAnimationFrame;
+		
 		public function SAnimationComponent(type : * = null)
 		{
 			super(type);
@@ -24,9 +25,32 @@ package hy.game.components
 			lazyEffect.priority = SLoadPriorityType.EFFECT;
 		}
 
+		public function setLoops(value:int):void
+		{
+			m_loops=value;
+		}
+		
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+		}
+		
+		override public function update():void
+		{
+			if (!m_effect)
+				return;
+			if(m_effect.isEnd)
+			{
+				destroy();
+				return;
+			}
+			var frame : SAnimationFrame = m_effect.gotoNextFrame(Time.deltaTime);
+			if (!frame || frame == animationFrame)
+				return;
+			animationFrame = frame;
+			m_render.bitmapData = animationFrame.frameData;
+			m_render.x = animationFrame.x+m_offsetX;
+			m_render.y = animationFrame.y+m_offsetY;
 		}
 
 		public function setEffectId(id : String) : void
@@ -41,9 +65,15 @@ package hy.game.components
 		private function onLoadEffectComplete(effect : SEffect) : void
 		{
 			m_effect = effect;
-			m_owner.transform.width = m_effect.width;
-			m_owner.transform.height = m_effect.height;
-			m_effect.gotoAnimation(SDirection.SOUTH, 0, 1);
+			m_effect.gotoAnimation(m_transform.dir, 0, m_loops);
+			m_render.layer=m_effect.depth;
+		}
+		
+		override public function destroy():void
+		{
+			super.destroy();
+			lazyEffect&& lazyEffect.destroy();
+			m_effect=null;
 		}
 	}
 }
