@@ -1,8 +1,7 @@
 package hy.game.animation
 {
 	import flash.geom.Point;
-
-	import hy.game.cfg.Config;
+	
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.rpg.enmu.SLoadPriorityType;

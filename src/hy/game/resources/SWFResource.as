@@ -9,6 +9,7 @@ package hy.game.resources
 	import flash.system.LoaderContext;
 	
 	import hy.game.namespaces.name_part;
+	use namespace name_part;
 
 	/**
 	 * 加载swf
@@ -27,8 +28,11 @@ package hy.game.resources
 
 		override name_part function startLoad(context : LoaderContext = null) : void
 		{
-			if (isLoading || isLoaded || isDestroy)
+			if (isStartLoad || isLoaded || isDestroy)
+			{
+				warning(url, "isLoaded", isStartLoad, isLoaded, isDestroy);
 				return;
+			}
 			super.startLoad(context);
 
 			if (context == null)
@@ -42,7 +46,11 @@ package hy.game.resources
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onDownLoadComplete);
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
 			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			reload();
+		}
 
+		override protected function reload() : void
+		{
 			try
 			{
 				loader.load(request, context);
@@ -50,7 +58,6 @@ package hy.game.resources
 			catch (e : Error)
 			{
 			}
-
 		}
 
 		override protected function onDownLoadComplete(evt : Event) : void

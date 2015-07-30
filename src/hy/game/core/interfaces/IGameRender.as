@@ -29,6 +29,10 @@ package hy.game.core.interfaces
 		function get layer() : int;
 		function set layer(value : int) : void;
 
+		function get isSortLayer() : Boolean;
+		function set isSortLayer(value : Boolean) : void;
+		function updateSortLayer() : void;
+
 		function rotate(rotate : Number) : void;
 
 		function get x() : Number;
@@ -67,7 +71,7 @@ package hy.game.core.interfaces
 
 		function set bitmapData(value : IBitmapData) : void;
 		function get bitmapData() : IBitmapData;
-		
+
 		function dispose() : void;
 	}
 }

@@ -5,6 +5,14 @@ package hy.game.cfg
 	public class Config
 	{
 		/**
+		 * 版本号
+		 */
+		public static var VERSION : String = "0.0.1";
+		/**
+		 * 是否调试模式
+		 */
+		public static var isDebug : Boolean = true;
+		/**
 		 * 分块宽度
 		 */
 		public static var TILE_WIDTH : int = 200;
@@ -25,7 +33,7 @@ package hy.game.cfg
 		 * 小地图相对场景地图缩放比例
 		 */
 		public static const SMALL_MAP_SCALE : Number = 0.1;
-		
+
 		public static var BIG_MAP_SCALE : Number = 0.1;
 
 		/**

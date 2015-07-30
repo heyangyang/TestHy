@@ -1,7 +1,7 @@
 package hy.game.resources
 {
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SReferenceManager;
 
@@ -13,6 +13,7 @@ package hy.game.resources
 	public class SPreLoad extends SBaseManager
 	{
 		private static var instance : SPreLoad;
+//		private var file_dic : Dictionary;
 		/**
 		 * 批量加载地址
 		 */
@@ -32,9 +33,7 @@ package hy.game.resources
 		public static function getInstance() : SPreLoad
 		{
 			if (instance == null)
-			{
 				instance = new SPreLoad();
-			}
 			return instance;
 		}
 
@@ -45,18 +44,28 @@ package hy.game.resources
 		 */
 		public function onConfigComplete(xml : XML) : void
 		{
+//			file_dic = new Dictionary();
+//			var xmlList : XMLList = xml.file;
+//			var len : int = xmlList.length();
+//			var fileData : Object;
+//			var child : XML;
+//			for (var i : int = 0; i < len; i++)
+//			{
+//				child = xmlList[i];
+//				fileData = {id: child.@id, v: child.@version, url: child.@url};
+//				file_dic[fileData.id] = fileData;
+//			}
+
 			batchData = new Dictionary();
 			var batchArray : Array;
 			var xmlList : XMLList = xml.batch;
 			var len : int = xmlList.length();
-			var child : XML;
-			var id : String;
 			var count : int;
+			var child : XML;
 			for (var i : int = 0; i < len; i++)
 			{
 				child = xmlList[i];
 				//预加载的id
-				id = child.@id;
 				count = child.file.length();
 				//id所对应的一系列资源地址
 				batchArray = [];
@@ -65,7 +74,7 @@ package hy.game.resources
 				{
 					batchArray.push(child.file[j].@id.toString());
 				}
-				batchData[id] = batchArray;
+				batchData[String(child.@id)] = batchArray;
 			}
 		}
 
@@ -96,7 +105,7 @@ package hy.game.resources
 		 * @param callFun
 		 *
 		 */
-		public function preLoad(id : String, callFun : Function = null) : void
+		public function preLoad(id : String, onComplete : Function = null, onProgress : Function = null) : void
 		{
 			if (m_isLoading)
 			{
@@ -113,19 +122,21 @@ package hy.game.resources
 			startLoadByArray(batchData[id])
 		}
 
-		private function startLoadByArray(load_list : Array) : Boolean
+		private function startLoadByArray(load_list : Array) : void
 		{
 			if (!load_list)
-				return false;
+			{
+				waring(this, "load_list=null");
+				return;
+			}
 			m_loadCount = load_list.length;
 			m_loadIndex = 0;
 			var referenceMgr : SReferenceManager = SReferenceManager.getInstance();
-
+			var id : String;
 			for (var i : int = 0; i < m_loadCount; i++)
 			{
-				referenceMgr.createResource(load_list[i]).addNotifyCompleted(onCompleteHandler).addNotifyProgress(onProgressHandler);
+				referenceMgr.createResource(load_list[i]).addNotifyCompleted(onCompleteHandler).addNotifyProgress(onProgressHandler).load();
 			}
-			return true;
 		}
 
 		private function onCompleteHandler(res : SResource) : void

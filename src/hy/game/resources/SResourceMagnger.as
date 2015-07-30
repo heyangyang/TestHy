@@ -1,12 +1,15 @@
 package hy.game.resources
 {
+	import flash.display.BitmapData;
 	import flash.system.ApplicationDomain;
 	import flash.system.ImageDecodingPolicy;
 	import flash.system.LoaderContext;
-
+	import flash.utils.Dictionary;
+	
+	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SBaseManager;
-	import hy.game.manager.SReferenceManager;
 	import hy.game.namespaces.name_part;
+	import hy.game.render.SRenderBitmapData;
 
 	use namespace name_part;
 
@@ -52,6 +55,11 @@ package hy.game.resources
 		private var m_bytesTotal : Number;
 
 		private var m_bytesLoaded : Number;
+
+		/**
+		 * 图片库
+		 */
+		private var m_globalImage : Dictionary = new Dictionary();
 
 		public function SResourceMagnger(count : int = 2)
 		{
@@ -170,6 +178,25 @@ package hy.game.resources
 				return ApplicationDomain.currentDomain.getDefinition(name) as Class;
 			waring("not find class:" + name);
 			return null;
+		}
+
+		/**
+		 * 获取图片,不能销毁
+		 * @param id
+		 * @return
+		 *
+		 */
+		public function getImageById(id : String) : IBitmapData
+		{
+			if (m_globalImage[id])
+				return m_globalImage[id];
+			var resClass : Class = getClass(id);
+			var source : BitmapData = new resClass();
+			var bitmapData : SRenderBitmapData = new SRenderBitmapData(source.width, source.height, true, 0);
+			bitmapData.draw(source);
+			source.dispose();
+			m_globalImage[id] = bitmapData;
+			return bitmapData;
 		}
 	}
 }

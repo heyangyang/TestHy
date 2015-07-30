@@ -84,7 +84,7 @@ package hy.game.avatar
 				invokeNotifyByArray();
 				return;
 			}
-			var resource : SResource = SReferenceManager.getInstance().createResource("./avatar/" + m_avatarId + "/" + m_avatarId + ".src");
+			var resource : SResource = SReferenceManager.getInstance().createResource(m_avatarId);
 
 			if (resource)
 			{

@@ -105,6 +105,15 @@ package hy.game.resources
 			this.context = context;
 		}
 
+		/**
+		 * 重复加载
+		 *
+		 */
+		protected function reload() : void
+		{
+
+		}
+
 		name_part function set isStartLoad(value : Boolean) : void
 		{
 			m_isStartLoad = value;
@@ -289,7 +298,7 @@ package hy.game.resources
 			if (m_currCount < Config.MAX_RELOAD)
 			{
 				m_currCount++;
-				startLoad(context);
+				reload();
 				error("load again: ", m_currCount, request.url);
 				return;
 			}

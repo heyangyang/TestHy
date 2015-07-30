@@ -2,7 +2,7 @@ package hy.game.core
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	
+
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameRender;
@@ -72,7 +72,7 @@ package hy.game.core
 			m_renders.push(render);
 			addChild(render.render as DisplayObject);
 			m_numRender++;
-			render.layer = m_numRender;
+			//render.layer = m_numRender;
 			render.container = this;
 			m_depthSort = true;
 		}
@@ -177,19 +177,17 @@ package hy.game.core
 		 *
 		 */
 		private var render_index : int;
-		private var render_Update : Boolean;
+		private var m_child : IGameRender;
 
 		protected function updateDepthSort() : void
 		{
 			m_depthSort = false;
 			m_renders.sort(sortDepthHandler);
 			render_index = 0;
-			var render : IGameRender;
 			for (var i : int = 0; i < m_numRender; i++)
 			{
-				render = m_renders[i];
-				render_Update = render.layer != render_index;
-				updateChildIndex(render);
+				m_child = m_renders[i];
+				updateChildIndex(m_child);
 			}
 		}
 
@@ -201,15 +199,19 @@ package hy.game.core
 		 */
 		protected function updateChildIndex(render : IGameRender) : void
 		{
-			if (render_Update)
+			if (getChildIndex(render.render as DisplayObject) != render_index)
 				setChildIndex(render.render as DisplayObject, render_index++);
 			else
-				render_index += render.numChildren + 1;
-			var child : IGameRender;
+				render_index += 1;
+			if (render.isSortLayer)
+			{
+				render.updateSortLayer();
+				render.isSortLayer = false;
+			}
 			for (var i : int = 0; i < render.numChildren; i++)
 			{
-				child = render.getChildAt(i);
-				updateChildIndex(child);
+				m_child = render.getChildAt(i);
+				updateChildIndex(m_child);
 			}
 		}
 

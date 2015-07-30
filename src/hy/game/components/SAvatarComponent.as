@@ -44,7 +44,7 @@ package hy.game.components
 			m_render.x = animationFrame.x;
 			m_render.y = animationFrame.y;
 		}
-		
+
 		public function setAvatarId(avatarId : String) : void
 		{
 			m_lazyAvatar.setAvatarId(avatarId);
@@ -57,8 +57,8 @@ package hy.game.components
 		private function onLoadAvatarComplete(avatar : SAvatar) : void
 		{
 			m_avatar = avatar;
-			m_owner.transform.width=avatar.width;
-			m_owner.transform.height=avatar.height;
+			m_owner.transform.width = avatar.width;
+			m_owner.transform.height = avatar.height;
 			m_avatar.gotoAnimation(SActionType.IDLE, 0, SDirection.SOUTH, 0, 0);
 		}
 

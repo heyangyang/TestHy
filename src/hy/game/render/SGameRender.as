@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
@@ -31,6 +31,7 @@ package hy.game.render
 		protected var m_rotation : int;
 		protected var m_zDepth : int;
 		protected var m_layer : int;
+		protected var m_isSortLayer : Boolean;
 		protected var m_visible : Boolean;
 		protected var m_blendMode : String;
 		protected var m_parent : IGameRender;
@@ -86,7 +87,8 @@ package hy.game.render
 			{
 				m_container && m_container.addChildRender(child as SGameRender, getRenderIndex(child));
 				m_numChildren++;
-				childs.splice(index, 0, child);
+				childs.push(child);
+				m_isSortLayer = true;
 				child.parent = this;
 				child.notifyAddedToRender();
 			}
@@ -385,6 +387,32 @@ package hy.game.render
 		public function set layer(value : int) : void
 		{
 			m_layer = value;
+			if (m_parent)
+				m_parent.isSortLayer = true;
+		}
+
+		public function get isSortLayer() : Boolean
+		{
+			return m_isSortLayer;
+		}
+
+		public function set isSortLayer(value : Boolean) : void
+		{
+			m_isSortLayer = value;
+		}
+
+		public function updateSortLayer() : void
+		{
+			m_childs.sort(onSortLayer);
+		}
+
+		private function onSortLayer(a : SGameRender, b : SGameRender) : int
+		{
+			if (a.layer > b.layer)
+				return 1;
+			if (a.layer < b.layer)
+				return -1;
+			return 0;
 		}
 
 		public function get name() : String

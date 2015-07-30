@@ -1,7 +1,6 @@
 package hy.game.resources
 {
 	import flash.events.Event;
-	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
@@ -9,7 +8,7 @@ package hy.game.resources
 	import flash.net.URLLoaderDataFormat;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
-
+	
 	import hy.game.namespaces.name_part;
 
 	use namespace name_part;

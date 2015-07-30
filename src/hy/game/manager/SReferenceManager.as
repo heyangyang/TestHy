@@ -1,14 +1,18 @@
 package hy.game.manager
 {
 	import flash.utils.Dictionary;
-
+	
+	import hy.game.aEffect.SEffectAnimationLibrary;
+	import hy.game.aEffect.SEffectDescription;
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.avatar.SAvatarAnimationLibrary;
 	import hy.game.avatar.SAvatarDescription;
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
+	import hy.game.data.SVersion;
 	import hy.game.resources.BytesResource;
 	import hy.game.resources.SResource;
+	import hy.game.resources.SwfResource;
 	import hy.game.sound.SoundReference;
 	import hy.rpg.pak.SDirectAnimationDecoder;
 	import hy.rpg.parser.SAnimationResourceParser;
@@ -64,6 +68,7 @@ package hy.game.manager
 		private var dic : Dictionary = new Dictionary();
 		private var dic_count : Dictionary = new Dictionary();
 		private var cur_dic : Dictionary;
+		private var versionMgr : SVersionManager;
 		private var _total_reference : int = 0;
 
 		public function SReferenceManager()
@@ -81,6 +86,7 @@ package hy.game.manager
 			check_dic[NAME] = 50;
 			check_dic[PARSER] = 50;
 			check_dic[BITMAPDATA] = 50;
+			versionMgr = SVersionManager.getInstance();
 		}
 
 		/**
@@ -252,7 +258,7 @@ package hy.game.manager
 		 * @return
 		 *
 		 */
-		public function createResource(id : String, version : String = null, root : String = null) : SResource
+		public function createResource(id : String, v : String = null, root : String = null) : SResource
 		{
 			if (!id)
 				return null;
@@ -260,17 +266,41 @@ package hy.game.manager
 			id = id.replace(/\\/g, "/");
 			//如果没有则需要初始化
 			var isInit : Boolean = getReference(LOADER, id) == null;
+			var resClass : Class = BytesResource;
 			if (isInit)
 			{
 				if (root == null)
 					root = Config.webRoot + "/";
 				else
 					root = root + "/";
-				root = root + id;
+				var version : SVersion = versionMgr.getVersionById(id);
+				if (version)
+				{
+					switch (version.type)
+					{
+						case 0:
+							resClass = SwfResource;
+							break;
+						case 1:
+							break;
+					}
+					root += version.url;
+					v = version.version;
+				}
+				else
+				{
+					!v && waring("not find version:" + id);
+					root += id;
+				}
 				root = root.replace(/\\/g, "/");
 				print("create resource:" + root);
+
+				//调试模式无视版本号
+				if (Config.isDebug)
+					v = Math.random() + "";
 			}
-			var res : SResource = createReference(LOADER, id, BytesResource, root, version) as SResource;
+			var res : SResource = createReference(LOADER, id, resClass, root, v) as SResource;
+			res.release();
 			return res;
 		}
 
@@ -335,13 +365,23 @@ package hy.game.manager
 		//*********************************懒加载动画****************************
 
 		//*********************************image****************************
-		public function createImageParser(id : String, priority : int = int.MIN_VALUE) : SImageResourceParser
+		public function createImageParser(id : String, version : String, priority : int = int.MIN_VALUE) : SImageResourceParser
 		{
-			return createReference(IMAGE, id, SImageResourceParser, id, null, priority) as SImageResourceParser;
+			return createReference(IMAGE, id, SImageResourceParser, id, version, priority) as SImageResourceParser;
 		}
 
 		//*********************************image****************************
 
+		//*********************************特效帧****************************
+		public function createEffectCollection(effectDesc : SEffectDescription, needReversal : Boolean) : SEffectAnimationLibrary
+		{
+			if (effectDesc == null)
+				return null;
+			return createReference(ANIMATION, effectDesc.id, SEffectAnimationLibrary, effectDesc, needReversal) as SEffectAnimationLibrary;
+		}
+		
+		//*********************************特效帧****************************
+		
 		//*********************************地图****************************
 		public function createMapResourceParser(parserClass : Class, id : String, resId : String, prioprty : int, version : String = null) : SMapResourceParser
 		{

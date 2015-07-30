@@ -1,62 +1,42 @@
-package hy.game.avatar
+package hy.game.aEffect
 {
-	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;
-
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.data.SObject;
 	import hy.rpg.enmu.SDirection;
 
 	/**
-	 * 纸娃娃
+	 * 特效
+	 * @author hyy
 	 *
 	 */
-	public class SAvatar extends SObject
+	public class SEffect extends SObject
 	{
-		/**
-		 * 默认的模型
-		 */
-		public static var default_avatar : SAvatar;
-		private var m_isLoaded : Boolean;
-		/**
-		 * 是否显示预览模型
-		 */
-		public var defaultAvatar : Boolean;
 		/**
 		 * 所有部件对应的各自动画
 		 */
-		private var _animationsByPart : SAvatarAnimationLibrary;
+		private var _animationsByPart : SEffectAnimationLibrary;
 
 		/**
 		 * 当前avatar的描述
 		 */
-		public var avatarDesc : SAvatarDescription;
+		public var effectDesc : SEffectDescription;
 		private var _width : int;
 		private var _height : int;
 		//当前动画
 		private var _curAnimation : SAnimation;
 		private var _curAnimationFrame : SAnimationFrame;
-		// 当前动作
-		private var _curAction : uint = SActionType.IDLE;
-		private var _curKind : uint = 0;
 		//当前方向
 		private var _curDir : uint = SDirection.EAST;
 		private var _correctDir : uint = SDirection.EAST;
 		private var _dirMode : uint = SDirection.DIR_MODE_HOR_ONE;
 
-		public var mouseRect : Rectangle = new Rectangle();
-
-		public var loaderComplement : Function;
-		public var changeAnimation : Function;
-
-		public function SAvatar(desc : SAvatarDescription)
+		public function SEffect(desc : SEffectDescription)
 		{
-			this.avatarDesc = desc;
+			this.effectDesc = desc;
 			_width = Math.abs(desc.rightBorder - desc.leftBorder);
 			_height = Math.abs(desc.bottomBorder - desc.topBorder);
 		}
-
 
 		/**
 		 * 播放 指定动画
@@ -66,63 +46,19 @@ package hy.game.avatar
 		 * @return
 		 *
 		 */
-		public function gotoAnimation(action : uint, kind : uint, dir : int, frame : int, loops : int) : SAnimationFrame
+		public function gotoAnimation(dir : int, frame : int, loops : int) : SAnimationFrame
 		{
-			if (avatarDesc == null)
+			if (effectDesc == null)
 			{
-				warning(this, "avatarDesc=null");
+				warning(this, "effectDesc=null");
 				return null;
 			}
-			if (action != 0)
-			{
-				if (hasAction(action, kind))
-				{
-					_curAction = action;
-					_curKind = kind;
-				}
-				else
-				{
-					_curAction = 0;
-					_curKind = 0;
-					var avaliaAction : Array = getAvaliableAction(action);
-					if (avaliaAction)
-					{
-						_curAction = avaliaAction[0];
-						_curKind = avaliaAction[1];
-					}
-				}
-			}
-
-			if (!_curAction)
-			{
-				return null;
-			}
-
 			_curDir = dir;
 			_correctDir = SDirection.correctDirection(_dirMode, _correctDir, dir);
-
-			if (_correctDir != 0)
-			{
-				if (!hasDir(_correctDir, _curAction, _curKind))
-				{
-					_correctDir = getAvaliableDir(0, 0);
-				}
-			}
-			_curAnimation = _animationsByPart.gotoAnimation(_curAction, _curKind, _correctDir);
+			_curAnimation = _animationsByPart.gotoAnimation(dir);
 			_loops = loops;
 			gotoFrame(frame);
-			changeAnimation && changeAnimation();
 			return _curAnimationFrame;
-		}
-
-		/**
-		 * 换方向
-		 * @param dir [0-7]
-		 * @return
-		 */
-		public function gotoDirection(dir : int) : void
-		{
-			gotoAnimation(_curAction, _curKind, dir, curFrame, 0);
 		}
 
 		/**
@@ -396,152 +332,16 @@ package hy.game.avatar
 			return _curDir;
 		}
 
-		public function get curAction() : uint
-		{
-			return _curAction;
-		}
-
-		public function get curKind() : uint
-		{
-			return _curKind;
-		}
-
-		/**
-		 * 是否有这个方向
-		 * @param curDir
-		 * @return
-		 */
-		public function hasDir(curDir : int, action : uint, kind : uint) : Boolean
-		{
-			if (action == 0)
-			{
-				action = _curAction;
-				kind = _curKind;
-			}
-			if (avatarDesc == null || action == 0)
-				return false;
-			var actionDesc : SAvatarActionDescription = avatarDesc.getActionDescByAction(action, kind);
-			if (actionDesc)
-			{
-				var dirs : Array = actionDesc.directions;
-				for each (var dir : int in dirs)
-				{
-					if (dir == curDir)
-						return true;
-				}
-			}
-			return false;
-		}
-
-		/**
-		 * 根据描述确定是否有该动作
-		 * @param action
-		 * @return
-		 */
-		public function hasAction(action : uint, kind : uint) : Boolean
-		{
-			if (avatarDesc == null)
-				return false;
-			var actionDesc : SAvatarActionDescription = avatarDesc.getActionDescByAction(action, kind);
-			if (actionDesc)
-				return true;
-			return false;
-		}
-
-		/**
-		 * 得到一个有效动作
-		 * @return
-		 */
-		public function getAvaliableAction(action : int) : Array
-		{
-			if (avatarDesc && avatarDesc.getAvaliableActionByType(action))
-				return avatarDesc.getAvaliableActionByType(action);
-			else if (hasAction(SActionType.IDLE, 0))
-				return [SActionType.IDLE, 0];
-			else
-				return avatarDesc.getAvaliableAction();
-		}
-
-		/**
-		 * 得到一个可用的方向
-		 * @return
-		 */
-		public function getAvaliableDir(action : uint, kind : uint) : int
-		{
-			if (!action)
-			{
-				action = _curAction;
-				kind = _curKind;
-			}
-			var actionDesc : SAvatarActionDescription = avatarDesc.getActionDescByAction(action, kind);
-			if (actionDesc)
-			{
-				var dirs : Array = actionDesc.directions;
-				if (dirs.length > 0)
-					return int(dirs[0]);
-			}
-			return 0;
-		}
-
-		public function dispose() : void
-		{
-			loaderComplement = null;
-			changeAnimation = null;
-			if (_animationsByPart)
-			{
-				_animationsByPart.release();
-				_animationsByPart = null;
-			}
-			avatarDesc = null;
-			_curAnimation = null;
-		}
-
 		/**
 		 * 设置当前动画库
 		 * @param value
 		 *
 		 */
-		public function set animationsByParts(value : SAvatarAnimationLibrary) : void
+		public function set animationsByParts(value : SEffectAnimationLibrary) : void
 		{
 			if (_animationsByPart)
 				_animationsByPart.release();
 			_animationsByPart = value;
-			if (_animationsByPart.isLoaded)
-				onLoadCompleteAnimation();
-			else if (default_avatar)
-			{
-				//_width = default_avatar.width * this.scaleX;
-				//_height = default_avatar.height * this.scaleY;
-			}
-			//loaderAllAnimation();
-		}
-
-		public function get animationsByParts() : SAvatarAnimationLibrary
-		{
-			return _animationsByPart;
-		}
-
-		private function onLoadCompleteAnimation() : void
-		{
-			m_isLoaded = true;
-			_width = Math.abs(avatarDesc.rightBorder - avatarDesc.leftBorder);
-			_height = Math.abs(avatarDesc.bottomBorder - avatarDesc.topBorder);
-
-			//加载完成，实行一次
-			if (loaderComplement != null)
-			{
-				loaderComplement();
-				loaderComplement = null;
-			}
-		}
-
-		/**
-		 * 加载所有动画
-		 *
-		 */
-		public function loaderAllAnimation() : void
-		{
-			_animationsByPart && _animationsByPart.loaderAnimation();
 		}
 
 		public function get width() : int
@@ -606,67 +406,15 @@ package hy.game.avatar
 			return _dirMode;
 		}
 
-		/**
-		 * update判断
-		 * @return
-		 *
-		 */
-		public function get isLoaded() : Boolean
+		public function dispose() : void
 		{
-			return m_isLoaded;
-		}
-
-		/**
-		 * 实时是否加载完成
-		 * @return
-		 *
-		 */
-		public function get isLoadedNow() : Boolean
-		{
-			return _animationsByPart && _animationsByPart.isLoaded;
-		}
-
-		public function getEditorAvaliableDir(action : uint, kind : uint) : int
-		{
-			if (!action)
+			if (_animationsByPart)
 			{
-				action = _curAction;
-				kind = _curKind;
+				_animationsByPart.release();
+				_animationsByPart = null;
 			}
-			var actionDesc : SAvatarActionDescription = avatarDesc.getActionDescByAction(action, kind);
-			if (actionDesc)
-			{
-				var dirs : Array = actionDesc.directions;
-				if (dirs.length > 0)
-				{
-					if (dirs.indexOf(SDirection.SOUTH) >= 0)
-						return SDirection.SOUTH;
-					return int(dirs[0]);
-				}
-			}
-			return 0;
+			effectDesc = null;
+			_curAnimation = null;
 		}
-
-		public function isRolePickable(localX : int, localY : int) : Boolean
-		{
-			if (curAnimationFrame && curAnimationFrame.frameData)
-			{
-				localX -= mouseRect.left;
-				localY -= mouseRect.top;
-
-				//反转的时候，需要把坐标反转
-				if (curAnimationFrame.needReversal)
-					localX = curAnimationFrame.frameData.width - localX;
-
-				var color : uint = curAnimationFrame.frameData.getPixel(localX, localY);
-
-				if (color != 0)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
 	}
 }
