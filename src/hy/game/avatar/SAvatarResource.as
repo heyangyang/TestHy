@@ -7,11 +7,11 @@ package hy.game.avatar
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
 	import hy.game.utils.SDebug;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 
 
 
-	public class SLazyAvatar extends SObject
+	public class SAvatarResource extends SObject
 	{
 		private var m_avatar : SAvatar;
 		private var m_change : Boolean;
@@ -23,7 +23,7 @@ package hy.game.avatar
 		 */
 		protected var m_notifyCompleteds : Vector.<Function>;
 
-		public function SLazyAvatar()
+		public function SAvatarResource()
 		{
 			super();
 		}
@@ -130,7 +130,7 @@ package hy.game.avatar
 		 * @return
 		 *
 		 */
-		public function addNotifyCompleted(notifyFunction : Function) : SLazyAvatar
+		public function addNotifyCompleted(notifyFunction : Function) : SAvatarResource
 		{
 			if (notifyFunction == null)
 				return this;
@@ -165,7 +165,7 @@ package hy.game.avatar
 			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(m_priority, "whole1", avatarDesc, true);
 			m_avatar && m_avatar.dispose();
 			m_avatar = new SAvatar(avatarDesc);
-			m_avatar.dirMode = SDirection.checkDirsDirMode(avatarDesc.directions);
+			m_avatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
 			m_avatar.animationsByParts = animations;
 			m_avatar.defaultAvatar = m_defaultAvatar;
 		}

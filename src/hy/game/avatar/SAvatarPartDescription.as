@@ -2,7 +2,7 @@ package hy.game.avatar
 {
 	import flash.utils.Dictionary;
 
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 
 
 	/**
@@ -26,7 +26,7 @@ package hy.game.avatar
 		/**
 		 * 动作拥有的方向
 		 */
-		public var directions : Array = [SDirection.EAST];
+		public var directions : Array = [EnumDirection.EAST];
 
 		/**
 		 * 由方向记录的动画id，即可以根据一个方向得到一个动画的id
@@ -46,8 +46,8 @@ package hy.game.avatar
 		
 		public function getAnimationIdByDir(dir : uint) : String
 		{
-			var mode : uint = SDirection.checkDirsDirMode(directions);
-			dir = SDirection.correctDirection(mode, dir, dir);
+			var mode : uint = EnumDirection.checkDirsDirMode(directions);
+			dir = EnumDirection.correctDirection(mode, dir, dir);
 			return m_animationIdByDir[dir];
 		}
 		

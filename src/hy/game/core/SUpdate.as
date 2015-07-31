@@ -1,11 +1,9 @@
 package hy.game.core
 {
-	import hy.game.core.interfaces.IUpdate;
-
 	import hy.game.cfg.Config;
-	import hy.game.cfg.Time;
-
-	import hy.game.enum.PriorityType;
+	import hy.game.core.interfaces.IUpdate;
+	import hy.game.enum.EnumPriority;
+	import hy.game.manager.SUpdateManager;
 
 	public class SUpdate implements IUpdate
 	{
@@ -71,7 +69,7 @@ package hy.game.core
 			{
 				return true;
 			}
-			m_frameElapsedTime += Time.deltaTime;
+			m_frameElapsedTime += STime.deltaTime;
 
 			if (m_frameElapsedTime >= m_frameInterval)
 			{
@@ -114,14 +112,16 @@ package hy.game.core
 		 * @param priority优先级别,越高越优先
 		 *
 		 */
-		public function registerd(priority : int = PriorityType.PRIORITY_0) : void
+		public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
+			SUpdateManager.getInstance().register(this);
 			m_priority = priority;
 			m_registerd = true;
 		}
 
 		public function unRegisterd() : void
 		{
+			SUpdateManager.getInstance().unRegister(this);
 			m_registerd = false;
 		}
 
@@ -160,18 +160,18 @@ package hy.game.core
 		{
 			return m_isDisposed;
 		}
-		
-		
+
+
 		public function print(... args) : void
 		{
 			trace(args.join(","));
 		}
-		
+
 		public function warning(... args) : void
 		{
 			trace(args.join(","));
 		}
-		
+
 		public function error(... args) : void
 		{
 			throw new Error(args.join(" "));

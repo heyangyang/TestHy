@@ -2,7 +2,7 @@ package hy.game.core.interfaces
 {
 	import flash.geom.ColorTransform;
 
-	public interface IGameRender extends IDisplay
+	public interface IRender extends IDisplay
 	{
 		function get name() : String;
 		function set name(value : String) : void;
@@ -10,19 +10,19 @@ package hy.game.core.interfaces
 		function notifyAddedToRender() : void;
 		function notifyRemovedFromRender() : void;
 
-		function addChild(child : IGameRender) : IGameRender;
-		function addChildAt(child : IGameRender, index : int) : IGameRender;
-		function removeChild(child : IGameRender) : IGameRender;
-		function removeChildAt(index : int) : IGameRender;
-		function getChildAt(index : int) : IGameRender;
-		function getChildIndex(child : IGameRender) : int;
-		function getChildByName(name : String) : IGameRender;
+		function addChild(child : IRender) : IRender;
+		function addChildAt(child : IRender, index : int) : IRender;
+		function removeChild(child : IRender) : IRender;
+		function removeChildAt(index : int) : IRender;
+		function getChildAt(index : int) : IRender;
+		function getChildIndex(child : IRender) : int;
+		function getChildByName(name : String) : IRender;
 		function removeAllChildren() : void;
 
 		function get numChildren() : int;
 
-		function get parent() : IGameRender;
-		function set parent(value : IGameRender) : void;
+		function get parent() : IRender;
+		function set parent(value : IRender) : void;
 
 		function get zDepth() : int;
 

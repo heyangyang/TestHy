@@ -3,7 +3,7 @@ package hy.game.aEffect
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.data.SObject;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 
 	/**
 	 * 特效
@@ -27,9 +27,9 @@ package hy.game.aEffect
 		private var _curAnimation : SAnimation;
 		private var _curAnimationFrame : SAnimationFrame;
 		//当前方向
-		private var _curDir : uint = SDirection.EAST;
-		private var _correctDir : uint = SDirection.EAST;
-		private var _dirMode : uint = SDirection.DIR_MODE_HOR_ONE;
+		private var _curDir : uint = EnumDirection.EAST;
+		private var _correctDir : uint = EnumDirection.EAST;
+		private var _dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
 
 		public function SEffect(desc : SEffectDescription)
 		{
@@ -54,7 +54,7 @@ package hy.game.aEffect
 				return null;
 			}
 			_curDir = dir;
-			_correctDir = SDirection.correctDirection(_dirMode, _correctDir, dir);
+			_correctDir = EnumDirection.correctDirection(_dirMode, _correctDir, dir);
 			_curAnimation = _animationsByPart.gotoAnimation(dir);
 			_loops = loops;
 			gotoFrame(frame);

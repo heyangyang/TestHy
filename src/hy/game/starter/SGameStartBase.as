@@ -27,7 +27,7 @@ package hy.game.starter
 
 		}
 
-		public function addNode(node_class : Class) : void
+		public function addNodeByClass(node_class : Class) : void
 		{
 			var node : SStartNode = new node_class();
 			if (!node.id)
@@ -37,17 +37,17 @@ package hy.game.starter
 			m_nodeTypes[node.id] = node;
 		}
 
-		public function updateExcuteData(list : Array) : void
+		/**
+		 * 按照添加顺序，运行启动器
+		 * @param type
+		 *
+		 */
+		public function addNodeByType(type : String) : void
 		{
-			m_nodes.length = 0;
-			var node : SStartNode;
-			for each (var id : String in list)
-			{
-				node = m_nodeTypes[id];
-				if (node == null)
-					SDebug.error(this, "not find id:" + id);
-				m_nodes.push(node);
-			}
+			var node : SStartNode = m_nodeTypes[type];
+			if (node == null)
+				SDebug.error(this, "not find id:" + type);
+			m_nodes.push(node);
 		}
 
 		public function run() : void

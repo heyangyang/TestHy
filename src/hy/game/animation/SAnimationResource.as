@@ -4,31 +4,31 @@ package hy.game.animation
 	
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.rpg.enmu.SLoadPriorityType;
-	import hy.rpg.parser.SAnimationResourceParser;
-	import hy.rpg.parser.SResourceParser;
+	import hy.rpg.enum.EnumLoadPriority;
+	import hy.rpg.parser.ParserAnimationResource;
+	import hy.rpg.parser.ParserResource;
 
 	/**
 	 * 动画加载器 
 	 * @author hyy
 	 * 
 	 */
-	public class SLazyAnimation extends SAnimation
+	public class SAnimationResource extends SAnimation
 	{
 		protected var m_currAccessFrame : int;
 		/**
 		 * 该动画用到的资源解析器
 		 */
-		protected var m_parser : SAnimationResourceParser;
+		protected var m_parser : ParserAnimationResource;
 
 		/**
 		 * 加完完成后处理,只实行一次
 		 */
 		public var onLoaderComplete : Function;
 
-		public var priority : int = SLoadPriorityType.EFFECT;
+		public var priority : int = EnumLoadPriority.EFFECT;
 
-		public function SLazyAnimation(id : String, desc : SAnimationDescription, needReversal : Boolean = false)
+		public function SAnimationResource(id : String, desc : SAnimationDescription, needReversal : Boolean = false)
 		{
 			super(id, desc, needReversal);
 		}
@@ -50,7 +50,7 @@ package hy.game.animation
 			}
 		}
 
-		private function onCreateFrameData(res : SResourceParser) : void
+		private function onCreateFrameData(res : ParserResource) : void
 		{
 			if (onLoaderComplete != null)
 			{
@@ -133,7 +133,7 @@ package hy.game.animation
 		 * @param value
 		 *
 		 */
-		private function set parser(value : SAnimationResourceParser) : void
+		private function set parser(value : ParserAnimationResource) : void
 		{
 			m_parser && m_parser.release();
 			m_parser = value;

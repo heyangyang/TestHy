@@ -1,9 +1,8 @@
 package hy.game.core
 {
-	import hy.game.cfg.Time;
 	import hy.game.data.SCameraRectangle;
 	import hy.game.data.STransform;
-	import hy.game.enum.PriorityType;
+	import hy.game.enum.EnumPriority;
 
 	/**
 	 * 摄像机
@@ -61,7 +60,7 @@ package hy.game.core
 			m_rectangle = new SCameraRectangle();
 		}
 
-		override public function registerd(priority : int = PriorityType.PRIORITY_0) : void
+		override public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
 			super.registerd(priority);
 			removeRender(m_render);
@@ -141,23 +140,23 @@ package hy.game.core
 			//往左走
 			if (m_screenX < m_rectangle.x)
 			{
-				sceneX += -m_velocityX * Time.deltaTime;
+				sceneX += -m_velocityX * STime.deltaTime;
 			}
 			//往右走
 			else if (m_screenX > m_rectangle.x + m_rectangle.width)
 			{
-				sceneX += m_velocityX * Time.deltaTime;
+				sceneX += m_velocityX * STime.deltaTime;
 			}
 
 			//往上走
 			if (m_screenY < m_rectangle.y)
 			{
-				sceneY += -m_velocityY * Time.deltaTime;
+				sceneY += -m_velocityY * STime.deltaTime;
 			}
 			//往下走
 			else if (m_screenY > m_rectangle.y + m_rectangle.height)
 			{
-				sceneY += m_velocityY * Time.deltaTime;
+				sceneY += m_velocityY * STime.deltaTime;
 			}
 
 			//检测是否超出边界

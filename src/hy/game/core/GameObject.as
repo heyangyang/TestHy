@@ -6,9 +6,9 @@ package hy.game.core
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameObject;
 	import hy.game.data.STransform;
-	import hy.game.enum.PriorityType;
+	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
-	import hy.game.render.SGameRender;
+	import hy.game.render.SRender;
 
 	use namespace name_part;
 
@@ -105,7 +105,7 @@ package hy.game.core
 		/**
 		 * 渲染容器
 		 */
-		protected var m_render : SGameRender;
+		protected var m_render : SRender;
 
 		public function GameObject()
 		{
@@ -118,7 +118,7 @@ package hy.game.core
 			m_components = new Vector.<FrameComponent>();
 			m_componentTypes = new Dictionary(true);
 			m_transform = new STransform();
-			m_render = new SGameRender();
+			m_render = new SRender();
 			start();
 		}
 
@@ -207,15 +207,16 @@ package hy.game.core
 		 * @param priority
 		 *
 		 */
-		override public function registerd(priority : int = PriorityType.PRIORITY_0) : void
+		override public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
-			super.registerd(priority);
+			m_priority = priority;
+			m_registerd = true;
 			if (!m_owner)
-				error(this,"m_owner=null");
-				m_isActive = true;
-				m_owner.changePrioritySort();
-				m_owner.addObject(this);
-				m_owner.addRender(m_render);
+				error(this, "m_owner=null");
+			m_isActive = true;
+			m_owner.changePrioritySort();
+			m_owner.addObject(this);
+			m_owner.addRender(m_render);
 		}
 
 		override public function unRegisterd() : void
@@ -239,16 +240,17 @@ package hy.game.core
 					continue;
 				component.update();
 			}
-			if (transform.isChange || SCameraObject.updateAble)
+			transform.updateRender(m_render);
+			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.updateAble)
 			{
-				m_render.alpha = transform.alpha;
-				m_render.scale = transform.scale;
+				m_render.x = transform.x - SCameraObject.sceneX;
+				m_render.y = transform.y - SCameraObject.sceneY;
 				m_render.depth = transform.y;
-				m_render.x = transform.x-SCameraObject.sceneX;
-				m_render.y = transform.y-SCameraObject.sceneY;
-				transform.update();
 				updateRenderDepthSort();
 			}
+			//更新后，设置成为改变
+			transform.hasChanged();
+			m_render.isSortLayer && updateRenderDepthSort();
 		}
 
 		/**
@@ -283,7 +285,7 @@ package hy.game.core
 		 * 通知容器下次需要更新队列
 		 *
 		 */
-		public function updateRenderDepthSort() : void
+		private function updateRenderDepthSort() : void
 		{
 			m_owner.changeDepthSort();
 		}
@@ -317,12 +319,12 @@ package hy.game.core
 			m_components.splice(index, 1);
 		}
 
-		public function addRender(render : SGameRender) : void
+		public function addRender(render : SRender) : void
 		{
 			m_render.addChild(render);
 		}
 
-		public function removeRender(render : SGameRender) : void
+		public function removeRender(render : SRender) : void
 		{
 			m_render.removeChild(render);
 		}
@@ -340,6 +342,11 @@ package hy.game.core
 		public function addContainer(container : IContainer) : void
 		{
 			m_owner.addContainer(container, m_owner.numChildren);
+		}
+		
+		public function removeContainer(container : IContainer) : void
+		{
+			m_owner.removeContainer(container);
 		}
 
 		private function clearComponents() : void

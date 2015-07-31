@@ -2,7 +2,7 @@ package hy.game.components
 {
 	import hy.game.core.FrameComponent;
 	import hy.game.data.STransform;
-	import hy.game.render.SGameRender;
+	import hy.game.render.SRender;
 
 	/**
 	 * 渲染基本组件
@@ -11,7 +11,7 @@ package hy.game.components
 	 */
 	public class SRenderComponent extends FrameComponent
 	{
-		protected var m_render : SGameRender;
+		protected var m_render : SRender;
 		protected var m_transform:STransform;
 		protected var m_offsetX:int;
 		protected var m_offsetY:int;
@@ -22,7 +22,7 @@ package hy.game.components
 
 		override protected function onStart() : void
 		{
-			m_render = new SGameRender();
+			m_render = new SRender();
 		}
 
 		override public function notifyAdded() : void
@@ -43,12 +43,12 @@ package hy.game.components
 			
 		}
 
-		protected function addRender(render : SGameRender) : void
+		protected function addRender(render : SRender) : void
 		{
 			m_owner && m_owner.addRender(render);
 		}
 
-		protected function removeRender(render : SGameRender) : void
+		protected function removeRender(render : SRender) : void
 		{
 			m_owner && m_owner.removeRender(render);
 		}

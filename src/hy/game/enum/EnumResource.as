@@ -1,7 +1,7 @@
 package hy.game.enum
 {
 
-	public class ResourceType
+	public class EnumResource
 	{
 		public static const SWF : String = "swf";
 		public static const IMAGE : String = "img";
@@ -9,7 +9,7 @@ package hy.game.enum
 		public static const XML : String = "xml";
 		public static const MP3 : String = "mp3";
 
-		public function ResourceType()
+		public function EnumResource()
 		{
 		}
 	}

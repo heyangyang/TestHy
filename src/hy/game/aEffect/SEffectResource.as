@@ -7,7 +7,7 @@ package hy.game.aEffect
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
 
-	public class SLazyEffect extends SObject
+	public class SEffectResource extends SObject
 	{
 		/**
 		 * 加载成功后回调
@@ -18,7 +18,7 @@ package hy.game.aEffect
 		private var m_effectId : String;
 		private var m_effect : SEffect;
 
-		public function SLazyEffect()
+		public function SEffectResource()
 		{
 			super();
 
@@ -81,7 +81,7 @@ package hy.game.aEffect
 		 * @return
 		 *
 		 */
-		public function addNotifyCompleted(notifyFunction : Function) : SLazyEffect
+		public function addNotifyCompleted(notifyFunction : Function) : SEffectResource
 		{
 			if (notifyFunction == null)
 				return this;

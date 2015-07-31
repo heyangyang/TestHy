@@ -5,9 +5,9 @@ package hy.game.core
 
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
-	import hy.game.core.interfaces.IGameRender;
+	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
-	import hy.game.render.SGameRender;
+	import hy.game.render.SRender;
 
 	use namespace name_part;
 
@@ -18,14 +18,14 @@ package hy.game.core
 		protected var m_depthSort : Boolean;
 		protected var m_prioritySort : Boolean;
 		protected var m_objects : Vector.<GameObject>;
-		protected var m_renders : Vector.<IGameRender>;
+		protected var m_renders : Vector.<IRender>;
 		protected var m_numRender : int;
 
 		public function GameContainer()
 		{
 			super();
 			m_objects = new Vector.<GameObject>();
-			m_renders = new Vector.<IGameRender>();
+			m_renders = new Vector.<IRender>();
 			m_numRender = 0;
 		}
 
@@ -35,7 +35,7 @@ package hy.game.core
 		 * @param index
 		 *
 		 */
-		public function addChildRender(render : IGameRender, index : int) : void
+		public function addChildRender(render : IRender, index : int) : void
 		{
 			if (index > numChildren)
 				index = numChildren;
@@ -49,13 +49,18 @@ package hy.game.core
 			addChildAt(container as DisplayObject, index);
 		}
 
+		public function removeContainer(container : IContainer) : void
+		{
+			removeChild(container as DisplayObject);
+		}
+
 		/**
 		 * 获得渲染对象索引
 		 * @param render
 		 * @return
 		 *
 		 */
-		public function getRenderIndex(render : IGameRender) : int
+		public function getRenderIndex(render : IRender) : int
 		{
 			return getChildIndex(render.render as DisplayObject);
 		}
@@ -65,14 +70,13 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		public function addRender(render : IGameRender) : void
+		public function addRender(render : IRender) : void
 		{
 			if (m_renders.indexOf(render) != -1)
 				return;
 			m_renders.push(render);
 			addChild(render.render as DisplayObject);
 			m_numRender++;
-			//render.layer = m_numRender;
 			render.container = this;
 			m_depthSort = true;
 		}
@@ -82,7 +86,7 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		public function removeRender(render : IGameRender) : void
+		public function removeRender(render : IRender) : void
 		{
 			var index : int = m_renders.indexOf(render);
 			if (index == -1)
@@ -177,7 +181,7 @@ package hy.game.core
 		 *
 		 */
 		private var render_index : int;
-		private var m_child : IGameRender;
+		private var m_child : IRender;
 
 		protected function updateDepthSort() : void
 		{
@@ -197,7 +201,7 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		protected function updateChildIndex(render : IGameRender) : void
+		protected function updateChildIndex(render : IRender) : void
 		{
 			if (getChildIndex(render.render as DisplayObject) != render_index)
 				setChildIndex(render.render as DisplayObject, render_index++);
@@ -222,7 +226,7 @@ package hy.game.core
 		 * @return
 		 *
 		 */
-		private function sortDepthHandler(a : SGameRender, b : SGameRender) : Number
+		private function sortDepthHandler(a : SRender, b : SRender) : Number
 		{
 			if (a.zDepth < b.zDepth)
 				return -1;

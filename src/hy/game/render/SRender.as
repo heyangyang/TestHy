@@ -5,7 +5,7 @@ package hy.game.render
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
-	import hy.game.core.interfaces.IGameRender;
+	import hy.game.core.interfaces.IRender;
 	import hy.game.core.interfaces.IRecycle;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
@@ -17,7 +17,7 @@ package hy.game.render
 	 * @author hyy
 	 *
 	 */
-	public class SGameRender implements IGameRender, IRecycle
+	public class SRender implements IRender, IRecycle
 	{
 		protected var m_render : IBitmap;
 		protected var m_name : String;
@@ -34,13 +34,13 @@ package hy.game.render
 		protected var m_isSortLayer : Boolean;
 		protected var m_visible : Boolean;
 		protected var m_blendMode : String;
-		protected var m_parent : IGameRender;
+		protected var m_parent : IRender;
 		protected var m_transform : ColorTransform
 		protected var m_filters : Array;
-		protected var m_childs : Vector.<IGameRender>;
+		protected var m_childs : Vector.<IRender>;
 		private var m_container : IGameContainer;
 
-		public function SGameRender()
+		public function SRender()
 		{
 			m_render = new SRenderBitmap();
 		}
@@ -67,25 +67,25 @@ package hy.game.render
 			m_container = value;
 			if (m_childs && m_container)
 			{
-				var child : SGameRender;
+				var child : SRender;
 				for (var i : int = 0; i < m_numChildren; i++)
 				{
-					child = m_childs[i] as SGameRender;
+					child = m_childs[i] as SRender;
 					m_container.addChildRender(child, getRenderIndex(child));
 				}
 			}
 		}
 
-		public function addChild(child : IGameRender) : IGameRender
+		public function addChild(child : IRender) : IRender
 		{
 			return addChildAt(child, m_numChildren);
 		}
 
-		public function addChildAt(child : IGameRender, index : int) : IGameRender
+		public function addChildAt(child : IRender, index : int) : IRender
 		{
 			if (childs.indexOf(child) == -1)
 			{
-				m_container && m_container.addChildRender(child as SGameRender, getRenderIndex(child));
+				m_container && m_container.addChildRender(child as SRender, getRenderIndex(child));
 				m_numChildren++;
 				childs.push(child);
 				m_isSortLayer = true;
@@ -101,7 +101,7 @@ package hy.game.render
 		 * @return
 		 *
 		 */
-		private function getRenderIndex(child : IGameRender) : int
+		private function getRenderIndex(child : IRender) : int
 		{
 			//父类所在容器的索引
 			var index : int = m_container.getRenderIndex(this) + 1;
@@ -113,37 +113,37 @@ package hy.game.render
 			return index;
 		}
 
-		public function removeChild(child : IGameRender) : IGameRender
+		public function removeChild(child : IRender) : IRender
 		{
 			return removeChildAt(childs.indexOf(child));
 		}
 
-		public function removeChildAt(index : int) : IGameRender
+		public function removeChildAt(index : int) : IRender
 		{
 			if (index < 0 || index >= m_numChildren)
 				return null;
 			m_numChildren--;
-			var child : IGameRender = childs.splice(index, 1) as IGameRender
+			var child : IRender = childs.splice(index, 1) as IRender
 			child.notifyRemovedFromRender();
 			child.parent = null;
 			return child;
 		}
 
-		public function getChildAt(index : int) : IGameRender
+		public function getChildAt(index : int) : IRender
 		{
 			if (index < 0 || index >= m_numChildren)
 				return null;
 			return childs[index];
 		}
 
-		public function getChildIndex(child : IGameRender) : int
+		public function getChildIndex(child : IRender) : int
 		{
 			return childs.indexOf(child);
 		}
 
-		public function getChildByName(name : String) : IGameRender
+		public function getChildByName(name : String) : IRender
 		{
-			var child : IGameRender;
+			var child : IRender;
 			for (var i : int = 0; i < m_numChildren; i++)
 			{
 				child = childs[i];
@@ -153,10 +153,10 @@ package hy.game.render
 			return null;
 		}
 
-		private function get childs() : Vector.<IGameRender>
+		private function get childs() : Vector.<IRender>
 		{
 			if (m_childs == null)
-				m_childs = new Vector.<IGameRender>();
+				m_childs = new Vector.<IRender>();
 			return m_childs;
 		}
 
@@ -173,12 +173,12 @@ package hy.game.render
 			return m_numChildren;
 		}
 
-		public function get parent() : IGameRender
+		public function get parent() : IRender
 		{
 			return m_parent;
 		}
 
-		public function set parent(value : IGameRender) : void
+		public function set parent(value : IRender) : void
 		{
 			if (m_parent == value)
 				return;
@@ -406,7 +406,7 @@ package hy.game.render
 			m_childs.sort(onSortLayer);
 		}
 
-		private function onSortLayer(a : SGameRender, b : SGameRender) : int
+		private function onSortLayer(a : SRender, b : SRender) : int
 		{
 			if (a.layer > b.layer)
 				return 1;

@@ -1,6 +1,5 @@
 package hy.game.core
 {
-	import hy.game.cfg.Time;
 	import hy.game.utils.SDebug;
 
 	/**
@@ -35,7 +34,7 @@ package hy.game.core
 		{
 			if (m_isDisposed)
 				return;
-			lastUseTime = Time.curTime;
+			lastUseTime = STime.getTimer;
 			--m_referenceCount;
 			if (m_referenceCount <= 0)
 			{

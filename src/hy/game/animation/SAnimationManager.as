@@ -138,15 +138,15 @@ package hy.game.animation
 		 * @param priority 下载优先级
 		 * @param needReversal 是否要反转
 		 */
-		public function createAnimation(resId : String, animationId : String = null, needReversal : Boolean = false) : SLazyAnimation
+		public function createAnimation(resId : String, animationId : String = null, needReversal : Boolean = false) : SAnimationResource
 		{
-			var animation : SLazyAnimation;
+			var animation : SAnimationResource;
 			animationId = animationId || resId;
 			var desc : SAnimationDescription = m_animationDescriptionById[animationId];
 
 			if (desc)
 			{
-				animation = new SLazyAnimation(resId, desc, needReversal);
+				animation = new SAnimationResource(resId, desc, needReversal);
 				return animation;
 			}
 			else

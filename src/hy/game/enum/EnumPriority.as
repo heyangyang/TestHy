@@ -1,7 +1,7 @@
 package hy.game.enum
 {
 
-	public class PriorityType
+	public class EnumPriority
 	{
 		public static const PRIORITY_0 : int = 0;
 		public static const PRIORITY_1 : int = 1;
@@ -15,7 +15,7 @@ package hy.game.enum
 		public static const PRIORITY_9 : int = 9;
 		public static const PRIORITY_MAX : int = 32;
 
-		public function PriorityType()
+		public function EnumPriority()
 		{
 		}
 	}

@@ -1,4 +1,4 @@
-package hy.game.components
+package hy.game.components.data
 {
 	import hy.game.core.Component;
 

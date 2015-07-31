@@ -6,7 +6,7 @@ package hy.game.avatar
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.data.SObject;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 
 	/**
 	 * 纸娃娃
@@ -41,9 +41,9 @@ package hy.game.avatar
 		private var _curAction : uint = SActionType.IDLE;
 		private var _curKind : uint = 0;
 		//当前方向
-		private var _curDir : uint = SDirection.EAST;
-		private var _correctDir : uint = SDirection.EAST;
-		private var _dirMode : uint = SDirection.DIR_MODE_HOR_ONE;
+		private var _curDir : uint = EnumDirection.EAST;
+		private var _correctDir : uint = EnumDirection.EAST;
+		private var _dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
 
 		public var mouseRect : Rectangle = new Rectangle();
 
@@ -99,7 +99,7 @@ package hy.game.avatar
 			}
 
 			_curDir = dir;
-			_correctDir = SDirection.correctDirection(_dirMode, _correctDir, dir);
+			_correctDir = EnumDirection.correctDirection(_dirMode, _correctDir, dir);
 
 			if (_correctDir != 0)
 			{
@@ -639,8 +639,8 @@ package hy.game.avatar
 				var dirs : Array = actionDesc.directions;
 				if (dirs.length > 0)
 				{
-					if (dirs.indexOf(SDirection.SOUTH) >= 0)
-						return SDirection.SOUTH;
+					if (dirs.indexOf(EnumDirection.SOUTH) >= 0)
+						return EnumDirection.SOUTH;
 					return int(dirs[0]);
 				}
 			}

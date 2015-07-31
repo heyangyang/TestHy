@@ -1,18 +1,28 @@
 package hy.game.data
 {
-	import flash.geom.Transform;
-	
+	import flash.geom.ColorTransform;
+
+	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
+	use namespace name_part;
 
 	/**
-	 * 游戏中显示对象的数据 
+	 * 游戏中显示对象的数据
 	 * @author hyy
-	 * 
+	 *
 	 */
 	public class STransform extends SObject
 	{
+		public static const C_XYZ : int = Math.pow(2, 0);
+		public static const C_WH : int = Math.pow(2, 1);
+		public static const C_SCALE : int = Math.pow(2, 2);
+		public static const C_ALPHA : int = Math.pow(2, 3);
+		public static const C_FILTER : int = Math.pow(2, 4);
+		public static const C_TRAN : int = Math.pow(2, 5);
+
 		private var m_x : int;
 		private var m_y : int;
+		private var m_z : int;
 
 		private var m_scale : Number;
 
@@ -20,16 +30,15 @@ package hy.game.data
 
 		private var m_filters : Array;
 
-		private var m_transform : Transform;
+		private var m_transform : ColorTransform;
 
 		private var m_blendMode : String;
 
-		private var m_width:int;
-		private var m_height:int;
-		
-		private var m_isChange : Boolean;
-		
-		public var dir:int;
+		private var m_width : int;
+		private var m_height : int;
+
+		private var m_change : int;
+		public var dir : int;
 
 		public function STransform()
 		{
@@ -45,7 +54,8 @@ package hy.game.data
 			if (m_x == value)
 				return;
 			m_x = value;
-			m_isChange = true;
+			if ((m_change & C_XYZ) == 0)
+				m_change += C_XYZ;
 		}
 
 		public function get y() : int
@@ -58,7 +68,22 @@ package hy.game.data
 			if (m_y == value)
 				return;
 			m_y = value;
-			m_isChange = true;
+			if ((m_change & C_XYZ) == 0)
+				m_change += C_XYZ;
+		}
+
+		public function get z() : int
+		{
+			return m_z;
+		}
+
+		public function set z(value : int) : void
+		{
+			if (m_z == value)
+				return;
+			m_z = value;
+			if ((m_change & C_XYZ) == 0)
+				m_change += C_XYZ;
 		}
 
 		public function get scale() : Number
@@ -71,7 +96,8 @@ package hy.game.data
 			if (m_scale == value)
 				return;
 			m_scale = value;
-			m_isChange = true;
+			if ((m_change & C_SCALE) == 0)
+				m_change += C_SCALE;
 		}
 
 		public function get alpha() : Number
@@ -84,7 +110,8 @@ package hy.game.data
 			if (m_alpha == value)
 				return;
 			m_alpha = value;
-			m_isChange = true;
+			if ((m_change & C_ALPHA) == 0)
+				m_change += C_ALPHA;
 		}
 
 		public function get filters() : Array
@@ -97,20 +124,22 @@ package hy.game.data
 			if (m_filters == value)
 				return;
 			m_filters = value;
-			m_isChange = true;
+			if ((m_change & C_FILTER) == 0)
+				m_change += C_FILTER;
 		}
 
-		public function get transform() : Transform
+		public function get transform() : ColorTransform
 		{
 			return m_transform;
 		}
 
-		public function set transform(value : Transform) : void
+		public function set transform(value : ColorTransform) : void
 		{
 			if (m_transform == value)
 				return;
 			m_transform = value;
-			m_isChange = true;
+			if ((m_change & C_TRAN) == 0)
+				m_change += C_TRAN;
 		}
 
 		public function get blendMode() : String
@@ -123,37 +152,65 @@ package hy.game.data
 			if (m_blendMode == value)
 				return;
 			m_blendMode = value;
-			m_isChange = true;
 		}
 
-		public function get isChange() : Boolean
+		public function isChangeFiled(key : int) : Boolean
 		{
-			return m_isChange;
+			return (m_change & key) != 0;
 		}
 
 		public function set width(value : int) : void
 		{
+			if (m_width == value)
+				return;
 			m_width = value;
+			if ((m_change & C_WH) == 0)
+				m_change += C_WH;
 		}
-		
-		public function get width():int
+
+		public function get width() : int
 		{
 			return m_width;
 		}
-		
+
 		public function set height(value : int) : void
 		{
+			if (m_height == value)
+				return;
 			m_height = value;
+			if ((m_change & C_WH) == 0)
+				m_change += C_WH;
 		}
-		
-		public function get height():int
+
+		public function get height() : int
 		{
 			return m_height;
 		}
-		
-		name_part function update() : void
+
+		public function updateRender(render : IRender) : void
 		{
-			m_isChange = false;
+			if (isChangeFiled(C_XYZ))
+			{
+				render.x = m_x;
+				render.y = m_y;
+			}
+			if (isChangeFiled(C_SCALE))
+				render.scale = m_scale;
+			if (isChangeFiled(C_ALPHA))
+				render.alpha = m_alpha;
+			if (isChangeFiled(C_FILTER))
+				render.filters = m_filters;
+			if (isChangeFiled(C_TRAN))
+				render.colorTransform = m_transform;
+		}
+
+		/**
+		 * 改变后清零
+		 *
+		 */
+		name_part function hasChanged() : void
+		{
+			m_change = 0;
 		}
 	}
 }

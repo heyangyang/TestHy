@@ -3,7 +3,7 @@ package hy.game.aEffect
 	import flash.utils.Dictionary;
 	
 	import hy.game.data.SObject;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 	import hy.game.animation.SAnimationManager;
 
 	/**
@@ -34,7 +34,7 @@ package hy.game.aEffect
 		/**
 		 * 动作拥有的方向
 		 */
-		public var directions : Array = [SDirection.EAST];
+		public var directions : Array = [EnumDirection.EAST];
 
 		/**
 		 * 由方向记录的动画id，即可以根据一个方向得到一个动画的id
@@ -53,7 +53,7 @@ package hy.game.aEffect
 			if (version == "2")
 			{
 				if (!dirs)
-					directions = [SDirection.EAST, SDirection.NORTH, SDirection.SOUTH, SDirection.WEST, SDirection.EAST_NORTH, SDirection.WEST_NORTH, SDirection.EAST_SOUTH, SDirection.WEST_SOUTH];
+					directions = [EnumDirection.EAST, EnumDirection.NORTH, EnumDirection.SOUTH, EnumDirection.WEST, EnumDirection.EAST_NORTH, EnumDirection.WEST_NORTH, EnumDirection.EAST_SOUTH, EnumDirection.WEST_SOUTH];
 				else
 				{
 					directions = dirs.split(",");
@@ -154,8 +154,8 @@ package hy.game.aEffect
 
 		public function getAnimationIdByDir(dir : uint) : String
 		{
-			var mode : uint = SDirection.checkDirsDirMode(directions);
-			dir = SDirection.correctDirection(mode, dir, dir);
+			var mode : uint = EnumDirection.checkDirsDirMode(directions);
+			dir = EnumDirection.correctDirection(mode, dir, dir);
 			return _animationIdByDir[dir];
 		}
 

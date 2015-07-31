@@ -3,9 +3,8 @@ package hy.game.core
 	import hy.game.core.interfaces.IUpdate;
 
 	import hy.game.cfg.Config;
-	import hy.game.cfg.Time;
 
-	import hy.game.enum.PriorityType;
+	import hy.game.enum.EnumPriority;
 
 	public class FrameComponent extends Component implements IUpdate
 	{
@@ -57,7 +56,7 @@ package hy.game.core
 			{
 				return true;
 			}
-			m_frameElapsedTime += Time.deltaTime;
+			m_frameElapsedTime += STime.deltaTime;
 
 			if (m_frameElapsedTime >= m_frameInterval)
 			{
@@ -96,7 +95,7 @@ package hy.game.core
 			m_priority = value;
 		}
 
-		public function registerd(priority : int = PriorityType.PRIORITY_0) : void
+		public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
 			m_priority = priority;
 			m_registerd = true;

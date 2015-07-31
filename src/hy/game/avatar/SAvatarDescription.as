@@ -3,7 +3,7 @@ package hy.game.avatar
 	import flash.utils.Dictionary;
 	
 	import hy.game.utils.SDebug;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 
 	/**
 	 *
@@ -205,7 +205,7 @@ package hy.game.avatar
 		{
 			var result : Array;
 			if (!dirs)
-				result = [SDirection.EAST, SDirection.NORTH, SDirection.SOUTH, SDirection.WEST, SDirection.EAST_NORTH, SDirection.WEST_NORTH, SDirection.EAST_SOUTH, SDirection.WEST_SOUTH];
+				result = [EnumDirection.EAST, EnumDirection.NORTH, EnumDirection.SOUTH, EnumDirection.WEST, EnumDirection.EAST_NORTH, EnumDirection.WEST_NORTH, EnumDirection.EAST_SOUTH, EnumDirection.WEST_SOUTH];
 			else
 			{
 				result = dirs.split(",");

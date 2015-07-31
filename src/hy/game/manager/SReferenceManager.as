@@ -14,10 +14,10 @@ package hy.game.manager
 	import hy.game.resources.SResource;
 	import hy.game.resources.SwfResource;
 	import hy.game.sound.SoundReference;
-	import hy.rpg.pak.SDirectAnimationDecoder;
-	import hy.rpg.parser.SAnimationResourceParser;
-	import hy.rpg.parser.SImageResourceParser;
-	import hy.rpg.parser.SMapResourceParser;
+	import hy.rpg.pak.DecoderDirectAnimation;
+	import hy.rpg.parser.ParserAnimationResource;
+	import hy.rpg.parser.ParserImageResource;
+	import hy.rpg.parser.ParserMapResource;
 	import hy.rpg.render.SNameParser;
 
 	/**
@@ -349,25 +349,25 @@ package hy.game.manager
 		//*********************************avatar帧****************************
 
 		//*********************************动画解析器****************************
-		public function createDirectAnimationDeocder(id : String) : SDirectAnimationDecoder
+		public function createDirectAnimationDeocder(id : String) : DecoderDirectAnimation
 		{
-			return createReference(PARSER, id, SDirectAnimationDecoder, id) as SDirectAnimationDecoder;
+			return createReference(PARSER, id, DecoderDirectAnimation, id) as DecoderDirectAnimation;
 		}
 
 		//*********************************动画解析器****************************
 
 		//*********************************懒加载动画****************************
-		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int) : SAnimationResourceParser
+		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int) : ParserAnimationResource
 		{
-			return createReference(ANIMATION_LOAD, desc.id, SAnimationResourceParser, desc, prioprty) as SAnimationResourceParser;
+			return createReference(ANIMATION_LOAD, desc.id, ParserAnimationResource, desc, prioprty) as ParserAnimationResource;
 		}
 
 		//*********************************懒加载动画****************************
 
 		//*********************************image****************************
-		public function createImageParser(id : String, version : String, priority : int = int.MIN_VALUE) : SImageResourceParser
+		public function createImageParser(id : String, version : String, priority : int = int.MIN_VALUE) : ParserImageResource
 		{
-			return createReference(IMAGE, id, SImageResourceParser, id, version, priority) as SImageResourceParser;
+			return createReference(IMAGE, id, ParserImageResource, id, version, priority) as ParserImageResource;
 		}
 
 		//*********************************image****************************
@@ -383,9 +383,9 @@ package hy.game.manager
 		//*********************************特效帧****************************
 		
 		//*********************************地图****************************
-		public function createMapResourceParser(parserClass : Class, id : String, resId : String, prioprty : int, version : String = null) : SMapResourceParser
+		public function createMapResourceParser(parserClass : Class, id : String, resId : String, prioprty : int, version : String = null) : ParserMapResource
 		{
-			return createReference(MAP, id, parserClass, resId, version, prioprty) as SMapResourceParser;
+			return createReference(MAP, id, parserClass, resId, version, prioprty) as ParserMapResource;
 		}
 
 		//*********************************地图****************************

@@ -1,7 +1,7 @@
 package hy.game.enum
 {
 
-	public class Tags
+	public class EnumTags
 	{
 		public static const PLAYER : int = 0;
 		public static const SCENE : int = 1;
@@ -9,7 +9,7 @@ package hy.game.enum
 		public static const EFFECT : int = 3;
 		public static const UI : int = 4;
 
-		public function Tags()
+		public function EnumTags()
 		{
 		}
 	}

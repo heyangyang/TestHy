@@ -1,8 +1,8 @@
-package hy.game.cfg
+package hy.game.core
 {
 
 
-	public class Time
+	public class STime
 	{
 		/**
 		 * 从游戏开始到到现在所用的时间
@@ -13,7 +13,7 @@ package hy.game.cfg
 		 */
 		public static var timeScale : Number;
 
-		public static var curTime : int;
+		public static var getTimer : int;
 
 		/**
 		 * 每帧间隔时间
@@ -24,7 +24,7 @@ package hy.game.cfg
 		 */
 		public static var passedTime : int;
 
-		public function Time()
+		public function STime()
 		{
 		}
 	}

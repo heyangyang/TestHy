@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	
+
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IDisplay;
 
@@ -20,7 +20,7 @@ package hy.game.render
 				addChildAt(child as DisplayObject, index);
 			}
 		}
-		
+
 		public function addGameChild(child : IDisplay) : void
 		{
 			if (child is DisplayObject)
@@ -38,20 +38,25 @@ package hy.game.render
 		{
 			return this.getChildIndex(child as DisplayObject);
 		}
-		
+
 		public function setGameChildIndex(child : IDisplay, index : int) : void
 		{
 			this.setChildIndex(child as DisplayObject, index);
 		}
-		
+
 		public function removeGameChild(child : IDisplay) : void
 		{
 			this.removeChild(child as DisplayObject);
 		}
-		
+
 		public function get sparent() : IContainer
 		{
 			return parent as IContainer;
+		}
+
+		public function dispose() : void
+		{
+			parent && parent.removeChild(this);
 		}
 	}
 }

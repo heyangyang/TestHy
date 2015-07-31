@@ -2,7 +2,7 @@ package hy.game.core.interfaces
 {
 	import hy.game.core.Component;
 	import hy.game.data.STransform;
-	import hy.game.render.SGameRender;
+	import hy.game.render.SRender;
 
 	public interface IGameObject
 	{
@@ -14,8 +14,8 @@ package hy.game.core.interfaces
 		function set tag(value : String) : void;
 		function get tag() : String;
 
-		function addRender(render : SGameRender) : void;
-		function removeRender(render : SGameRender) : void;
+		function addRender(render : SRender) : void;
+		function removeRender(render : SRender) : void;
 
 		function addComponent(com : Component) : void;
 

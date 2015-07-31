@@ -12,6 +12,7 @@ package hy.game.state
 	{
 		protected var gameObject : GameObject;
 		protected var stateMgr : StateComponent;
+		protected var m_id : int;
 
 		public function SBaseState(gameObject : GameObject, stateMgr : StateComponent)
 		{
@@ -74,7 +75,7 @@ package hy.game.state
 		 */
 		public function get id() : int
 		{
-			return 0;
+			return m_id;
 		}
 
 	}

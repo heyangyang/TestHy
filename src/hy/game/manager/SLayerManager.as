@@ -5,11 +5,11 @@ package hy.game.manager
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 
-	import hy.game.cfg.Time;
 	import hy.game.core.GameContainer;
 	import hy.game.core.GameObject;
+	import hy.game.core.STime;
 	import hy.game.core.interfaces.IGameContainer;
-	import hy.game.enum.PriorityType;
+	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
 
 	use namespace name_part;
@@ -33,9 +33,7 @@ package hy.game.manager
 		public static function getInstance() : SLayerManager
 		{
 			if (instance == null)
-			{
 				instance = new SLayerManager();
-			}
 			return instance;
 		}
 
@@ -58,12 +56,12 @@ package hy.game.manager
 			m_list = new Vector.<IGameContainer>();
 			m_dictionary = new Dictionary();
 			//添加默认层级
-			addLayer(LAYER_MAP, PriorityType.PRIORITY_9);
-			addLayer(LAYER_GAME, PriorityType.PRIORITY_8);
-			addLayer(LAYER_WEATHER, PriorityType.PRIORITY_7);
-			addLayer(LAYER_UI, PriorityType.PRIORITY_6);
-			addLayer(LAYER_ALERT, PriorityType.PRIORITY_5);
-			addLayer(LAYER_GUIDE, PriorityType.PRIORITY_4);
+			addLayer(LAYER_MAP, EnumPriority.PRIORITY_9);
+			addLayer(LAYER_GAME, EnumPriority.PRIORITY_8);
+			addLayer(LAYER_WEATHER, EnumPriority.PRIORITY_7);
+			addLayer(LAYER_UI, EnumPriority.PRIORITY_6);
+			addLayer(LAYER_ALERT, EnumPriority.PRIORITY_5);
+			addLayer(LAYER_GUIDE, EnumPriority.PRIORITY_4);
 			start();
 		}
 
@@ -83,19 +81,20 @@ package hy.game.manager
 		private function start() : void
 		{
 			m_elapsedTime = getTimer();
-			m_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			m_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 999);
 		}
 
 		private function onEnterFrame(evt : Event) : void
 		{
-			Time.deltaTime = getTimer() - m_elapsedTime;
+			STime.getTimer = getTimer();
+			STime.deltaTime = STime.getTimer - m_elapsedTime;
 			m_passedTime = m_elapsedTime = getTimer();
 			m_needSort && onSort();
 			for (var i : int = m_list.length - 1; i >= 0; i--)
 			{
 				m_list[i].update();
 			}
-			Time.passedTime = getTimer() - m_passedTime;
+			STime.passedTime = getTimer() - m_passedTime;
 		}
 
 		private function onSort() : void

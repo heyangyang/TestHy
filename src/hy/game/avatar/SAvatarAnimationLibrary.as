@@ -3,10 +3,10 @@ package hy.game.avatar
 	import flash.utils.Dictionary;
 	
 	import hy.game.core.SReference;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationManager;
-	import hy.game.animation.SLazyAnimation;
+	import hy.game.animation.SAnimationResource;
 
 
 
@@ -66,7 +66,7 @@ package hy.game.avatar
 
 		public function loaderAnimation() : void
 		{
-			var animation : SLazyAnimation;
+			var animation : SAnimationResource;
 			var animationByDir : Dictionary;
 			loader_count = loader_index = 0;
 			for each (animationByDir in m_animationByActionAndDir)
@@ -149,7 +149,7 @@ package hy.game.avatar
 			var needReversal : Boolean;
 			var revrsalDir : int;
 			var dir : int;
-			var animation : SLazyAnimation;
+			var animation : SAnimationResource;
 			//构建每个动作的8方向动画
 			for each (var actionDesc : SAvatarActionDescription in avatarDesc.actionDescByActionMap)
 			{
@@ -161,16 +161,16 @@ package hy.game.avatar
 					continue;
 				dirs = actionDesc.directions; //当前有的方向数据
 				if (needReversalPart)
-					actionDesc.directions = dirs = SDirection.getReversalDirs(dirs);
+					actionDesc.directions = dirs = EnumDirection.getReversalDirs(dirs);
 
 
 				//构建该动作的方向动画			
 				for each (dir in dirs)
 				{
-					needReversal = needReversalPart && SDirection.needMirrorReversal(dir);
+					needReversal = needReversalPart && EnumDirection.needMirrorReversal(dir);
 					if (needReversal)
 					{
-						revrsalDir = SDirection.getMirrorReversal(dir);
+						revrsalDir = EnumDirection.getMirrorReversal(dir);
 						animationId = partDesc.getAnimationIdByDir(revrsalDir);
 						if (animationId)
 							id = animationId.substr(0, animationId.length - 1) + dir;
@@ -182,7 +182,7 @@ package hy.game.avatar
 					}
 					if (animationId && id)
 					{
-						animation = SAnimationManager.getInstance().createAnimation(id, animationId, needReversal) as SLazyAnimation;
+						animation = SAnimationManager.getInstance().createAnimation(id, animationId, needReversal) as SAnimationResource;
 						animation.priority = priority;
 						if (animation)
 							animationByDir[dir] = animation;
@@ -210,10 +210,10 @@ package hy.game.avatar
 			var otherComposeingId : String;
 			for each (var dir : int in dirs)
 			{
-				dirNeedReversal = needReversalPart && SDirection.needMirrorReversal(dir);
+				dirNeedReversal = needReversalPart && EnumDirection.needMirrorReversal(dir);
 				if (dirNeedReversal)
 				{ //如果需要反转
-					dir = SDirection.getMirrorReversal(dir);
+					dir = EnumDirection.getMirrorReversal(dir);
 				}
 				otherComposeingId = partDesc.getAnimationIdByDir(dir);
 

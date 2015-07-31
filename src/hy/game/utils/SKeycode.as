@@ -214,6 +214,7 @@
 		public static const Enter : uint = 13;
 		public static const Shift : uint = 16;
 		public static const Control : uint = 17;
+		public static const Alt : uint = 18;
 		public static const PauseBreak : uint = 19;
 		public static const CapsLock : uint = 20;
 		public static const Esc : uint = 27;

@@ -5,10 +5,12 @@ package hy.game
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	
+
 	import hy.game.cfg.Config;
+	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
+	import hy.game.manager.SUpdateManager;
 	import hy.game.net.SGameSocket;
 	import hy.game.resources.SPreLoad;
 	import hy.game.resources.SResourceMagnger;
@@ -16,12 +18,12 @@ package hy.game
 	import hy.game.starter.SGameStartBase;
 	import hy.game.utils.SDebug;
 	import hy.game.utils.STimeControl;
-	import hy.rpg.manager.SGameManager;
+	import hy.rpg.manager.ManagerGame;
 
 	/**
 	 * 游戏运行入口
 	 * @author wait
-	 * 
+	 *
 	 */
 	public class GameFrameStart
 	{
@@ -32,15 +34,15 @@ package hy.game
 			return m_current
 		}
 
-		public function GameFrameStart(stage : Stage,sarter:SGameStartBase)
+		public function GameFrameStart(stage : Stage, sarter : SGameStartBase)
 		{
-			gameStarter=sarter;
+			gameStarter = sarter;
 			init(stage);
 			sarter.onStart();
 		}
 
 		private var current_stage : Stage;
-		private var gameStarter:SGameStartBase;
+		private var gameStarter : SGameStartBase;
 
 		private function init(stage : Stage) : void
 		{
@@ -54,16 +56,20 @@ package hy.game
 			stage.color = 0x000000;
 			stage.addEventListener(Event.RESIZE, onResizeHandler);
 			onResizeHandler(null);
+			Config.stage = stage;
+			stage.focus = stage;
 			m_current = this;
 			SDebug.init(stage);
 			SLayerManager.getInstance().init(stage);
+			SUpdateManager.getInstance().init(stage);
+			SKeyboardManager.getInstance().init(stage);
 			SReferenceManager.getInstance();
 			SPreLoad.getInstance();
 			SResourceMagnger.getInstance();
 			SGameSocket.getInstance();
 			SoundManager.getInstance();
 			STimeControl.getInstance();
-			SGameManager.getInstance();
+			ManagerGame.getInstance();
 		}
 
 		protected function onResizeHandler(event : Event) : void

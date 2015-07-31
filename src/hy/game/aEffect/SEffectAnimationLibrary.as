@@ -4,7 +4,7 @@ package hy.game.aEffect
 
 	import hy.game.core.SReference;
 	import hy.game.utils.SDebug;
-	import hy.rpg.enmu.SDirection;
+	import hy.rpg.enum.EnumDirection;
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationManager;
 
@@ -25,13 +25,13 @@ package hy.game.aEffect
 		private var effectDesc : SEffectDescription;
 		private var _width : int;
 		private var _height : int;
-		private var _dirMode : uint = SDirection.DIR_MODE_HOR_ONE;
+		private var _dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
 
 		public function SEffectAnimationLibrary(desc : SEffectDescription, needReversal : Boolean)
 		{
 			_animationByDir = new Dictionary();
 			if (desc.version == "2")
-				_dirMode = SDirection.checkDirsDirMode(desc.directions);
+				_dirMode = EnumDirection.checkDirsDirMode(desc.directions);
 			this.effectDesc = desc;
 			_width = Math.abs(desc.rightBorder - desc.leftBorder);
 			_height = Math.abs(desc.bottomBorder - desc.topBorder);
@@ -43,7 +43,7 @@ package hy.game.aEffect
 			if (effectDesc == null)
 				return null;
 
-			var cur_dir : int = SDirection.correctDirection(_dirMode, SDirection.EAST, dir); //对方向进行修正
+			var cur_dir : int = EnumDirection.correctDirection(_dirMode, EnumDirection.EAST, dir); //对方向进行修正
 
 			if (cur_dir != 0 && !hasDir(cur_dir))
 			{
@@ -127,7 +127,7 @@ package hy.game.aEffect
 
 			var dirs : Array = effectDesc.directions; //当前有的方向数据
 			if (needReversal)
-				effectDesc.animationDirections = dirs = SDirection.getReversalDirs(dirs);
+				effectDesc.animationDirections = dirs = EnumDirection.getReversalDirs(dirs);
 			else
 				effectDesc.animationDirections = dirs;
 
@@ -137,11 +137,11 @@ package hy.game.aEffect
 			var id : String;
 			for each (var dir : int in dirs)
 			{
-				isReversal = needReversal && SDirection.needMirrorReversal(dir);
+				isReversal = needReversal && EnumDirection.needMirrorReversal(dir);
 				animationId = id = effectDesc.getAnimationIdByDir(dir);
 				if (isReversal)
 				{
-					var revrsalDir : int = SDirection.getMirrorReversal(dir);
+					var revrsalDir : int = EnumDirection.getMirrorReversal(dir);
 					animationId = effectDesc.getAnimationIdByDir(revrsalDir);
 					id = animationId.substr(0, animationId.length - 1) + dir;
 				}
@@ -163,10 +163,10 @@ package hy.game.aEffect
 			var ids : Array = [];
 			for each (var dir : int in dirs)
 			{
-				var dirNeedReversal : Boolean = needReversal && SDirection.needMirrorReversal(dir);
+				var dirNeedReversal : Boolean = needReversal && EnumDirection.needMirrorReversal(dir);
 				if (dirNeedReversal)
 				{ //如果需要反转
-					dir = SDirection.getMirrorReversal(dir);
+					dir = EnumDirection.getMirrorReversal(dir);
 				}
 				var otherComposeingId : String = effectDesc.getAnimationIdByDir(dir);
 
