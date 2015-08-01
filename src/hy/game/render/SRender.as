@@ -25,7 +25,8 @@ package hy.game.render
 		name_part var m_parentY : int;
 		protected var m_x : int;
 		protected var m_y : int;
-		protected var m_scale : Number;
+		protected var m_scaleX : Number;
+		protected var m_scaleY : Number;
 		protected var m_numChildren : int;
 		protected var m_alpha : Number;
 		protected var m_rotation : int;
@@ -123,7 +124,7 @@ package hy.game.render
 			if (index < 0 || index >= m_numChildren)
 				return null;
 			m_numChildren--;
-			var child : IRender = childs.splice(index, 1) as IRender
+			var child : IRender = childs.splice(index, 1)[0];
 			child.notifyRemovedFromRender();
 			child.parent = null;
 			return child;
@@ -256,18 +257,32 @@ package hy.game.render
 			return m_render.height;
 		}
 
-		public function get scale() : Number
+		public function get scaleX() : Number
 		{
-			return m_scale;
+			return m_scaleX;
 		}
 
-		public function set scale(value : Number) : void
+		public function set scaleX(value : Number) : void
 		{
-			if (m_scale == value)
+			if (m_scaleX == value)
 				return;
-			m_scale = value;
+			m_scaleX = value;
 			if (m_render)
-				m_render.scaleX = m_render.scaleY = m_scale;
+				m_render.scaleX = m_scaleX;
+		}
+
+		public function get scaleY() : Number
+		{
+			return m_scaleY;
+		}
+
+		public function set scaleY(value : Number) : void
+		{
+			if (m_scaleY == value)
+				return;
+			m_scaleY = value;
+			if (m_render)
+				m_render.scaleY = m_scaleY;
 		}
 
 		public function get alpha() : Number
@@ -459,13 +474,14 @@ package hy.game.render
 
 		public function dispose() : void
 		{
-			if (m_childs)
-				m_childs.length = 0;
+
 			if (parent)
 			{
 				parent.removeChild(this);
 				parent = null;
 			}
+			while (m_numChildren > 0)
+				removeChildAt(0);
 			m_numChildren = 0;
 			if (m_render)
 				m_render.data = null;

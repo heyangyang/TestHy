@@ -1,11 +1,10 @@
 package hy.game.components
 {
 	import hy.game.animation.SAnimationFrame;
-	import hy.game.avatar.SActionType;
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
-	import hy.rpg.components.data.DataComponentRole;
+	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
 
 	/**
@@ -18,7 +17,9 @@ package hy.game.components
 		protected var m_lazyAvatar : SAvatarResource;
 		protected var m_avatar : SAvatar;
 		private var m_frame : SAnimationFrame;
-		protected var m_roleData : DataComponentRole;
+		private var tmp_frame : SAnimationFrame;
+		private var needReversal : Boolean;
+		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
 
@@ -33,8 +34,8 @@ package hy.game.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_roleData = m_owner.getComponentByType(DataComponentRole) as DataComponentRole;
-			setAvatarId(m_roleData.avatarId);
+			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			setAvatarId(m_data.avatarId);
 			m_dir = m_action = -1;
 		}
 
@@ -47,16 +48,23 @@ package hy.game.components
 			}
 			if (!m_avatar)
 				return;
-			if (m_dir != m_transform.dir || m_action != m_roleData.action)
+			if (m_dir != m_transform.dir || m_action != m_data.action)
 			{
 				m_dir = m_transform.dir;
-				m_action = m_roleData.action
-				m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
+				m_action = m_data.action
+				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
 			}
-			var frame : SAnimationFrame = m_avatar.gotoNextFrame(STime.deltaTime);
-			if (!frame || frame == m_frame)
+			else
+				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);
+			if (!tmp_frame || tmp_frame == m_frame || !tmp_frame.frameData)
 				return;
-			m_frame = frame;
+			m_frame = tmp_frame;
+			if (needReversal != m_frame.needReversal)
+			{
+				needReversal = m_frame.needReversal;
+				m_render.scaleX = needReversal ? -1 : 1;
+			}
+			m_frame.needReversal && m_frame.reverseData();
 			m_render.bitmapData = m_frame.frameData;
 			m_render.x = m_frame.x;
 			m_render.y = m_frame.y;

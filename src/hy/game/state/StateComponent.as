@@ -14,7 +14,7 @@ package hy.game.state
 	{
 		private var stateDictionary : Dictionary = new Dictionary();
 		private var currState : IBaseState;
-		public var oldStateId : int;
+		private var m_oldStateId : int;
 
 		public function StateComponent(type : * = null)
 		{
@@ -54,7 +54,7 @@ package hy.game.state
 			if (currState)
 			{
 				currState.exitState();
-				oldStateId = currState.id;
+				m_oldStateId = currState.id;
 			}
 			currState = stateDictionary[id];
 			currState.enterState();
@@ -83,6 +83,10 @@ package hy.game.state
 			}
 		}
 
+		public function get oldStateId():int
+		{
+			return m_oldStateId;
+		}
 		/**
 		 * 获得当前状态id
 		 * @return
@@ -111,6 +115,5 @@ package hy.game.state
 			stateDictionary = null;
 			currState = null;
 		}
-
 	}
 }

@@ -44,8 +44,11 @@ package hy.game.core.interfaces
 		function get width() : Number;
 		function get height() : Number;
 
-		function get scale() : Number;
-		function set scale(value : Number) : void;
+		function get scaleX() : Number;
+		function set scaleX(value : Number) : void;
+		
+		function get scaleY() : Number;
+		function set scaleY(value : Number) : void;
 
 		function get alpha() : Number;
 		function set alpha(value : Number) : void;

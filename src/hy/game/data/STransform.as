@@ -38,7 +38,11 @@ package hy.game.data
 		private var m_height : int;
 
 		private var m_change : int;
+
 		public var dir : int;
+
+		name_part var mx : int;
+		name_part var my : int;
 
 		public function STransform()
 		{
@@ -194,14 +198,25 @@ package hy.game.data
 				render.x = m_x;
 				render.y = m_y;
 			}
-			if (isChangeFiled(C_SCALE))
-				render.scale = m_scale;
+//			if (isChangeFiled(C_SCALE))
+//				render.scale = m_scale;
 			if (isChangeFiled(C_ALPHA))
 				render.alpha = m_alpha;
 			if (isChangeFiled(C_FILTER))
 				render.filters = m_filters;
 			if (isChangeFiled(C_TRAN))
 				render.colorTransform = m_transform;
+		}
+
+		name_part function changAll() : void
+		{
+			m_change = 0;
+			m_change += C_XYZ;
+			m_change += C_WH;
+			m_change += C_SCALE;
+			m_change += C_ALPHA;
+			m_change += C_FILTER;
+			m_change += C_TRAN;
 		}
 
 		/**

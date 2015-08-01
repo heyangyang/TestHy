@@ -1,7 +1,7 @@
 package hy.game.core
 {
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameObject;
@@ -82,6 +82,7 @@ package hy.game.core
 		protected var m_prioritySort : Boolean;
 		protected var m_name : String;
 		protected var m_tag : String;
+		protected var m_id : int;
 		/**
 		 * 更新列表
 		 */
@@ -117,7 +118,6 @@ package hy.game.core
 		{
 			m_components = new Vector.<FrameComponent>();
 			m_componentTypes = new Dictionary(true);
-			m_transform = new STransform();
 			m_render = new SRender();
 			start();
 		}
@@ -192,6 +192,12 @@ package hy.game.core
 			return m_transform;
 		}
 
+		public function set transform(value : STransform) : void
+		{
+			m_transform = value;
+			m_transform && m_transform.changAll();
+		}
+
 		public function set activeStatus(value : Boolean) : void
 		{
 			m_isActive = value;
@@ -224,8 +230,8 @@ package hy.game.core
 			if (m_owner)
 			{
 				m_isActive = false;
-				m_owner.removeObject(this);
 				m_owner.removeRender(m_render);
+				m_owner.removeObject(this);
 			}
 		}
 
@@ -236,12 +242,12 @@ package hy.game.core
 			for (var i : int = m_components.length - 1; i >= 0; i--)
 			{
 				component = m_components[i];
-				if (component.isDestroy || !component.checkUpdatable())
+				if (component.isDestroy)
 					continue;
 				component.update();
 			}
 			transform.updateRender(m_render);
-			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.updateAble)
+			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.isMoving)
 			{
 				m_render.x = transform.x - SCameraObject.sceneX;
 				m_render.y = transform.y - SCameraObject.sceneY;
@@ -343,7 +349,7 @@ package hy.game.core
 		{
 			m_owner.addContainer(container, m_owner.numChildren);
 		}
-		
+
 		public function removeContainer(container : IContainer) : void
 		{
 			m_owner.removeContainer(container);
@@ -366,11 +372,24 @@ package hy.game.core
 			if (m_isDisposed)
 				return;
 			unRegisterd();
+			m_render && m_render.dispose();
+			m_render = null;
 			m_owner = null;
 			clearComponents();
 			tag = null;
 			name = null;
 			super.destroy();
 		}
+
+		public function get id() : int
+		{
+			return m_id;
+		}
+
+		public function set id(value : int) : void
+		{
+			m_id = value;
+		}
+
 	}
 }

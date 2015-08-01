@@ -3,7 +3,6 @@ package hy.game.manager
 	import flash.display.Stage;
 	import flash.events.Event;
 	
-	import hy.game.core.FrameComponent;
 	import hy.game.core.interfaces.IUpdate;
 
 	public class SUpdateManager extends SBaseManager
@@ -72,7 +71,7 @@ package hy.game.manager
 			m_prioritySort = false;
 		}
 
-		private function onPrioritySortFun(a : FrameComponent, b : FrameComponent) : int
+		private function onPrioritySortFun(a : IUpdate, b : IUpdate) : int
 		{
 			if (a.priority > b.priority)
 				return 1;

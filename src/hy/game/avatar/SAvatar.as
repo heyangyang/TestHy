@@ -2,7 +2,7 @@ package hy.game.avatar
 {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.data.SObject;
@@ -585,7 +585,7 @@ package hy.game.avatar
 		{
 			return _curAnimation ? _curAnimation.offsetY : 0;
 		}
-
+		
 		public function get hasAnimation() : Boolean
 		{
 			return _curAnimation != null;

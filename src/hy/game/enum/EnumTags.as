@@ -3,11 +3,11 @@ package hy.game.enum
 
 	public class EnumTags
 	{
-		public static const PLAYER : int = 0;
-		public static const SCENE : int = 1;
-		public static const MONSTER : int = 2;
-		public static const EFFECT : int = 3;
-		public static const UI : int = 4;
+		public static const PLAYER : String = "0";
+		public static const SCENE : String = "1";
+		public static const MONSTER : String = "2";
+		public static const EFFECT : String = "3";
+		public static const UI : String = "4";
 
 		public function EnumTags()
 		{
