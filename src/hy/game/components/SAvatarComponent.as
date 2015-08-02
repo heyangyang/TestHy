@@ -4,6 +4,7 @@ package hy.game.components
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
+	import hy.game.enum.EnumPriority;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
 
@@ -16,9 +17,9 @@ package hy.game.components
 	{
 		protected var m_lazyAvatar : SAvatarResource;
 		protected var m_avatar : SAvatar;
-		private var m_frame : SAnimationFrame;
-		private var tmp_frame : SAnimationFrame;
-		private var needReversal : Boolean;
+		protected var m_frame : SAnimationFrame;
+		protected var tmp_frame : SAnimationFrame;
+		protected var needReversal : Boolean;
 		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
@@ -37,6 +38,7 @@ package hy.game.components
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			setAvatarId(m_data.avatarId);
 			m_dir = m_action = -1;
+			registerd(EnumPriority.PRIORITY_9);
 		}
 
 		override public function update() : void

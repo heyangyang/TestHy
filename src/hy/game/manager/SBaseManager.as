@@ -13,7 +13,7 @@ package hy.game.manager
 			SDebug.print(args.join(","));
 		}
 
-		public function waring(... args) : void
+		public function warning(... args) : void
 		{
 			SDebug.warning(args.join(","));
 		}

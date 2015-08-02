@@ -72,7 +72,7 @@ package hy.game.manager
 			if (m_curDic == null)
 				golbal_dic[m_key] = m_curDic = new Dictionary();
 			if (m_curDic[keyCode])
-				waring("key is exist : " + keyCode);
+				warning("key is exist : " + keyCode);
 			m_curDic[keyCode] = fun;
 		}
 
@@ -105,7 +105,7 @@ package hy.game.manager
 						key += KEY_SHIFT;
 						break;
 					default:
-						waring("不支持其他键值:" + args[i]);
+						warning("不支持其他键值:" + args[i]);
 						break;
 				}
 			}

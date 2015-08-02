@@ -120,9 +120,9 @@ package hy.game.avatar
 		 * @param dir [0-7]
 		 * @return
 		 */
-		public function gotoDirection(dir : int) : void
+		public function gotoDirection(dir : int) : SAnimationFrame
 		{
-			gotoAnimation(_curAction, _curKind, dir, curFrame, 0);
+			return gotoAnimation(_curAction, _curKind, dir, curFrame, 0);
 		}
 
 		/**

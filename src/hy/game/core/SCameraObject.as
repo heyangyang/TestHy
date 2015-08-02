@@ -230,18 +230,18 @@ package hy.game.core
 				m_sceneY = m_sceneH - m_screenH;
 
 			//更新可视范围
-			visualRect.updateRectangle(m_sceneX + m_visualRange.x, m_sceneY + m_visualRange.y, m_sceneX + m_visualRange.width, m_sceneY + m_visualRange.height);
+			visualRect.updateRectangle(m_sceneX + m_visualRange.x, m_sceneY + m_visualRange.y + 120, m_sceneX + m_visualRange.width, m_sceneY + m_visualRange.height + 120);
 		}
 
 		/**
 		 * 场景大小
 		 */
-		public function get sceneW():int
+		public function get sceneW() : int
 		{
 			return m_sceneW;
 		}
 
-		public function get sceneH():int
+		public function get sceneH() : int
 		{
 			return m_sceneH;
 		}

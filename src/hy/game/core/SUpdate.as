@@ -4,6 +4,7 @@ package hy.game.core
 	import hy.game.core.interfaces.IUpdate;
 	import hy.game.enum.EnumPriority;
 	import hy.game.manager.SUpdateManager;
+	import hy.game.utils.SDebug;
 
 	public class SUpdate implements IUpdate
 	{
@@ -164,19 +165,17 @@ package hy.game.core
 
 		public function print(... args) : void
 		{
-			trace(args.join(","));
+			SDebug.print(args.join(","));
 		}
-
+		
 		public function warning(... args) : void
 		{
-			trace(args.join(","));
+			SDebug.warning(args.join(","));
 		}
-
+		
 		public function error(... args) : void
 		{
-			throw new Error(args.join(" "));
+			SDebug.error(args.join(","));
 		}
-
-
 	}
 }

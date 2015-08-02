@@ -289,7 +289,7 @@ package hy.game.manager
 				}
 				else
 				{
-					!v && waring("not find version:" + id);
+					!v && warning("not find version:" + id);
 					root += id;
 				}
 				root = root.replace(/\\/g, "/");
@@ -359,7 +359,7 @@ package hy.game.manager
 		//*********************************懒加载动画****************************
 		public function createAnimationResourceParser(desc : SAnimationDescription, prioprty : int) : ParserAnimationResource
 		{
-			return createReference(ANIMATION_LOAD, desc.id, ParserAnimationResource, desc, prioprty) as ParserAnimationResource;
+			return createReference(ANIMATION_LOAD, desc.url, ParserAnimationResource, desc, prioprty) as ParserAnimationResource;
 		}
 
 		//*********************************懒加载动画****************************

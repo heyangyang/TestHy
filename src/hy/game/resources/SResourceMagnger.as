@@ -176,7 +176,7 @@ package hy.game.resources
 		{
 			if (ApplicationDomain.currentDomain.hasDefinition(name))
 				return ApplicationDomain.currentDomain.getDefinition(name) as Class;
-			waring("not find class:" + name);
+			warning("not find class:" + name);
 			return null;
 		}
 

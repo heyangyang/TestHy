@@ -7,7 +7,7 @@ package hy.game.resources
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.namespaces.name_part;

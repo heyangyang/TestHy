@@ -1,7 +1,7 @@
 package hy.game.animation
 {
 	import flash.geom.Point;
-	
+
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.rpg.enum.EnumLoadPriority;
@@ -9,9 +9,9 @@ package hy.game.animation
 	import hy.rpg.parser.ParserResource;
 
 	/**
-	 * 动画加载器 
+	 * 动画加载器
 	 * @author hyy
-	 * 
+	 *
 	 */
 	public class SAnimationResource extends SAnimation
 	{
@@ -28,9 +28,12 @@ package hy.game.animation
 
 		public var priority : int = EnumLoadPriority.EFFECT;
 
+		private var cur_dir : String;
+
 		public function SAnimationResource(id : String, desc : SAnimationDescription, needReversal : Boolean = false)
 		{
 			super(id, desc, needReversal);
+			cur_dir = desc.id.substring(desc.id.length - 1);
 		}
 
 		override public function constructFrames(currAccessFrame : int) : void
@@ -81,7 +84,7 @@ package hy.game.animation
 						return;
 					frame.clear();
 					frame.frameData = getBitmapDataByIndex(index);
-					var offset : Point = m_parser.getOffset(index);
+					var offset : Point = m_parser.getOffset(index, cur_dir);
 					if (offset)
 					{
 						frame.frameX = offset.x;
@@ -107,7 +110,7 @@ package hy.game.animation
 				{
 					if (frameDesc.index == index + 1)
 					{
-						return m_parser.getBitmapDataByDir(frameDesc.frame);
+						return m_parser.getBitmapDataByDir(frameDesc.frame, cur_dir);
 					}
 				}
 			}

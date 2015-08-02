@@ -89,7 +89,7 @@ package hy.game.resources
 		{
 			if (m_isLoading)
 			{
-				waring("preLoad is loading");
+				warning("preLoad is loading");
 				return;
 			}
 			var loads : Array = id.split(",");
@@ -109,7 +109,7 @@ package hy.game.resources
 		{
 			if (m_isLoading)
 			{
-				waring("preLoad is loading");
+				warning("preLoad is loading");
 				return;
 			}
 			if (batchData[id] == null)
@@ -126,7 +126,7 @@ package hy.game.resources
 		{
 			if (!load_list)
 			{
-				waring(this, "load_list=null");
+				warning(this, "load_list=null");
 				return;
 			}
 			m_loadCount = load_list.length;

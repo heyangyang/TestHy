@@ -253,7 +253,8 @@
 		 */
 		public static function error(... arg) : void
 		{
-			TRACE_ERROR && trace("[error] " + arg.join(" "))
+			if (TRACE_ERROR)
+				throw new Error(arg.join());
 			write(arg, ERROR_INFOR_COLOR);
 		}
 
