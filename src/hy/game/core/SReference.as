@@ -36,7 +36,9 @@ package hy.game.core
 				return;
 			lastUseTime = STime.getTimer;
 			--m_referenceCount;
-			if (m_referenceCount <= 0)
+			if (m_referenceCount < 0)
+				error(this, "release error");
+			if (m_referenceCount == 0)
 			{
 				m_allowDestroy = true;
 			}

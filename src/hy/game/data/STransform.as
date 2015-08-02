@@ -41,11 +41,19 @@ package hy.game.data
 
 		public var dir : int;
 
+		private var m_rectangle : SRectangle;
+
 		name_part var mx : int;
 		name_part var my : int;
 
 		public function STransform()
 		{
+			m_rectangle = new SRectangle();
+		}
+
+		public function get rectangle() : SRectangle
+		{
+			return m_rectangle;
 		}
 
 		public function get x() : int

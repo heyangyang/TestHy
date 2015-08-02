@@ -1,6 +1,6 @@
 package hy.game.core
 {
-	import hy.game.data.SCameraRectangle;
+	import hy.game.data.SRectangle;
 	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
@@ -48,7 +48,7 @@ package hy.game.core
 			return m_isMoving;
 		}
 
-		private static var visualRect : SCameraRectangle = new SCameraRectangle();
+		private static var visualRect : SRectangle = new SRectangle();
 
 		/**
 		 * 是否在场景内
@@ -57,9 +57,9 @@ package hy.game.core
 		 */
 		public static function isInScreen(transform : STransform) : Boolean
 		{
-			if (transform.x < visualRect.x || transform.x > visualRect.width)
+			if (transform.x < visualRect.x || transform.x > visualRect.right)
 				return false;
-			if (transform.y < visualRect.y || transform.y > visualRect.height)
+			if (transform.y < visualRect.y || transform.y > visualRect.bottom)
 				return false;
 			return true;
 		}
@@ -76,11 +76,11 @@ package hy.game.core
 		/**
 		 * 可是范围
 		 */
-		private var m_visualRange : SCameraRectangle;
+		private var m_visualRange : SRectangle;
 		/**
 		 * 可以移动的范围
 		 */
-		private var m_walkRange : SCameraRectangle;
+		private var m_walkRange : SRectangle;
 		/**
 		 * 屏幕大小
 		 */
@@ -101,8 +101,8 @@ package hy.game.core
 		{
 			if (instance)
 				error(this, "only one");
-			m_walkRange = new SCameraRectangle();
-			m_visualRange = new SCameraRectangle();
+			m_walkRange = new SRectangle();
+			m_visualRange = new SRectangle();
 		}
 
 		override public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
@@ -191,46 +191,42 @@ package hy.game.core
 
 			m_isMoving = true;
 
-			//屏幕相对位置
-			m_screenX = m_transform.x - sceneX;
-			m_screenY = m_transform.y - sceneY;
-
 			//往左走
-			if (m_screenX < m_walkRange.x)
+			if (m_sceneX > 0 && m_transform.x < m_sceneX + m_walkRange.x)
 			{
 				m_sceneX += m_transform.mx;
 			}
 			//往右走
-			else if (m_screenX > m_walkRange.x + m_walkRange.width)
+			else if (m_transform.x > m_sceneX + m_walkRange.right && m_sceneX < m_sceneW - m_screenW)
 			{
 				m_sceneX += m_transform.mx;
 			}
 
 			//往上走
-			if (m_screenY < m_walkRange.y)
+			if (m_sceneY > 0 && m_transform.y < m_sceneY + m_walkRange.y)
 			{
 				m_sceneY += m_transform.my;
 			}
 			//往下走
-			else if (m_screenY > m_walkRange.y + m_walkRange.height)
+			else if (m_transform.y > m_sceneY + m_walkRange.bottom && m_sceneY < m_sceneH - m_screenH)
 			{
 				m_sceneY += m_transform.my;
 			}
 
 			m_transform.my = m_transform.mx = 0;
 			//检测是否超出边界
-			if (sceneX < 0)
+			if (m_sceneX < 0)
 				m_sceneX = 0;
-			else if (sceneX > m_sceneW - m_screenW)
+			else if (m_sceneX > m_sceneW - m_screenW)
 				m_sceneX = m_sceneW - m_screenW;
 
-			if (sceneY < 0)
+			if (m_sceneY < 0)
 				m_sceneY = 0;
-			else if (sceneY > m_sceneH - m_screenH)
+			else if (m_sceneY > m_sceneH - m_screenH)
 				m_sceneY = m_sceneH - m_screenH;
 
 			//更新可视范围
-			visualRect.updateRectangle(m_sceneX + m_visualRange.x, m_sceneY + m_visualRange.y + 120, m_sceneX + m_visualRange.width, m_sceneY + m_visualRange.height + 120);
+			visualRect.updateRectangle(m_sceneX + m_visualRange.x, m_sceneY + m_visualRange.y + 120, m_visualRange.width, m_visualRange.height - 120);
 		}
 
 		/**

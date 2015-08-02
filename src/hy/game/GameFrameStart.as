@@ -5,10 +5,11 @@ package hy.game
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
+	import hy.game.manager.SMouseMangaer;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.manager.SUpdateManager;
 	import hy.game.net.SGameSocket;
@@ -18,7 +19,7 @@ package hy.game
 	import hy.game.starter.SGameStartBase;
 	import hy.game.utils.SDebug;
 	import hy.game.utils.STimeControl;
-	import hy.rpg.manager.ManagerGame;
+	import hy.rpg.manager.ManagerGameCreate;
 
 	/**
 	 * 游戏运行入口
@@ -60,6 +61,7 @@ package hy.game
 			stage.focus = stage;
 			m_current = this;
 			SDebug.init(stage);
+			SMouseMangaer.init(stage);
 			SLayerManager.getInstance().init(stage);
 			SUpdateManager.getInstance().init(stage);
 			SKeyboardManager.getInstance().init(stage);
@@ -69,7 +71,7 @@ package hy.game
 			SGameSocket.getInstance();
 			SoundManager.getInstance();
 			STimeControl.getInstance();
-			ManagerGame.getInstance();
+			ManagerGameCreate.getInstance();
 		}
 
 		protected function onResizeHandler(event : Event) : void

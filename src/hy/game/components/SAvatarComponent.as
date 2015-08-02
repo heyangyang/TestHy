@@ -23,18 +23,18 @@ package hy.game.components
 		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
-
+		
 		public function SAvatarComponent(type : * = null)
 		{
 			super(type);
 			m_lazyAvatar = new SAvatarResource();
 			m_lazyAvatar.defaultAvatar = true;
-			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			setAvatarId(m_data.avatarId);
 			m_dir = m_action = -1;
@@ -61,6 +61,7 @@ package hy.game.components
 			if (!tmp_frame || tmp_frame == m_frame || !tmp_frame.frameData)
 				return;
 			m_frame = tmp_frame;
+			m_transform.rectangle.contains(m_frame.rect);
 			if (needReversal != m_frame.needReversal)
 			{
 				needReversal = m_frame.needReversal;
