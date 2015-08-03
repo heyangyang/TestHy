@@ -24,6 +24,8 @@ package hy.game.components
 		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
+		protected var m_isRide : Boolean;
+		protected var m_height : int;
 		protected var m_useCenterOffsetY : Boolean;
 
 		public function SAvatarComponent(type : * = null)
@@ -40,6 +42,7 @@ package hy.game.components
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			setAvatarId(m_data.avatarId);
 			m_dir = m_action = -1;
+			m_isRide = false;
 			needReversal = false;
 			m_useCenterOffsetY = true;
 			registerd(EnumPriority.PRIORITY_9);
@@ -57,10 +60,15 @@ package hy.game.components
 				m_render.bitmapData = null;
 				return;
 			}
-			if (m_dir != m_transform.dir || m_action != m_data.action)
+			if (m_dir != m_transform.dir || m_action != m_data.action || m_isRide != m_data.isRide)
 			{
 				m_dir = m_transform.dir;
 				m_action = m_data.action;
+				if (m_isRide != m_data.isRide)
+				{
+					m_isRide = m_data.isRide;
+					m_transform.height = m_height - (m_isRide ? 20 : 0);
+				}
 				changeAnimation();
 			}
 			else
@@ -109,7 +117,9 @@ package hy.game.components
 		{
 			m_avatar = avatar;
 			m_owner.transform.width = avatar.width;
-			m_owner.transform.height = avatar.height;
+			m_height = m_owner.transform.height = avatar.height;
+			m_dir = m_action = -1;
+			m_isRide = !m_data.isRide;
 		}
 
 		override public function destroy() : void
