@@ -12,9 +12,10 @@ package hy.game.components
 	public class SRenderComponent extends FrameComponent
 	{
 		protected var m_render : SRender;
-		protected var m_transform:STransform;
-		protected var m_offsetX:int;
-		protected var m_offsetY:int;
+		protected var m_transform : STransform;
+		protected var m_offsetX : int;
+		protected var m_offsetY : int;
+
 		public function SRenderComponent(type : * = null)
 		{
 			super(type);
@@ -27,7 +28,7 @@ package hy.game.components
 
 		override public function notifyAdded() : void
 		{
-			m_transform=m_owner.transform;
+			m_transform = m_owner.transform;
 			m_render.notifyAddedToRender();
 			addRender(m_render);
 		}
@@ -40,7 +41,7 @@ package hy.game.components
 
 		override public function update() : void
 		{
-			
+
 		}
 
 		protected function addRender(render : SRender) : void
@@ -58,18 +59,18 @@ package hy.game.components
 			super.destroy();
 		}
 
-		public function setOffsetXY(x:int,y:int):void
+		public function setOffsetXY(x : int, y : int) : void
 		{
-			m_offsetX=x;
-			m_offsetY=y;
+			m_offsetX = x;
+			m_offsetY = y;
 		}
-		
-		public function set offsetX(value:int):void
+
+		public function set offsetX(value : int) : void
 		{
 			m_offsetX = value;
 		}
-		
-		public function set offsetY(value:int):void
+
+		public function set offsetY(value : int) : void
 		{
 			m_offsetY = value;
 		}

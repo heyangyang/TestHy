@@ -5,8 +5,8 @@ package hy.game.render
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
-	import hy.game.core.interfaces.IRender;
 	import hy.game.core.interfaces.IRecycle;
+	import hy.game.core.interfaces.IRender;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
 
@@ -20,6 +20,7 @@ package hy.game.render
 	public class SRender implements IRender, IRecycle
 	{
 		protected var m_render : IBitmap;
+		protected var m_bitmapData : IBitmapData;
 		protected var m_name : String;
 		name_part var m_parentX : int;
 		name_part var m_parentY : int;
@@ -447,6 +448,9 @@ package hy.game.render
 
 		public function set bitmapData(value : IBitmapData) : void
 		{
+			if (m_bitmapData == value)
+				return;
+			m_bitmapData = value;
 			render.data = value;
 		}
 
@@ -474,7 +478,6 @@ package hy.game.render
 
 		public function dispose() : void
 		{
-
 			if (parent)
 			{
 				parent.removeChild(this);
@@ -482,9 +485,8 @@ package hy.game.render
 			}
 			while (m_numChildren > 0)
 				removeChildAt(0);
+			bitmapData = null;
 			m_numChildren = 0;
-			if (m_render)
-				m_render.data = null;
 		}
 	}
 }

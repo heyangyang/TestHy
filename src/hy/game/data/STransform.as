@@ -1,7 +1,7 @@
 package hy.game.data
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 	use namespace name_part;
@@ -23,6 +23,7 @@ package hy.game.data
 		private var m_x : int;
 		private var m_y : int;
 		private var m_z : int;
+		private var m_centerOffsetY : int;
 
 		private var m_scale : Number;
 
@@ -98,6 +99,20 @@ package hy.game.data
 				m_change += C_XYZ;
 		}
 
+		public function get centerOffsetY():int
+		{
+			return m_centerOffsetY;
+		}
+		
+		public function set centerOffsetY(value:int):void
+		{
+			if (m_centerOffsetY == value)
+				return;
+			m_centerOffsetY = value;
+			if ((m_change & C_XYZ) == 0)
+				m_change += C_XYZ;
+		}
+		
 		public function get scale() : Number
 		{
 			return m_scale;

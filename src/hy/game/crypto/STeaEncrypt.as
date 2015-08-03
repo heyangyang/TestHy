@@ -29,21 +29,10 @@ package hy.game.crypto
 
 		public static function teaEncrypt(enData : ByteArray) : ByteArray
 		{
-			//trace("加密前数据：" + ByteArrayToLongArray(enData, false));
-			//trace("加密前长度：；" + enData.length);
-
 			enData.position = 0;
 			var len : uint = Math.ceil(enData.length / 8);
 			var step : uint = Math.ceil(len / 8); //llm$sunny 20130217 新增步进，分批，每批有步进
 			var keyArr : Array = str2long(keyStr, false); //getKey(key);
-//			var keyBytes : ByteArray = new ByteArray();
-//			keyBytes.position = 0;
-//			keyBytes.endian = Endian.LITTLE_ENDIAN;
-//
-//			for (i = 0; i < keyArr.length; i++)
-//			{
-//				keyBytes.writeByte(keyArr[i]);
-//			}
 
 			var resData : ByteArray = new ByteArray();
 			resData.position = 0;
@@ -101,31 +90,16 @@ package hy.game.crypto
 			{
 				resData.writeBytes(nData, 0, nData.length);
 			}
-			//trace("加密后数据：" + ByteArrayToLongArray(resData, false));
-			//trace("加密后长度：" + resData.length);
 			resData.position = 0;
 			return resData;
 		}
 
 		public static function teaDecrypt(decData : ByteArray) : ByteArray
 		{
-			//trace("解密前数据：" + ByteArrayToLongArray(decData, false));
-			//trace("解密前长度：" + decData.length);
-
 			decData.position = 0;
 			var len : uint = Math.ceil(decData.length / 8);
 			var step : uint = Math.ceil(len / 8); //llm$sunny 20130217 新增步进，分批，每批有步进
 			var keyArr : Array = str2long(keyStr, false); //getKey(key);
-
-//			var keyBytes : ByteArray = new ByteArray();
-//			keyBytes.position = 0;
-//			keyBytes.endian = Endian.LITTLE_ENDIAN;
-//			//将密钥写入缓冲区
-//			for (i = 0; i < keyArr.length; i++)
-//			{
-//				keyBytes.writeByte(keyArr[i]);
-//			}
-
 			var resData : ByteArray = new ByteArray();
 			resData.position = 0;
 			resData.endian = Endian.LITTLE_ENDIAN;
@@ -172,15 +146,12 @@ package hy.game.crypto
 				}
 				decBytes.clear();
 			}
-			//keyBytes.clear();
 			decData.clear();
 
 			if (nData.length > 0)
 			{
 				nData.readBytes(resData, resData.length, nData.length);
 			}
-			//trace("解密后数据：" + ByteArrayToLongArray(resData, false));
-			//trace("解密后长度：" + resData.length);
 			resData.position = 0;
 			return resData;
 		}

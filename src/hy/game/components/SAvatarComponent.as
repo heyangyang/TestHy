@@ -1,6 +1,7 @@
 package hy.game.components
 {
 	import hy.game.animation.SAnimationFrame;
+	import hy.game.avatar.SActionType;
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
@@ -23,7 +24,8 @@ package hy.game.components
 		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
-		
+		protected var m_useCenterOffsetY : Boolean;
+
 		public function SAvatarComponent(type : * = null)
 		{
 			super(type);
@@ -38,6 +40,8 @@ package hy.game.components
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			setAvatarId(m_data.avatarId);
 			m_dir = m_action = -1;
+			needReversal = false;
+			m_useCenterOffsetY = true;
 			registerd(EnumPriority.PRIORITY_9);
 		}
 
@@ -49,16 +53,24 @@ package hy.game.components
 				m_lazyAvatar.loadResource();
 			}
 			if (!m_avatar)
+			{
+				m_render.bitmapData = null;
 				return;
+			}
 			if (m_dir != m_transform.dir || m_action != m_data.action)
 			{
 				m_dir = m_transform.dir;
-				m_action = m_data.action
-				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
+				m_action = m_data.action;
+				changeAnimation();
 			}
 			else
 				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);
-			if (!tmp_frame || tmp_frame == m_frame || !tmp_frame.frameData)
+			if (!tmp_frame || !tmp_frame.frameData)
+			{
+				m_render.bitmapData = null;
+				return;
+			}
+			if (tmp_frame == m_frame)
 				return;
 			m_frame = tmp_frame;
 			m_transform.rectangle.contains(m_frame.rect);
@@ -70,7 +82,22 @@ package hy.game.components
 			m_frame.needReversal && m_frame.reverseData();
 			m_render.bitmapData = m_frame.frameData;
 			m_render.x = m_frame.x;
-			m_render.y = m_frame.y;
+			if (m_useCenterOffsetY)
+				m_render.y = m_frame.y + m_transform.centerOffsetY;
+			else
+				m_render.y = m_frame.y;
+		}
+
+		/**
+		 * 转换动作的一些操作
+		 *
+		 */
+		protected function changeAnimation() : void
+		{
+			if (m_data.isRide)
+				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, 0, m_dir, 0, 0);
+			else
+				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
 		}
 
 		public function setAvatarId(avatarId : String) : void
@@ -90,8 +117,9 @@ package hy.game.components
 			super.destroy();
 			m_lazyAvatar && m_lazyAvatar.dispose();
 			m_lazyAvatar = null;
-			m_frame = null;
+			tmp_frame = m_frame = null;
 			m_avatar = null;
+			m_data = null;
 		}
 	}
 }
