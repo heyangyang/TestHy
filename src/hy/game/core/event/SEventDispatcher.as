@@ -157,11 +157,11 @@ package hy.game.core.event
         /** Dispatches an event with the given parameters to all objects that have registered 
          *  listeners for the given type. The method uses an internal pool of event objects to 
          *  avoid allocations. */
-        public function dispatchEventWith(type:String, bubbles:Boolean=false, data:Object=null):void
+        public function dispatchEventWith(type:String, data:Object=null):void
         {
-            if (bubbles || hasEventListener(type)) 
+            if (hasEventListener(type)) 
             {
-                var event:SEvent = SEvent.fromPool(type, bubbles, data);
+                var event:SEvent = SEvent.fromPool(type, data);
                 dispatchEvent(event);
                 SEvent.toPool(event);
             }

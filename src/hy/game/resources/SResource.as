@@ -132,12 +132,16 @@ package hy.game.resources
 			return m_url;
 		}
 
-		public function priority(value : int) : SResource
+		public function setPriority(value : int) : SResource
 		{
 			m_priority = value;
 			return this;
 		}
 
+		public function get priority() : int
+		{
+			return m_priority;
+		}
 		/**
 		 * 正在加载
 		 * @return

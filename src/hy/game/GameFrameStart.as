@@ -8,6 +8,7 @@ package hy.game
 	import flash.events.MouseEvent;
 	
 	import hy.game.cfg.Config;
+	import hy.game.core.GameDispatcher;
 	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SMouseMangaer;
@@ -56,6 +57,7 @@ package hy.game
 			stage.align = StageAlign.TOP_LEFT;
 			stage.frameRate = Config.frameRate;
 			stage.color = 0x000000;
+			GameDispatcher.getInstance();
 			stage.addEventListener(Event.RESIZE, onResizeHandler);
 			stage.addEventListener(MouseEvent.RIGHT_CLICK, onRightClickHandler);
 			onResizeHandler(null);
@@ -80,11 +82,12 @@ package hy.game
 		{
 			Config.screenWidth = current_stage.stageWidth;
 			Config.screenHeight = current_stage.stageHeight;
+			GameDispatcher.dispatch(GameDispatcher.RESIZE);
 		}
-		
+
 		protected function onRightClickHandler(event : Event) : void
 		{
-			
+
 		}
 
 	}

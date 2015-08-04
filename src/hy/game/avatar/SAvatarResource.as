@@ -93,7 +93,7 @@ package hy.game.avatar
 				if (resource.isLoaded)
 					notifyAvatarBuildCompleted(resource);
 				else
-					resource.priority(m_priority).addNotifyCompleted(notifyAvatarBuildCompleted).load();
+					resource.setPriority(m_priority).addNotifyCompleted(notifyAvatarBuildCompleted).load();
 			}
 		}
 

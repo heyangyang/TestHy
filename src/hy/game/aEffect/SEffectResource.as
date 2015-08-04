@@ -2,7 +2,7 @@ package hy.game.aEffect
 {
 	import flash.system.System;
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -41,7 +41,7 @@ package hy.game.aEffect
 		{
 			m_priority = value;
 		}
-		
+
 		/**
 		 * avatar是否有改变
 		 * @return
@@ -60,7 +60,7 @@ package hy.game.aEffect
 			var effectDescription : SEffectDescription = SEffectDescription.getEffectDescription(m_effectId);
 			if (effectDescription)
 			{
-				invokeNotifyByArray();
+				onLoadComplete(null);
 				return;
 			}
 			var resource : SResource = SReferenceManager.getInstance().createResource(m_effectId);
@@ -71,7 +71,7 @@ package hy.game.aEffect
 				if (resource.isLoaded)
 					onLoadComplete(resource);
 				else
-					resource.priority(m_priority).addNotifyCompleted(onLoadComplete).load();
+					resource.setPriority(m_priority).addNotifyCompleted(onLoadComplete).load();
 			}
 		}
 
@@ -150,10 +150,10 @@ package hy.game.aEffect
 		 */
 		public function destroy() : void
 		{
-			if(m_effect)
+			if (m_effect)
 			{
 				m_effect.dispose();
-				m_effect=null;
+				m_effect = null;
 			}
 			m_notifyCompleteds = null;
 		}

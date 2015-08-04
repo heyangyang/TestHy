@@ -37,6 +37,11 @@ package hy.game.components
 
 		override public function update() : void
 		{
+			if (lazyEffect.isChange)
+			{
+				lazyEffect.addNotifyCompleted(onLoadEffectComplete);
+				lazyEffect.loadResource();
+			}
 			if (!m_effect)
 				return;
 			if (m_effect.isEnd)
@@ -56,10 +61,6 @@ package hy.game.components
 		public function setEffectId(id : String) : void
 		{
 			lazyEffect.setEffectId(id);
-			if (!lazyEffect.isChange)
-				return;
-			lazyEffect.addNotifyCompleted(onLoadEffectComplete);
-			lazyEffect.loadResource();
 		}
 
 		private function onLoadEffectComplete(effect : SEffect) : void

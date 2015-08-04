@@ -1,7 +1,7 @@
 package hy.game.data
 {
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 	use namespace name_part;
@@ -99,12 +99,12 @@ package hy.game.data
 				m_change += C_XYZ;
 		}
 
-		public function get centerOffsetY():int
+		public function get centerOffsetY() : int
 		{
 			return m_centerOffsetY;
 		}
-		
-		public function set centerOffsetY(value:int):void
+
+		public function set centerOffsetY(value : int) : void
 		{
 			if (m_centerOffsetY == value)
 				return;
@@ -112,7 +112,7 @@ package hy.game.data
 			if ((m_change & C_XYZ) == 0)
 				m_change += C_XYZ;
 		}
-		
+
 		public function get scale() : Number
 		{
 			return m_scale;
@@ -212,6 +212,22 @@ package hy.game.data
 		public function get height() : int
 		{
 			return m_height;
+		}
+
+		/**
+		 * 是否包含指定的点。
+		 * @param x
+		 * @param y
+		 * @return
+		 *
+		 */
+		public function contains(x : int, y : int) : Boolean
+		{
+			if (x < m_x + m_rectangle.x)
+				return false;
+			if (y > m_y + m_rectangle.width)
+				return false;
+			return true;
 		}
 
 		public function updateRender(render : IRender) : void

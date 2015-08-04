@@ -91,6 +91,7 @@ package hy.game.core
 		{
 			if (m_isDisposed)
 				return;
+			notifyRemoved();
 			if (m_owner)
 			{
 				m_owner.removeComponent(this);

@@ -9,6 +9,7 @@ package hy.game.manager
 	import flash.utils.Dictionary;
 
 	import hy.game.cfg.Config;
+	import hy.game.components.SMouseComponent;
 	import hy.game.utils.SDebug;
 
 
@@ -25,22 +26,17 @@ package hy.game.manager
 		private static var m_stageX : int;
 		private static var m_stageY : int;
 
-		public static function get stageX() : int
+		public static function get mouseX() : int
 		{
 			return m_stageX;
 		}
 
-		public static function get stageY() : int
+		public static function get mouseY() : int
 		{
 			return m_stageY;
 		}
 
 		private static var mouse_dic : Dictionary = new Dictionary();
-
-		public function SMouseMangaer()
-		{
-			super();
-		}
 
 		public static function init(stage : Stage) : void
 		{
@@ -81,6 +77,34 @@ package hy.game.manager
 			}
 			Mouse.registerCursor(type, mouseData);
 		}
+
+		private static var m_mouseComponents : Vector.<SMouseComponent> = new Vector.<SMouseComponent>();
+		private static var m_numComponent : int = 0;
+
+		public static function addComponent(com : SMouseComponent) : void
+		{
+			if (m_mouseComponents.indexOf(com) == -1)
+			{
+				m_numComponent++;
+				m_mouseComponents.push(com);
+			}
+		}
+
+		public static function removeComponent(com : SMouseComponent) : void
+		{
+			var index : int = m_mouseComponents.indexOf(com);
+			if (index != -1)
+			{
+				m_numComponent--;
+				m_mouseComponents.splice(index, 1);
+			}
+		}
+
+		public function SMouseMangaer()
+		{
+			super();
+		}
+
 
 
 	}

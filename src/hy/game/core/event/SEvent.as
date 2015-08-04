@@ -137,9 +137,9 @@ package hy.game.core.event
         // event pooling
         
         /** @private */
-        name_part static function fromPool(type:String, bubbles:Boolean=false, data:Object=null):SEvent
+        name_part static function fromPool(type:String, data:Object=null):SEvent
         {
-            if (sEventPool.length) return sEventPool.pop().reset(type, bubbles, data);
+            if (sEventPool.length) return sEventPool.pop().reset(type, data);
             else return new SEvent(type, data);
         }
         
@@ -151,7 +151,7 @@ package hy.game.core.event
         }
         
         /** @private */
-        name_part function reset(type:String, bubbles:Boolean=false, data:Object=null):SEvent
+        name_part function reset(type:String, data:Object=null):SEvent
         {
             mType = type;
             mData = data;
