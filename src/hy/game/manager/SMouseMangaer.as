@@ -13,7 +13,7 @@ package hy.game.manager
 
 
 	/**
-	 * 鼠标
+	 * 鼠标管理器
 	 * @author wait
 	 *
 	 */

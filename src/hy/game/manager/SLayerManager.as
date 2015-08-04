@@ -4,7 +4,7 @@ package hy.game.manager
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-
+	
 	import hy.game.core.GameContainer;
 	import hy.game.core.GameObject;
 	import hy.game.core.STime;
@@ -42,7 +42,6 @@ package hy.game.manager
 		private var m_stage : Stage;
 		private var m_needSort : Boolean;
 		private var m_elapsedTime : int;
-		private var m_passedTime : int;
 
 		public function SLayerManager()
 		{
@@ -88,13 +87,12 @@ package hy.game.manager
 		{
 			STime.getTimer = getTimer();
 			STime.deltaTime = STime.getTimer - m_elapsedTime;
-			m_passedTime = m_elapsedTime = getTimer();
+			m_elapsedTime = STime.getTimer;
 			m_needSort && onSort();
 			for (var i : int = m_list.length - 1; i >= 0; i--)
 			{
 				m_list[i].update();
 			}
-			STime.passedTime = getTimer() - m_passedTime;
 		}
 
 		private function onSort() : void

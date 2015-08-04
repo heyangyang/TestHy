@@ -2,7 +2,9 @@ package hy.game.manager
 {
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.utils.getTimer;
 	
+	import hy.game.core.STime;
 	import hy.game.core.interfaces.IUpdate;
 
 	public class SUpdateManager extends SBaseManager
@@ -41,6 +43,7 @@ package hy.game.manager
 					continue;
 				m_update.update();
 			}
+			STime.passedTime = getTimer() - STime.getTimer;
 		}
 
 		public function register(update : IUpdate) : void
