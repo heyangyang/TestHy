@@ -29,10 +29,14 @@ package hy.game.core
 			if (type == null)
 				type = this["constructor"];
 			m_type = type;
-			onStart();
+			init();
 		}
 
-		protected function onStart() : void
+		/**
+		 * 初始化，只运行一次
+		 *
+		 */
+		protected function init() : void
 		{
 
 		}
@@ -42,10 +46,20 @@ package hy.game.core
 			m_owner = value;
 		}
 
+		/**
+		 * 添加到容器的时候调用
+		 * 一般参数设置，写这里
+		 *
+		 */
 		public function notifyAdded() : void
 		{
 		}
 
+		/**
+		 * 移除出容器的时候调用
+		 * 销毁的时候也会调用
+		 *
+		 */
 		public function notifyRemoved() : void
 		{
 		}

@@ -16,23 +16,60 @@ package hy.game.components
 		private var lazyEffect : SEffectResource;
 		private var m_effect : SEffect;
 		private var m_loops : int;
+		private var m_x : int;
+		private var m_y : int;
 		private var animationFrame : SAnimationFrame;
 
 		public function SAnimationComponent(type : * = null)
 		{
 			super(type);
+		}
+
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function init() : void
+		{
+			super.init();
 			lazyEffect = new SEffectResource();
 			lazyEffect.priority = EnumLoadPriority.EFFECT;
 		}
 
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function onStart() : void
+		{
+			super.onStart();
+		}
+
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override public function notifyRemoved() : void
+		{
+			super.notifyRemoved();
+			m_effect = null;
+			animationFrame = null;
+		}
+
+		/**
+		 * 默认值为0
+		 * @param value
+		 *
+		 */
 		public function setLoops(value : int) : void
 		{
 			m_loops = value;
 		}
 
-		override public function notifyAdded() : void
+		public function setPosition(x : int, y : int) : void
 		{
-			super.notifyAdded();
+			m_x = x;
+			m_y = y;
 		}
 
 		override public function update() : void
@@ -54,16 +91,26 @@ package hy.game.components
 				return;
 			animationFrame = frame;
 			m_render.bitmapData = animationFrame.frameData;
-			m_render.x = animationFrame.x + m_offsetX;
-			m_render.y = animationFrame.y + m_offsetY;
+			m_render.x = m_x + animationFrame.x + m_offsetX;
+			m_render.y = m_x + animationFrame.y + m_offsetY;
 		}
 
+		/**
+		 * 设置特效id
+		 * @param id
+		 *
+		 */
 		public function setEffectId(id : String) : void
 		{
 			lazyEffect.setEffectId(id);
 		}
 
-		private function onLoadEffectComplete(effect : SEffect) : void
+		/**
+		 * 加载完成
+		 * @param effect
+		 *
+		 */
+		protected function onLoadEffectComplete(effect : SEffect) : void
 		{
 			m_effect = effect;
 			m_effect.gotoAnimation(m_transform.dir, 0, m_loops);
@@ -74,7 +121,7 @@ package hy.game.components
 		{
 			super.destroy();
 			lazyEffect && lazyEffect.destroy();
-			m_effect = null;
+			lazyEffect = null;
 		}
 	}
 }

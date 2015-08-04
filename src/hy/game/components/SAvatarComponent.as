@@ -20,32 +20,58 @@ package hy.game.components
 		protected var m_avatar : SAvatar;
 		protected var m_frame : SAnimationFrame;
 		protected var tmp_frame : SAnimationFrame;
-		protected var needReversal : Boolean;
 		protected var m_data : DataComponent;
 		protected var m_dir : int;
 		protected var m_action : int;
-		protected var m_isRide : Boolean;
 		protected var m_height : int;
+		protected var m_isRide : Boolean;
+		protected var needReversal : Boolean;
 		protected var m_useCenterOffsetY : Boolean;
 
 		public function SAvatarComponent(type : * = null)
 		{
 			super(type);
+		}
+
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function init() : void
+		{
+			super.init();
 			m_lazyAvatar = new SAvatarResource();
 			m_lazyAvatar.defaultAvatar = true;
+		}
+
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function onStart() : void
+		{
+			super.onStart();
+			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			setAvatarId(m_data.avatarId);
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-			setAvatarId(m_data.avatarId);
-			m_dir = m_action = -1;
-			m_isRide = false;
-			needReversal = false;
-			m_useCenterOffsetY = true;
 			registerd(EnumPriority.PRIORITY_9);
+			m_dir = m_action = -1;
+			m_useCenterOffsetY = true;
+			needReversal = false;
+			m_isRide = false;
+		}
+
+		override public function notifyRemoved() : void
+		{
+			super.notifyRemoved();
+			tmp_frame = m_frame = null;
+			m_avatar = null;
+			m_data = null;
 		}
 
 		override public function update() : void
@@ -128,9 +154,6 @@ package hy.game.components
 			super.destroy();
 			m_lazyAvatar && m_lazyAvatar.dispose();
 			m_lazyAvatar = null;
-			tmp_frame = m_frame = null;
-			m_avatar = null;
-			m_data = null;
 		}
 	}
 }

@@ -244,6 +244,7 @@ package hy.game.core
 				component = m_components[i];
 				if (component.isDestroy)
 					continue;
+				!component.isStart && component.onInit();
 				component.update();
 			}
 			transform.updateRender(m_render);

@@ -21,10 +21,6 @@ package hy.game.state
 			super(type);
 		}
 
-		override public function notifyAdded() : void
-		{
-		}
-
 		override public function update() : void
 		{
 			currState && currState.update();

@@ -21,22 +21,41 @@ package hy.game.components
 			super(type);
 		}
 
-		override protected function onStart() : void
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function init() : void
 		{
 			m_render = new SRender();
 		}
 
-		override public function notifyAdded() : void
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function onStart() : void
 		{
-			m_transform = m_owner.transform;
-			m_render.notifyAddedToRender();
 			addRender(m_render);
+			m_render.notifyAddedToRender();
+			m_transform = m_owner.transform;
 		}
 
+		override public function notifyAdded():void
+		{
+			super.notifyAdded();
+			m_offsetX = m_offsetY = 0;
+		}
+		
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
 		override public function notifyRemoved() : void
 		{
-			m_render.notifyRemovedFromRender();
 			removeRender(m_render);
+			m_render.notifyRemovedFromRender();
+			m_transform = null;
 		}
 
 		override public function update() : void

@@ -1,6 +1,8 @@
 package hy.game.core
 {
 	import hy.game.enum.EnumPriority;
+	import hy.game.namespaces.name_part;
+	use namespace name_part;
 
 	public class FrameComponent extends Component
 	{
@@ -13,9 +15,26 @@ package hy.game.core
 		 */
 		private var m_registerd : Boolean;
 
+		name_part var isStart : Boolean;
+
 		public function FrameComponent(type : * = null)
 		{
 			super(type);
+		}
+
+		name_part function onInit() : void
+		{
+			isStart = true;
+			onStart();
+		}
+
+		/**
+		 * 第一次更新前创调用
+		 * 一般引用，写这里
+		 */
+		protected function onStart() : void
+		{
+
 		}
 
 		/**
