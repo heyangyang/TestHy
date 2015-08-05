@@ -53,6 +53,13 @@ package hy.game.components
 			return m_transform.contains(mouseX, mouseY);
 		}
 
+		/**
+		 * 像素级检测 
+		 * @param mouseX
+		 * @param mouseY
+		 * @return 
+		 * 
+		 */
 		public function checkPixelIn(mouseX : int, mouseY : int) : Boolean
 		{
 			if (m_avatar == null)

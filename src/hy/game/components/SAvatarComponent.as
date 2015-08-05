@@ -5,7 +5,6 @@ package hy.game.components
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
-	import hy.game.enum.EnumPriority;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
 
@@ -49,14 +48,13 @@ package hy.game.components
 		{
 			super.init();
 			m_lazyAvatar = new SAvatarResource();
-			m_lazyAvatar.defaultAvatar = true;
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			m_lazyAvatar.defaultAvatar = true;
 			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
-			registerd(EnumPriority.PRIORITY_9);
 			m_dir = m_action = -1;
 			m_useCenterOffsetY = true;
 			needReversal = false;

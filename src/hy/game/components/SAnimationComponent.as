@@ -92,7 +92,7 @@ package hy.game.components
 			animationFrame = frame;
 			m_render.bitmapData = animationFrame.frameData;
 			m_render.x = m_x + animationFrame.x + m_offsetX;
-			m_render.y = m_x + animationFrame.y + m_offsetY;
+			m_render.y = m_y + animationFrame.y + m_offsetY;
 		}
 
 		/**

@@ -68,6 +68,11 @@ package hy.game.core
 		{
 			return m_type;
 		}
+		
+		public function get gameObject():GameObject
+		{
+			return m_owner;
+		}
 
 		/**
 		 * 是否销毁

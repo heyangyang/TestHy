@@ -17,7 +17,7 @@ package hy.game.core.interfaces
 		function addRender(render : SRender) : void;
 		function removeRender(render : SRender) : void;
 
-		function addComponent(com : Component) : void;
+		function addComponent(com : Component, priority : int = 0) : void;
 
 		function removeComponent(com : Component) : void;
 		function removeComponentByType(type : *) : void;

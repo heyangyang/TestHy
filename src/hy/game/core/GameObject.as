@@ -297,7 +297,7 @@ package hy.game.core
 			m_owner.changeDepthSort();
 		}
 
-		public function addComponent(component : Component) : void
+		public function addComponent(component : Component, priority : int = 0) : void
 		{
 			if (!component)
 				return;
@@ -306,6 +306,7 @@ package hy.game.core
 			{
 				updatePrioritySort();
 				m_components.push(component);
+				frameComponent.registerd(priority);
 			}
 
 			if (component.type == null)
@@ -346,6 +347,11 @@ package hy.game.core
 		public function getComponentByType(type : *) : Component
 		{
 			return m_componentTypes[type];
+		}
+
+		public function addContainerIndex(container : IContainer, index : int) : void
+		{
+			m_owner.addContainer(container, index);
 		}
 
 		public function addContainer(container : IContainer) : void

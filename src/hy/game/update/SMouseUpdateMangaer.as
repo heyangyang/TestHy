@@ -7,9 +7,10 @@ package hy.game.update
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursorData;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.components.SMouseComponent;
+	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
 	import hy.game.utils.SDebug;
@@ -118,6 +119,13 @@ package hy.game.update
 				m_currComponent.isMouseOver = true;
 		}
 
+		public function get target():GameObject
+		{
+			if(m_currComponent==null)
+				return null;
+			return m_currComponent.gameObject;
+		}
+		
 		protected function onMouseMoveHandler(event : MouseEvent) : void
 		{
 			m_stageX = event.stageX;
