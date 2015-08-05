@@ -26,7 +26,15 @@ package hy.game.components
 		protected var m_height : int;
 		protected var m_isRide : Boolean;
 		protected var needReversal : Boolean;
+		/**
+		 * 是否使用人物中心Y便宜点
+		 */
 		protected var m_useCenterOffsetY : Boolean;
+		/**
+		 * 是否使用滤镜
+		 */
+		protected var m_isUseFilters : Boolean;
+		protected var m_filters : Array;
 
 		public function SAvatarComponent(type : * = null)
 		{
@@ -44,17 +52,6 @@ package hy.game.components
 			m_lazyAvatar.defaultAvatar = true;
 		}
 
-		/**
-		 * 继承的子类，必须调用该类方法
-		 *
-		 */
-		override protected function onStart() : void
-		{
-			super.onStart();
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-			setAvatarId(m_data.avatarId);
-		}
-
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
@@ -64,6 +61,18 @@ package hy.game.components
 			m_useCenterOffsetY = true;
 			needReversal = false;
 			m_isRide = false;
+			m_isUseFilters = true;
+		}
+		
+		/**
+		 * 继承的子类，必须调用该类方法
+		 *
+		 */
+		override protected function onStart() : void
+		{
+			super.onStart();
+			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			setAvatarId(m_data.avatarId);
 		}
 
 		override public function notifyRemoved() : void
@@ -100,6 +109,13 @@ package hy.game.components
 			}
 			else
 				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);
+
+			if (m_isUseFilters && m_filters != m_transform.filters)
+			{
+				m_filters = m_transform.filters;
+				m_render.filters = m_filters;
+			}
+
 			if (!tmp_frame || !tmp_frame.frameData)
 			{
 				m_render.bitmapData = null;
@@ -147,6 +163,23 @@ package hy.game.components
 			m_height = m_owner.transform.height = avatar.height;
 			m_dir = m_action = -1;
 			m_isRide = !m_data.isRide;
+		}
+
+		public function isRolePickable(mouseX : int, mouseY : int) : Boolean
+		{
+			if (m_frame && m_frame.frameData)
+			{
+				mouseX -= m_frame.x;
+				mouseY -= m_frame.y;
+				//反转的时候，需要把坐标反转
+				if (m_frame.needReversal)
+					mouseX = -mouseX;
+				if (m_frame.frameData.getPixel(mouseX, mouseY) != 0)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		override public function destroy() : void

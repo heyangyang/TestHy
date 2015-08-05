@@ -308,6 +308,8 @@ package hy.game.core
 				m_components.push(component);
 			}
 
+			if (component.type == null)
+				error(this, "type is null!");
 			if (m_componentTypes[component.type])
 				error("type :" + component.type + "重复");
 			m_componentTypes[component.type] = component;
@@ -333,7 +335,7 @@ package hy.game.core
 
 		public function removeRender(render : SRender) : void
 		{
-			m_render.removeChild(render);
+			m_render && m_render.removeChild(render);
 		}
 
 		public function removeComponentByType(type : *) : void
@@ -356,16 +358,21 @@ package hy.game.core
 			m_owner.removeContainer(container);
 		}
 
+		public function get render() : SRender
+		{
+			return m_render;
+		}
+
 		private function clearComponents() : void
 		{
 			var component : Component;
-			for (var i : int = m_components.length - 1; i >= 0; i--)
+			for (var key : * in m_componentTypes)
 			{
-				component = m_components[i];
-				component.destroy();
+				component = m_componentTypes[key];
+				component && component.destroy();
+				delete m_componentTypes[key];
 			}
 			m_components.length = 0;
-			m_componentTypes = null;
 		}
 
 		override public function destroy() : void

@@ -76,7 +76,7 @@ package hy.game.core
 				return;
 			m_renders.push(render);
 			addChild(render.render as DisplayObject);
-			m_numRender++;
+			render.index = m_numRender++;
 			render.container = this;
 			m_depthSort = true;
 		}
@@ -92,7 +92,7 @@ package hy.game.core
 			if (index == -1)
 				return;
 			m_renders.splice(index, 1);
-			this.removeChild(render.render as DisplayObject);
+			removeChild(render.render as DisplayObject);
 			m_numRender--;
 			render.container = null;
 		}
@@ -203,6 +203,7 @@ package hy.game.core
 		 */
 		protected function updateChildIndex(render : IRender) : void
 		{
+			render.index = render_index;
 			if (getChildIndex(render.render as DisplayObject) != render_index)
 				setChildIndex(render.render as DisplayObject, render_index++);
 			else

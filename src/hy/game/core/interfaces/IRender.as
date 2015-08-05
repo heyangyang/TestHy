@@ -28,6 +28,9 @@ package hy.game.core.interfaces
 
 		function get layer() : int;
 		function set layer(value : int) : void;
+		
+		function get index() : int;
+		function set index(value : int) : void;
 
 		function get isSortLayer() : Boolean;
 		function set isSortLayer(value : Boolean) : void;

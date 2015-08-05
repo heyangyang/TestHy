@@ -32,6 +32,7 @@ package hy.game.render
 		protected var m_alpha : Number;
 		protected var m_rotation : int;
 		protected var m_zDepth : int;
+		protected var m_index : int;
 		protected var m_layer : int;
 		protected var m_isSortLayer : Boolean;
 		protected var m_visible : Boolean;
@@ -54,8 +55,11 @@ package hy.game.render
 				m_parentX = m_parent.x;
 				m_parentY = m_parent.y;
 				depth = m_parent.zDepth;
-				x = m_x;
-				y = m_y;
+				var oldX : int = m_x;
+				var oldY : int = m_y;
+				m_x = m_y = 0;
+				x = oldX;
+				y = oldY;
 			}
 		}
 
@@ -388,6 +392,16 @@ package hy.game.render
 		name_part function set depth(value : int) : void
 		{
 			m_zDepth = value;
+		}
+
+		public function get index() : int
+		{
+			return m_index;
+		}
+
+		public function set index(value : int) : void
+		{
+			m_index = value;
 		}
 
 		/**

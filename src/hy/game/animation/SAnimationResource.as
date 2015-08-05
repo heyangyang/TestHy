@@ -83,13 +83,13 @@ package hy.game.animation
 					if (frame.frameData)
 						return;
 					frame.clear();
-					frame.frameData = getBitmapDataByIndex(index);
 					var offset : Point = m_parser.getOffset(index, cur_dir);
 					if (offset)
 					{
 						frame.frameX = offset.x;
 						frame.frameY = offset.y;
 					}
+					frame.frameData = getBitmapDataByIndex(index);
 					if (!frame.frameData)
 						warning(this, "帧数据为空！" + index + "   " + id);
 				}

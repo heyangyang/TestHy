@@ -1,7 +1,7 @@
 package hy.game.data
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 	use namespace name_part;
@@ -15,10 +15,7 @@ package hy.game.data
 	{
 		public static const C_XYZ : int = Math.pow(2, 0);
 		public static const C_WH : int = Math.pow(2, 1);
-		public static const C_SCALE : int = Math.pow(2, 2);
-		public static const C_ALPHA : int = Math.pow(2, 3);
-		public static const C_FILTER : int = Math.pow(2, 4);
-		public static const C_TRAN : int = Math.pow(2, 5);
+		public static const C_ALPHA : int = Math.pow(2, 2);
 
 		private var m_x : int;
 		private var m_y : int;
@@ -46,6 +43,8 @@ package hy.game.data
 
 		name_part var mx : int;
 		name_part var my : int;
+
+		public var isMouseOver : Boolean;
 
 		public function STransform()
 		{
@@ -123,8 +122,6 @@ package hy.game.data
 			if (m_scale == value)
 				return;
 			m_scale = value;
-			if ((m_change & C_SCALE) == 0)
-				m_change += C_SCALE;
 		}
 
 		public function get alpha() : Number
@@ -151,8 +148,6 @@ package hy.game.data
 			if (m_filters == value)
 				return;
 			m_filters = value;
-			if ((m_change & C_FILTER) == 0)
-				m_change += C_FILTER;
 		}
 
 		public function get transform() : ColorTransform
@@ -165,8 +160,6 @@ package hy.game.data
 			if (m_transform == value)
 				return;
 			m_transform = value;
-			if ((m_change & C_TRAN) == 0)
-				m_change += C_TRAN;
 		}
 
 		public function get blendMode() : String
@@ -223,9 +216,9 @@ package hy.game.data
 		 */
 		public function contains(x : int, y : int) : Boolean
 		{
-			if (x < m_x + m_rectangle.x)
+			if (x < m_x + m_rectangle.x || x > m_x + m_rectangle.right)
 				return false;
-			if (y > m_y + m_rectangle.width)
+			if (y < m_y + m_rectangle.y || y > m_y + m_rectangle.bottom)
 				return false;
 			return true;
 		}
@@ -237,14 +230,8 @@ package hy.game.data
 				render.x = m_x;
 				render.y = m_y;
 			}
-//			if (isChangeFiled(C_SCALE))
-//				render.scale = m_scale;
 			if (isChangeFiled(C_ALPHA))
 				render.alpha = m_alpha;
-			if (isChangeFiled(C_FILTER))
-				render.filters = m_filters;
-			if (isChangeFiled(C_TRAN))
-				render.colorTransform = m_transform;
 		}
 
 		name_part function changAll() : void
@@ -252,10 +239,7 @@ package hy.game.data
 			m_change = 0;
 			m_change += C_XYZ;
 			m_change += C_WH;
-			m_change += C_SCALE;
 			m_change += C_ALPHA;
-			m_change += C_FILTER;
-			m_change += C_TRAN;
 		}
 
 		/**

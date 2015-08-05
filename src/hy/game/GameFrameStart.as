@@ -11,7 +11,7 @@ package hy.game
 	import hy.game.core.GameDispatcher;
 	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
-	import hy.game.manager.SMouseMangaer;
+	import hy.game.update.SMouseUpdateMangaer;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.manager.SUpdateManager;
 	import hy.game.net.SGameSocket;
@@ -65,7 +65,7 @@ package hy.game
 			stage.focus = stage;
 			m_current = this;
 			SDebug.init(stage);
-			SMouseMangaer.init(stage);
+			SMouseUpdateMangaer.getInstance().init(stage);
 			SLayerManager.getInstance().init(stage);
 			SUpdateManager.getInstance().init(stage);
 			SKeyboardManager.getInstance().init(stage);
