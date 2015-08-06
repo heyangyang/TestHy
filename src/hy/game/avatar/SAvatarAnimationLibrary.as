@@ -1,12 +1,12 @@
 package hy.game.avatar
 {
 	import flash.utils.Dictionary;
-	
-	import hy.game.core.SReference;
-	import hy.rpg.enum.EnumDirection;
+
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationManager;
 	import hy.game.animation.SAnimationResource;
+	import hy.game.core.SReference;
+	import hy.rpg.enum.EnumDirection;
 
 
 
@@ -62,13 +62,14 @@ package hy.game.avatar
 		 */
 		private var loader_count : int = 0;
 		private var loader_index : int = 0;
-		public var onReturnHanlder : Function;
+		private var onReturnHanlder : Function;
 
-		public function loaderAnimation() : void
+		public function loaderAnimation(complete : Function = null) : void
 		{
 			var animation : SAnimationResource;
 			var animationByDir : Dictionary;
 			loader_count = loader_index = 0;
+			onReturnHanlder = complete;
 			for each (animationByDir in m_animationByActionAndDir)
 			{
 				for each (animation in animationByDir)

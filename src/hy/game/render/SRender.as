@@ -24,8 +24,8 @@ package hy.game.render
 		protected var m_name : String;
 		name_part var m_parentX : int;
 		name_part var m_parentY : int;
-		protected var m_x : int;
-		protected var m_y : int;
+		protected var m_x : int=int.MIN_VALUE;
+		protected var m_y : int=int.MIN_VALUE;
 		protected var m_scaleX : Number;
 		protected var m_scaleY : Number;
 		protected var m_numChildren : int;
@@ -58,7 +58,7 @@ package hy.game.render
 				m_zDepth = m_parent.zDepth;
 				var oldX : int = m_x;
 				var oldY : int = m_y;
-				m_x = m_y = 0;
+				m_x = m_y = int.MIN_VALUE;
 				x = oldX;
 				y = oldY;
 			}

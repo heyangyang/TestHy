@@ -16,7 +16,6 @@ package hy.game.avatar
 		private var m_avatar : SAvatar;
 		private var m_change : Boolean;
 		private var m_avatarId : String;
-		private var m_defaultAvatar : Boolean;
 		private var m_priority : int;
 		/**
 		 * 加载成功后回调
@@ -36,16 +35,6 @@ package hy.game.avatar
 		public function set priority(value : int) : void
 		{
 			m_priority = value;
-		}
-
-		/**
-		 * 是否显示默认模型
-		 * @param value
-		 *
-		 */
-		public function set defaultAvatar(value : Boolean) : void
-		{
-			m_defaultAvatar = value;
 		}
 
 		/**
@@ -167,7 +156,6 @@ package hy.game.avatar
 			m_avatar = new SAvatar(avatarDesc);
 			m_avatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
 			m_avatar.animationsByParts = animations;
-			m_avatar.defaultAvatar = m_defaultAvatar;
 		}
 
 		public function dispose() : void

@@ -15,6 +15,7 @@ package hy.game.components
 	 */
 	public class SAvatarComponent extends SRenderComponent
 	{
+		public static var defaultAvatar : SAvatar;
 		protected var m_lazyAvatar : SAvatarResource;
 		protected var m_avatar : SAvatar;
 		protected var m_frame : SAnimationFrame;
@@ -53,7 +54,6 @@ package hy.game.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_lazyAvatar.defaultAvatar = true;
 			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
 			m_dir = m_action = -1;
 			m_useCenterOffsetY = true;
@@ -61,7 +61,7 @@ package hy.game.components
 			m_isRide = false;
 			m_isUseFilters = true;
 		}
-		
+
 		/**
 		 * 继承的子类，必须调用该类方法
 		 *
