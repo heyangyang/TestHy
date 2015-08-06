@@ -2,7 +2,6 @@ package hy.game.core
 {
 	import flash.utils.Dictionary;
 
-	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IGameObject;
 	import hy.game.data.STransform;
@@ -247,17 +246,25 @@ package hy.game.core
 				!component.isStart && component.onInit();
 				component.update();
 			}
+			m_render.needLayerSort && m_render.onLayerSort();
+			updateTransform();
+		}
+
+		/**
+		 * 更新transform的一些信息
+		 *
+		 */
+		protected function updateTransform() : void
+		{
 			transform.updateRender(m_render);
 			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.isMoving)
 			{
 				m_render.x = transform.x - SCameraObject.sceneX;
 				m_render.y = transform.y - SCameraObject.sceneY;
 				m_render.depth = transform.y;
-				updateRenderDepthSort();
 			}
 			//更新后，设置成为改变
 			transform.hasChanged();
-			m_render.isSortLayer && updateRenderDepthSort();
 		}
 
 		/**
@@ -286,15 +293,6 @@ package hy.game.core
 		public function updatePrioritySort() : void
 		{
 			m_prioritySort = true;
-		}
-
-		/**
-		 * 通知容器下次需要更新队列
-		 *
-		 */
-		private function updateRenderDepthSort() : void
-		{
-			m_owner.changeDepthSort();
 		}
 
 		public function addComponent(component : Component, priority : int = 0) : void
@@ -347,21 +345,6 @@ package hy.game.core
 		public function getComponentByType(type : *) : Component
 		{
 			return m_componentTypes[type];
-		}
-
-		public function addContainerIndex(container : IContainer, index : int) : void
-		{
-			m_owner.addContainer(container, index);
-		}
-
-		public function addContainer(container : IContainer) : void
-		{
-			m_owner.addContainer(container, m_owner.numChildren);
-		}
-
-		public function removeContainer(container : IContainer) : void
-		{
-			m_owner.removeContainer(container);
 		}
 
 		public function get render() : SRender

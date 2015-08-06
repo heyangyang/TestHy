@@ -46,6 +46,13 @@ package hy.game.data
 			bottom = Math.max(m_bottom, rect.bottom);
 		}
 
+		public function containsByPoint(px : int, py : int) : Boolean
+		{
+			if (px >= m_x && px <= m_right && py >= m_y && py <= m_bottom)
+				return true;
+			return false;
+		}
+
 		public function setEmpty() : void
 		{
 			updateRectangle(0, 0, 0, 0);

@@ -28,13 +28,13 @@ package hy.game.core.interfaces
 
 		function get layer() : int;
 		function set layer(value : int) : void;
-		
+
 		function get index() : int;
 		function set index(value : int) : void;
 
-		function get isSortLayer() : Boolean;
-		function set isSortLayer(value : Boolean) : void;
-		function updateSortLayer() : void;
+		function get needLayerSort() : Boolean;
+		function set needLayerSort(value : Boolean) : void;
+		function onLayerSort() : void;
 
 		function rotate(rotate : Number) : void;
 
@@ -49,7 +49,7 @@ package hy.game.core.interfaces
 
 		function get scaleX() : Number;
 		function set scaleX(value : Number) : void;
-		
+
 		function get scaleY() : Number;
 		function set scaleY(value : Number) : void;
 

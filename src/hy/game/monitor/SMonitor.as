@@ -3,6 +3,7 @@ package hy.game.monitor
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.system.Capabilities;
 	import flash.system.System;
 	import flash.text.StyleSheet;
@@ -10,12 +11,11 @@ package hy.game.monitor
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.STime;
 	import hy.game.core.SUpdate;
 	import hy.game.enum.EnumPriority;
-	import hy.game.render.SRenderContainer;
 	import hy.rpg.utils.UtilsCommon;
 	import hy.rpg.utils.UtilsFilter;
 	import hy.rpg.utils.UtilsUIStyle;
@@ -41,7 +41,7 @@ package hy.game.monitor
 			return instance;
 		}
 
-		private var container : SRenderContainer;
+		private var container : Sprite;
 
 		private var defaultColor : uint = DEFAULT_COLOR;
 
@@ -118,7 +118,7 @@ package hy.game.monitor
 			xml.copyright = Config.VERSION;
 			xml.version = Capabilities.version + (Capabilities.isDebugger ? " (debug)" : "");
 
-			container = new SRenderContainer();
+			container = new Sprite();
 			container.mouseEnabled = false;
 			container.mouseChildren = false;
 			container.y = container.x = 0;
@@ -135,7 +135,8 @@ package hy.game.monitor
 		override public function unRegisterd() : void
 		{
 			super.unRegisterd();
-			container.dispose();
+			container.parent && container.parent.removeChild(container);
+			bitmap.parent && bitmap.parent.removeChild(bitmap);
 		}
 
 		private function initView() : void

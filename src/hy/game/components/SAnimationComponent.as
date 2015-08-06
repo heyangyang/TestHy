@@ -4,7 +4,10 @@ package hy.game.components
 	import hy.game.aEffect.SEffectResource;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.core.STime;
+	import hy.game.namespaces.name_part;
 	import hy.rpg.enum.EnumLoadPriority;
+
+	use namespace name_part;
 
 	/**
 	 * 动画组件
@@ -72,6 +75,11 @@ package hy.game.components
 			m_y = y;
 		}
 
+		public function setLayer(value : int) : void
+		{
+			m_render.layer = value;
+		}
+
 		override public function update() : void
 		{
 			if (lazyEffect.isChange)
@@ -114,7 +122,7 @@ package hy.game.components
 		{
 			m_effect = effect;
 			m_effect.gotoAnimation(m_transform.dir, 0, m_loops);
-			m_render.layer = m_effect.depth;
+			m_render.depth = m_render.y;
 		}
 
 		override public function destroy() : void

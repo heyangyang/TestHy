@@ -6,7 +6,6 @@ package hy.game.render
 	
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
-	import hy.game.core.interfaces.IContainer;
 
 	public class SRenderBitmap extends Bitmap implements IBitmap
 	{
@@ -38,12 +37,6 @@ package hy.game.render
 		public function get colorTransform() : ColorTransform
 		{
 			return transform.colorTransform;
-		}
-
-
-		public function get sparent() : IContainer
-		{
-			return parent as IContainer;
 		}
 
 		public function dispose() : void

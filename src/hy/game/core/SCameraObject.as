@@ -16,7 +16,7 @@ package hy.game.core
 	{
 		private static var instance : SCameraObject;
 
-		private static var m_sceneX : int;
+		private static var m_sceneX : int = -1;
 
 		/**
 		 * 物体在场景的位置X
@@ -26,7 +26,7 @@ package hy.game.core
 			return m_sceneX;
 		}
 
-		private static var m_sceneY : int;
+		private static var m_sceneY : int = -1;
 
 		/**
 		 * 物体在场景的位置Y

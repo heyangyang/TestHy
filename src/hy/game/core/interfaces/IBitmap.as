@@ -48,8 +48,6 @@ package hy.game.core.interfaces
 
 		function set scrollRect(rect : Rectangle) : void;
 
-		function get sparent() : IContainer;
-
 		function dispose() : void;
 	}
 }

@@ -3,7 +3,6 @@ package hy.game.core
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 
-	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
@@ -42,18 +41,6 @@ package hy.game.core
 			addChildAt(render.render as DisplayObject, index);
 		}
 
-		public function addContainer(container : IContainer, index : int) : void
-		{
-			if (index > numChildren)
-				index = numChildren;
-			addChildAt(container as DisplayObject, index);
-		}
-
-		public function removeContainer(container : IContainer) : void
-		{
-			removeChild(container as DisplayObject);
-		}
-
 		/**
 		 * 获得渲染对象索引
 		 * @param render
@@ -63,6 +50,13 @@ package hy.game.core
 		public function getRenderIndex(render : IRender) : int
 		{
 			return getChildIndex(render.render as DisplayObject);
+		}
+
+		public function setChildRenderIndex(render : IRender, index : int) : void
+		{
+			if (getRenderIndex(render) == index)
+				return;
+			setChildIndex(render.render as DisplayObject, index);
 		}
 
 		/**
@@ -208,11 +202,6 @@ package hy.game.core
 				setChildIndex(render.render as DisplayObject, render_index++);
 			else
 				render_index += 1;
-			if (render.isSortLayer)
-			{
-				render.updateSortLayer();
-				render.isSortLayer = false;
-			}
 			for (var i : int = 0; i < render.numChildren; i++)
 			{
 				m_child = render.getChildAt(i);
@@ -249,7 +238,5 @@ package hy.game.core
 			}
 			m_depthSort && updateDepthSort();
 		}
-
-
 	}
 }

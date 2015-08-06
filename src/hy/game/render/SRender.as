@@ -41,6 +41,7 @@ package hy.game.render
 		protected var m_transform : ColorTransform
 		protected var m_filters : Array;
 		protected var m_childs : Vector.<IRender>;
+		protected var m_tmpIndex : int;
 		private var m_container : IGameContainer;
 
 		public function SRender()
@@ -54,7 +55,7 @@ package hy.game.render
 			{
 				m_parentX = m_parent.x;
 				m_parentY = m_parent.y;
-				depth = m_parent.zDepth;
+				m_zDepth = m_parent.zDepth;
 				var oldX : int = m_x;
 				var oldY : int = m_y;
 				m_x = m_y = 0;
@@ -66,19 +67,39 @@ package hy.game.render
 		public function notifyRemovedFromRender() : void
 		{
 			m_render && m_render.removeChild();
+			for (var i : int = 0; i < m_numChildren; i++)
+			{
+				m_childs[i].notifyRemovedFromRender();
+			}
 		}
 
 		public function set container(value : IGameContainer) : void
 		{
 			m_container = value;
-			if (m_childs && m_container)
+			if (!m_container)
+				notifyRemovedFromRender();
+		}
+
+		/**
+		 * 更新所有子元素层级
+		 *
+		 */
+		private function updateIndex() : void
+		{
+			if (!m_container)
+				return;
+			m_tmpIndex = m_container.getRenderIndex(this);
+			updateIndexByRender(this);
+		}
+
+		private function updateIndexByRender(render : SRender) : void
+		{
+			var child : SRender;
+			for (var i : int = 0; i < m_numChildren; i++)
 			{
-				var child : SRender;
-				for (var i : int = 0; i < m_numChildren; i++)
-				{
-					child = m_childs[i] as SRender;
-					m_container.addChildRender(child, getRenderIndex(child));
-				}
+				child = m_childs[i] as SRender;
+				m_container.setChildRenderIndex(child, ++m_tmpIndex);
+				child.numChildren > 0 && updateIndexByRender(child);
 			}
 		}
 
@@ -392,6 +413,7 @@ package hy.game.render
 		name_part function set depth(value : int) : void
 		{
 			m_zDepth = value;
+			m_container && m_container.changeDepthSort();
 		}
 
 		public function get index() : int
@@ -418,22 +440,24 @@ package hy.game.render
 		{
 			m_layer = value;
 			if (m_parent)
-				m_parent.isSortLayer = true;
+				m_parent.needLayerSort = true;
 		}
 
-		public function get isSortLayer() : Boolean
+		public function get needLayerSort() : Boolean
 		{
 			return m_isSortLayer;
 		}
 
-		public function set isSortLayer(value : Boolean) : void
+		public function set needLayerSort(value : Boolean) : void
 		{
-			m_isSortLayer = value;
+			m_isSortLayer = true;
 		}
 
-		public function updateSortLayer() : void
+		public function onLayerSort() : void
 		{
 			m_childs.sort(onSortLayer);
+			updateIndex();
+			m_isSortLayer = false;
 		}
 
 		private function onSortLayer(a : SRender, b : SRender) : int
