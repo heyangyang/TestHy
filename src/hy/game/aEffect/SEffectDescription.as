@@ -7,9 +7,7 @@ package hy.game.aEffect
 	import hy.game.animation.SAnimationManager;
 
 	/**
-	 *
-	 * <p>
-	 * SunnyGame的特效描述
+	 * 特效描述
 	 *
 	 */
 	public class SEffectDescription extends SObject

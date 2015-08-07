@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
@@ -19,13 +19,18 @@ package hy.game.render
 	 */
 	public class SRender implements IRender, IRecycle
 	{
+		private static var ids : uint = 0;
+		/**
+		 * 唯一id
+		 */
+		name_part var id : uint;
 		protected var m_render : IBitmap;
 		protected var m_bitmapData : IBitmapData;
 		protected var m_name : String;
 		name_part var m_parentX : int;
 		name_part var m_parentY : int;
-		protected var m_x : int=int.MIN_VALUE;
-		protected var m_y : int=int.MIN_VALUE;
+		protected var m_x : int = int.MIN_VALUE;
+		protected var m_y : int = int.MIN_VALUE;
 		protected var m_scaleX : Number;
 		protected var m_scaleY : Number;
 		protected var m_numChildren : int;
@@ -46,6 +51,7 @@ package hy.game.render
 
 		public function SRender()
 		{
+			id = ids++;
 			m_render = new SRenderBitmap();
 		}
 
@@ -504,7 +510,7 @@ package hy.game.render
 				m_childs[i][field] = value;
 			}
 		}
-
+		
 		/**
 		 * 回收
 		 *

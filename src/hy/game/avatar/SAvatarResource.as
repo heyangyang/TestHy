@@ -153,7 +153,8 @@ package hy.game.avatar
 			//建立每个独立部件的动画数据
 			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(m_priority, "whole1", avatarDesc, true);
 			m_avatar && m_avatar.dispose();
-			m_avatar = new SAvatar(avatarDesc);
+			m_avatar = new SAvatar();
+			m_avatar.initAvatar(avatarDesc);
 			m_avatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
 			m_avatar.animationsByParts = animations;
 		}

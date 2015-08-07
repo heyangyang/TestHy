@@ -18,10 +18,11 @@ package hy.game.components
 	{
 		private var lazyEffect : SEffectResource;
 		private var m_effect : SEffect;
+		private var m_currFrame : SAnimationFrame;
+		private var m_updateFrame : SAnimationFrame;
 		private var m_loops : int;
 		private var m_x : int;
 		private var m_y : int;
-		private var animationFrame : SAnimationFrame;
 
 		public function SAnimationComponent(type : * = null)
 		{
@@ -56,7 +57,8 @@ package hy.game.components
 		{
 			super.notifyRemoved();
 			m_effect = null;
-			animationFrame = null;
+			m_currFrame = null;
+			m_updateFrame = null;
 		}
 
 		/**
@@ -94,13 +96,13 @@ package hy.game.components
 				destroy();
 				return;
 			}
-			var frame : SAnimationFrame = m_effect.gotoNextFrame(STime.deltaTime);
-			if (!frame || frame == animationFrame)
+			m_updateFrame = m_effect.gotoNextFrame(STime.deltaTime);
+			if (!m_updateFrame || m_updateFrame == m_currFrame)
 				return;
-			animationFrame = frame;
-			m_render.bitmapData = animationFrame.frameData;
-			m_render.x = m_x + animationFrame.x + m_offsetX;
-			m_render.y = m_y + animationFrame.y + m_offsetY;
+			m_currFrame = m_updateFrame;
+			m_render.bitmapData = m_currFrame.frameData;
+			m_render.x = m_x + m_currFrame.x + m_offsetX;
+			m_render.y = m_y + m_currFrame.y + m_offsetY;
 		}
 
 		/**
@@ -121,7 +123,7 @@ package hy.game.components
 		protected function onLoadEffectComplete(effect : SEffect) : void
 		{
 			m_effect = effect;
-			m_effect.gotoAnimation(m_transform.dir, 0, m_loops);
+			m_effect.gotoEffect(m_transform.dir, 0, m_loops);
 			m_render.depth = m_render.y;
 		}
 

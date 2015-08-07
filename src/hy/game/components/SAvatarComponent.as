@@ -143,7 +143,7 @@ package hy.game.components
 		 */
 		protected function changeAnimation() : void
 		{
-			if (m_data.isRide)
+			if (m_isRide)
 				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, 0, m_dir, 0, 0);
 			else
 				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);

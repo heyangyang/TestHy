@@ -106,11 +106,13 @@ package hy.game.animation
 			if (!desc.version || desc.version == "undefined")
 				desc.version = mainVersion;
 
+			var frameDescription : SFrameDescription;
+			var frameValue : String;
 			for each (var frame : XML in animationXML.frame)
 			{
-				var frameDescription : SFrameDescription = new SFrameDescription();
+				frameDescription = new SFrameDescription();
 				frameDescription.index = uint(frame.@index);
-				var frameValue : String = frame.@frame;
+				frameValue = frame.@frame;
 				if (frameValue)
 					frameDescription.frame = uint(frameValue);
 				else

@@ -15,6 +15,7 @@ package hy.game.components
 		protected var m_transform : STransform;
 		protected var m_offsetX : int;
 		protected var m_offsetY : int;
+		protected var m_isVisible : Boolean = true;
 
 		public function SRenderComponent(type : * = null)
 		{
@@ -36,17 +37,17 @@ package hy.game.components
 		 */
 		override protected function onStart() : void
 		{
-			addRender(m_render);
+			updateRenderVisible();
 			m_render.notifyAddedToRender();
 			m_transform = m_owner.transform;
 		}
 
-		override public function notifyAdded():void
+		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
 			m_offsetX = m_offsetY = 0;
 		}
-		
+
 		/**
 		 * 继承的子类，必须调用该类方法
 		 *
@@ -94,5 +95,18 @@ package hy.game.components
 			m_offsetY = value;
 		}
 
+		public function setVisible(value : Boolean) : void
+		{
+			m_isVisible = value;
+			updateRenderVisible();
+		}
+
+		protected function updateRenderVisible() : void
+		{
+			if (m_isVisible)
+				addRender(m_render);
+			else
+				removeRender(m_render);
+		}
 	}
 }

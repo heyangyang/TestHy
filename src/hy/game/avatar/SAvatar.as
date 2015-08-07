@@ -1,15 +1,14 @@
 package hy.game.avatar
 {
-	import hy.game.animation.SAnimation;
+	import hy.game.aEffect.SEffect;
 	import hy.game.animation.SAnimationFrame;
-	import hy.game.data.SObject;
 	import hy.rpg.enum.EnumDirection;
 
 	/**
 	 * 纸娃娃
 	 *
 	 */
-	public class SAvatar extends SObject
+	public class SAvatar extends SEffect
 	{
 		/**
 		 * 所有部件对应的各自动画
@@ -18,67 +17,22 @@ package hy.game.avatar
 		/**
 		 * 当前avatar的描述
 		 */
-		public var m_avatarDesc : SAvatarDescription;
-		private var m_width : int;
-		private var m_height : int;
-		//当前动画
-		private var m_curAnimation : SAnimation;
-		private var m_curAnimationFrame : SAnimationFrame;
+		private var m_avatarDesc : SAvatarDescription;
 		// 当前动作
-		private var m_curAction : uint = SActionType.IDLE;
-		private var m_curKind : uint = 0;
-		//当前方向
-		private var m_curDir : uint = EnumDirection.EAST;
-		private var m_correctDir : uint = EnumDirection.EAST;
-		private var m_dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
-		/**
-		 * 当前帧逝去时间
-		 */
-		protected var m_curFrameElapsedTime : int;
-		/**
-		 * 当前帧持续的时间
-		 */
-		protected var m_curFrameDuration : int;
-		/**
-		 * 当前的动画帧索引
-		 */
-		protected var m_curFrameIndex : int;
-		/**
-		 * 是否暂停播放
-		 */
-		protected var m_isPaused : Boolean;
+		private var m_curAction : uint;
+		private var m_curKind : uint;
 
-		/**
-		 * 当前帧是否到最后一帧
-		 */
-		protected var m_isEnd : Boolean;
-		/**
-		 *  是否播放次数结束
-		 */
-		protected var m_isLoopEnd : Boolean;
-		/**
-		 * 刚开始播放
-		 */
-		protected var m_isJustStarted : Boolean;
-		/**
-		 * 动画总共需要循环的次数
-		 */
-		protected var m_loops : int = 0;
-		/**
-		 * 当前已经循环的次数
-		 */
-		protected var m_curLoop : int;
+		public function SAvatar()
+		{
 
-		private var m_skipFrames : int
-		private var m_nextFrame : SAnimationFrame;
+		}
 
-		public function SAvatar(desc : SAvatarDescription)
+		public function initAvatar(desc : SAvatarDescription) : void
 		{
 			this.m_avatarDesc = desc;
 			m_width = Math.abs(desc.rightBorder - desc.leftBorder);
 			m_height = Math.abs(desc.bottomBorder - desc.topBorder);
 		}
-
 
 		/**
 		 * 换方向
@@ -87,7 +41,7 @@ package hy.game.avatar
 		 */
 		public function gotoDirection(dir : int) : SAnimationFrame
 		{
-			return gotoAnimation(m_curAction, m_curKind, dir, curFrame, 0);
+			return gotoAnimation(m_curAction, m_curKind, dir, m_curFrameIndex, 0);
 		}
 
 		/**
@@ -173,206 +127,6 @@ package hy.game.avatar
 			return false;
 		}
 
-		public function gotoNextFrame(elapsedTime : int) : SAnimationFrame
-		{
-			if (!m_curAnimation)
-				return null;
-			if (!m_curAnimationFrame)
-				return gotoFrame(1);
-			if (m_isPaused)
-				return m_curAnimationFrame;
-
-			m_isJustStarted = false;
-			m_curFrameDuration = m_curAnimationFrame.duration;
-			m_curFrameElapsedTime += elapsedTime;
-
-			if (m_curFrameElapsedTime < m_curFrameDuration)
-				return m_curAnimationFrame;
-			//要强制跳的帧数
-			m_skipFrames = m_curFrameElapsedTime / m_curFrameDuration;
-			//大于一帧的跳帧情况
-			if (m_skipFrames > 1)
-			{
-				do
-				{
-					m_curFrameElapsedTime -= m_curFrameDuration;
-					m_curFrameIndex += 1;
-					if (m_curFrameIndex >= totalFrame)
-					{
-						m_curFrameIndex = totalFrame;
-						break;
-					}
-					else
-					{
-						m_nextFrame = getFrame(m_curFrameIndex + 1);
-						m_curFrameDuration = m_nextFrame.duration;
-					}
-				} while (m_curFrameElapsedTime >= m_curFrameDuration)
-			}
-			else
-			{
-				//求余值 
-				m_curFrameElapsedTime = m_curFrameElapsedTime % m_curFrameDuration;
-				m_curFrameIndex += m_skipFrames;
-			}
-
-			//如果播放到动画尾，重新从第一帧开始播放
-			if (m_curFrameIndex >= totalFrame)
-			{
-				m_curLoop++;
-				//从0帧开始跳转 当前帧索引 相对于 总帧数 的余数
-				m_curFrameIndex = m_curFrameIndex % totalFrame;
-				//如果需要记录结束 ，则不跳转
-				if (m_loops > 0 && m_curLoop >= m_loops)
-				{
-					gotoFrame(totalFrame);
-					m_isLoopEnd = true;
-				}
-				else
-				{
-					m_isJustStarted = true;
-					gotoFrame(m_curFrameIndex + 1);
-				}
-			}
-			else
-			{
-				gotoFrame(m_curFrameIndex + 1);
-			}
-
-			if (m_curFrameIndex >= totalFrame && m_curFrameElapsedTime >= m_curFrameDuration)
-				m_isEnd = true;
-			return m_curAnimationFrame;
-		}
-
-		public function gotoFrame(frame : int) : SAnimationFrame
-		{
-			if (!m_curAnimation)
-				return null;
-			if (frame < 1)
-				frame = 1;
-			if (frame > totalFrame)
-				frame = totalFrame;
-			m_curFrameElapsedTime = 0;
-			m_curFrameIndex = frame - 1;
-
-			m_curAnimation.constructFrames(frame);
-			m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-			while (m_curAnimationFrame && m_curAnimationFrame.duration <= 0)
-			{
-				frame++;
-				m_curFrameIndex = frame - 1;
-				if (m_curFrameIndex >= 0 && m_curFrameIndex < totalFrame)
-				{
-					m_curAnimation.constructFrames(frame);
-					m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-				}
-				else
-				{
-					frame = totalFrame;
-					m_curFrameIndex = frame - 1;
-					m_curAnimation.constructFrames(frame);
-					m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-					break;
-				}
-			}
-			m_isEnd = frame >= totalFrame;
-			return m_curAnimationFrame;
-		}
-
-		// 暂定播放动画
-		public function pause() : void
-		{
-			m_isPaused = true;
-		}
-
-		// 恢复播放动画
-		public function resume(elapsedTime : int = 0) : void
-		{
-			m_isPaused = false;
-			m_curFrameElapsedTime = 0;
-			m_isEnd = false;
-			m_isLoopEnd = false;
-			m_isJustStarted = true;
-			m_curLoop = 0;
-		}
-
-		public function get isEnd() : Boolean
-		{
-			if (!m_curAnimation)
-				return false;
-			return m_isEnd && m_isLoopEnd;
-		}
-
-		public function get isLoopEnd() : Boolean
-		{
-			return m_curAnimation ? m_isLoopEnd : false;
-		}
-
-		public function get curFrameIndex() : int
-		{
-			return m_curAnimation ? m_curFrameIndex : 0;
-		}
-
-		public function get curFrame() : int
-		{
-			return m_curAnimation ? m_curFrameIndex + 1 : 1;
-		}
-
-		public function get totalFrame() : int
-		{
-			return m_curAnimation ? m_curAnimation.totalFrame : 1;
-		}
-
-		public function get isJustStarted() : Boolean
-		{
-			return m_curAnimation ? m_isJustStarted : true;
-		}
-
-		public function get isPaused() : Boolean
-		{
-			return m_curAnimation ? m_isPaused : true;
-		}
-
-		public function get curAnimationFrame() : SAnimationFrame
-		{
-			return m_curAnimation ? m_curAnimationFrame : null;
-		}
-
-		public function getFrame(frame : int) : SAnimationFrame
-		{
-			return m_curAnimation ? m_curAnimation.getFrame(frame - 1) : null;
-		}
-
-		public function get loops() : int
-		{
-			return m_loops;
-		}
-
-		public function set loops(value : int) : void
-		{
-			m_loops = value;
-		}
-
-		public function getFrameDurations(frame : int = 1) : int
-		{
-			return m_curAnimation ? m_curAnimation.getFrameDurations(frame) : 0;
-		}
-
-		public function get curDir() : int
-		{
-			return m_curDir;
-		}
-
-		public function get curAction() : uint
-		{
-			return m_curAction;
-		}
-
-		public function get curKind() : uint
-		{
-			return m_curKind;
-		}
-
 		/**
 		 * 根据描述确定是否有该动作
 		 * @param action
@@ -382,8 +136,7 @@ package hy.game.avatar
 		{
 			if (m_avatarDesc == null)
 				return false;
-			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, kind);
-			if (actionDesc)
+			if (m_avatarDesc.getActionDescByAction(action, kind))
 				return true;
 			return false;
 		}
@@ -440,74 +193,21 @@ package hy.game.avatar
 			return m_animationsByPart;
 		}
 
-		public function get width() : int
+		public function get curAction() : uint
 		{
-			return m_width;
+			return m_curAction;
 		}
 
-		public function set width(value : int) : void
+		public function get curKind() : uint
 		{
-			if (m_width != value)
-				m_width = value;
+			return m_curKind;
 		}
 
-		public function get height() : int
+		override public function dispose() : void
 		{
-			return m_height;
-		}
-
-		public function set height(value : int) : void
-		{
-			if (m_height != value)
-				m_height = value;
-		}
-
-		public function get animation_width() : int
-		{
-			return m_curAnimation ? m_curAnimation.width : 0;
-		}
-
-		public function get animation_height() : int
-		{
-			return m_curAnimation ? m_curAnimation.height : 0;
-		}
-
-		public function get offsetX() : int
-		{
-			return m_curAnimation ? m_curAnimation.offsetX : 0;
-		}
-
-		public function get offsetY() : int
-		{
-			return m_curAnimation ? m_curAnimation.offsetY : 0;
-		}
-
-		public function get hasAnimation() : Boolean
-		{
-			return m_curAnimation != null;
-		}
-
-		public function get correctDir() : uint
-		{
-			return m_correctDir;
-		}
-
-		public function set dirMode(value : uint) : void
-		{
-			m_dirMode = value;
-		}
-
-		public function get dirMode() : uint
-		{
-			return m_dirMode;
-		}
-
-		public function dispose() : void
-		{
+			super.dispose();
 			animationsByParts = null;
 			m_avatarDesc = null;
-			m_curAnimation = null;
-			m_curAnimationFrame = null;
 		}
 	}
 }

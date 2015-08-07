@@ -2,7 +2,7 @@ package hy.game.animation
 {
 	import flash.display.BlendMode;
 	import flash.filters.BitmapFilter;
-	
+
 	import hy.game.data.SObject;
 
 
@@ -49,8 +49,8 @@ package hy.game.animation
 		private var m_blendMode : String = BlendMode.NORMAL;
 
 		public var filter : BitmapFilter;
-		
-		protected var m_depth:int;
+
+		protected var m_depth : int;
 
 		public function SAnimation(id : String, desc : SAnimationDescription, needReversal : Boolean)
 		{
@@ -70,7 +70,7 @@ package hy.game.animation
 			m_centerY = desc.centerY;
 			m_width = desc.width;
 			m_height = desc.height;
-			m_depth=desc.depth;
+			m_depth = desc.depth;
 			filter = desc.filter;
 			m_blendMode = desc.blendMode;
 
@@ -86,17 +86,14 @@ package hy.game.animation
 				animationFrame.duration = frameDesc.duration;
 				m_animationFrames.push(animationFrame);
 			}
-			total_frames = m_animationFrames.length;
+			total_frames = m_animationFrames.length - 1;
+			if (total_frames <= 0)
+				error(desc.id + "is null frames ");
 		}
 
 
 		public function getFrame(frame : int) : SAnimationFrame
 		{
-			constructFrames(frame);
-			if (m_animationFrames && total_frames > 0)
-			{
-				return m_animationFrames[frame];
-			}
 			return null;
 		}
 
@@ -107,7 +104,7 @@ package hy.game.animation
 
 		public function get totalFrame() : int
 		{
-			return total_frames == 0 ? 1 : total_frames;
+			return total_frames;
 		}
 
 		/**
@@ -162,13 +159,13 @@ package hy.game.animation
 		{
 			return m_height;
 		}
-		
-		
+
+
 		public function get depth() : int
 		{
 			return m_depth;
 		}
-		
+
 
 		/**
 		 * 销毁所有帧
@@ -178,7 +175,6 @@ package hy.game.animation
 		{
 			if (m_animationFrames == null)
 				return;
-			var len : int = m_animationFrames.length;
 			for each (var frame : SAnimationFrame in m_animationFrames)
 			{
 				frame.destroy();
@@ -189,6 +185,7 @@ package hy.game.animation
 
 		public function destroy() : void
 		{
+			m_description = null;
 			destroyFrames();
 			filter = null;
 		}

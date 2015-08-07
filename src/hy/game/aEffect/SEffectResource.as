@@ -141,8 +141,9 @@ package hy.game.aEffect
 			//建立每个独立部件的动画数据
 			var animations : SEffectAnimationLibrary = SReferenceManager.getInstance().createEffectCollection(effectDescription, true);
 			m_effect && m_effect.dispose();
-			m_effect = new SEffect(effectDescription);
-			m_effect.animationsByParts = animations;
+			m_effect = new SEffect();
+			m_effect.initEffect(effectDescription);
+			m_effect.effectAnimationLibrary = animations;
 		}
 
 		/**

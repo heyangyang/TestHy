@@ -222,7 +222,9 @@ package hy.game.core
 				return -1;
 			if (a.zDepth > b.zDepth)
 				return 1;
-			return 0;
+			if (a.id > b.id)
+				return 1;
+			return -1;
 		}
 
 		public function update() : void
