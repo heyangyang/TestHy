@@ -6,7 +6,6 @@ package hy.game.avatar
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
-	import hy.game.utils.SDebug;
 	import hy.rpg.enum.EnumDirection;
 
 
@@ -22,9 +21,12 @@ package hy.game.avatar
 		 */
 		protected var m_notifyCompleteds : Vector.<Function>;
 
-		public function SAvatarResource()
+		public function SAvatarResource(avatar : SAvatar)
 		{
 			super();
+			m_avatar = avatar;
+			if (m_avatar == null)
+				error(this, "avatar is null!");
 		}
 
 		/**
@@ -136,8 +138,9 @@ package hy.game.avatar
 				return;
 			for each (var notify : Function in m_notifyCompleteds)
 			{
-				notify(m_avatar);
+				notify();
 			}
+			m_avatar = null;
 			m_notifyCompleteds.length = 0;
 		}
 
@@ -148,13 +151,10 @@ package hy.game.avatar
 		 */
 		private function createAvatar(avatarDesc : SAvatarDescription) : void
 		{
-			if (!m_avatarId)
-				SDebug.error("avatar part = null :" + avatarDesc.name);
-			//建立每个独立部件的动画数据
-			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(m_priority, "whole1", avatarDesc, true);
-			m_avatar && m_avatar.dispose();
-			m_avatar = new SAvatar();
-			m_avatar.initAvatar(avatarDesc);
+			//已经销毁则不处理，直接返回
+			if (!m_notifyCompleteds)
+				return;
+			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(m_priority, "whole1", avatarDesc);
 			m_avatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
 			m_avatar.animationsByParts = animations;
 		}
@@ -166,11 +166,7 @@ package hy.game.avatar
 
 		public function dispose() : void
 		{
-			if (m_avatar)
-			{
-				m_avatar.dispose();
-				m_avatar = null;
-			}
+			m_avatar = null;
 			m_notifyCompleteds = null;
 		}
 	}

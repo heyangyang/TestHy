@@ -15,7 +15,11 @@ package hy.game.components
 	 */
 	public class SAvatarComponent extends SRenderComponent
 	{
-		public static var defaultAvatar : SAvatar;
+		/**
+		 * 默认模型
+		 */
+		public static var default_avatar : SAvatar;
+
 		protected var m_lazyAvatar : SAvatarResource;
 		protected var m_avatar : SAvatar;
 		protected var m_frame : SAnimationFrame;
@@ -55,7 +59,8 @@ package hy.game.components
 		override protected function init() : void
 		{
 			super.init();
-			m_lazyAvatar = new SAvatarResource();
+			m_avatar = new SAvatar();
+			m_lazyAvatar = new SAvatarResource(m_avatar);
 		}
 
 		override public function notifyAdded() : void
@@ -78,9 +83,14 @@ package hy.game.components
 		{
 			super.onStart();
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-//			if (m_useDefaultAvatar)
-//				onLoadAvatarComplete(defaultAvatar);
-//			m_useDefaultAvatar && onLoadAvatarComplete(defaultAvatar);
+			if (m_useDefaultAvatar)
+			{
+				m_avatar.dirMode = default_avatar.dirMode;
+				//自增下，以免被垃圾回收
+				default_avatar.animationsByParts.retain();
+				m_avatar.animationsByParts = default_avatar.animationsByParts;
+				onLoadAvatarComplete();
+			}
 			setAvatarId(m_data.avatarId);
 		}
 
@@ -98,11 +108,6 @@ package hy.game.components
 			{
 				m_lazyAvatar.addNotifyCompleted(onLoadAvatarComplete);
 				m_lazyAvatar.loadResource();
-			}
-			if (!m_avatar)
-			{
-				m_render.bitmapData = null;
-				return;
 			}
 			if (m_dir != m_transform.dir || m_action != m_data.action || m_isRide != m_data.isRide)
 			{
@@ -125,6 +130,10 @@ package hy.game.components
 				m_render.filters = m_filters;
 			}
 
+			if (m_useDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))
+			{
+				tmp_frame = default_avatar.gotoAnimation(m_action, m_dir, m_avatar.curFrameIndex, 0);
+			}
 			if (!tmp_frame || !tmp_frame.frameData)
 			{
 				m_render.bitmapData = null;
@@ -165,11 +174,10 @@ package hy.game.components
 			m_lazyAvatar.setAvatarId(avatarId);
 		}
 
-		protected function onLoadAvatarComplete(avatar : SAvatar) : void
+		protected function onLoadAvatarComplete() : void
 		{
-			m_avatar = avatar;
-			m_owner.transform.width = avatar.width;
-			m_height = m_owner.transform.height = avatar.height;
+			m_owner.transform.width = m_avatar.width;
+			m_height = m_owner.transform.height = m_avatar.height;
 			m_dir = m_action = -1;
 			m_isRide = !m_data.isRide;
 		}

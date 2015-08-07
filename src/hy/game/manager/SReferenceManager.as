@@ -339,11 +339,11 @@ package hy.game.manager
 		//*********************************声音****************************
 
 		//*********************************avatar帧****************************
-		public function createAvatarCollection(priority : int, partName : String, avatarDesc : SAvatarDescription, needReversal : Boolean) : SAvatarAnimationLibrary
+		public function createAvatarCollection(priority : int, partName : String, avatarDesc : SAvatarDescription) : SAvatarAnimationLibrary
 		{
 			if (avatarDesc == null)
 				return null;
-			return createReference(ANIMATION, partName + "," + avatarDesc.name, SAvatarAnimationLibrary, priority, partName, avatarDesc, needReversal) as SAvatarAnimationLibrary;
+			return createReference(ANIMATION, partName + "," + avatarDesc.name, SAvatarAnimationLibrary, priority, partName, avatarDesc) as SAvatarAnimationLibrary;
 		}
 
 		//*********************************avatar帧****************************

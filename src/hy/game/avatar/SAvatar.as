@@ -26,9 +26,9 @@ package hy.game.avatar
 
 		}
 
-		public function initAvatar(desc : SAvatarDescription) : void
+		private function initAvatar(desc : SAvatarDescription) : void
 		{
-			this.m_avatarDesc = desc;
+			m_avatarDesc = desc;
 			m_width = Math.abs(desc.rightBorder - desc.leftBorder);
 			m_height = Math.abs(desc.bottomBorder - desc.topBorder);
 		}
@@ -53,11 +53,8 @@ package hy.game.avatar
 		 */
 		public function gotoAnimation(action : uint, dir : int, frame : int, loops : int) : SAnimationFrame
 		{
-			if (m_avatarDesc == null)
-			{
-				warning(this, "avatarDesc=null");
+			if (!m_avatarDesc)
 				return null;
-			}
 			if (action != 0)
 			{
 				if (hasAction(action, 0))
@@ -66,6 +63,7 @@ package hy.game.avatar
 				}
 				else
 				{
+					warning(m_avatarDesc.name, "not find action : ", action);
 					m_curAction = 0;
 					var avaliaAction : Array = getAvaliableAction(action);
 					if (avaliaAction)
@@ -76,11 +74,10 @@ package hy.game.avatar
 			}
 
 			if (!m_curAction)
-			{
 				return null;
-			}
 
 			m_curDir = dir;
+			//矫正方向
 			m_correctDir = EnumDirection.correctDirection(m_dirMode, m_correctDir, dir);
 
 			if (m_correctDir != 0)
@@ -88,9 +85,10 @@ package hy.game.avatar
 				if (!hasDir(m_correctDir, m_curAction))
 				{
 					m_correctDir = getAvaliableDir(0, 0);
+					warning(m_avatarDesc.name, "not find dir : ", dir);
 				}
 			}
-			m_curAnimation = m_animationsByPart.gotoAnimation(m_curAction, 0, m_correctDir);
+			m_curAnimation = m_animationsByPart.gotoAnimation(m_curAction, m_correctDir);
 			m_loops = loops;
 			gotoFrame(frame);
 			return m_curAnimationFrame;
@@ -103,8 +101,6 @@ package hy.game.avatar
 		 */
 		public function hasDir(curDir : int, action : uint) : Boolean
 		{
-			if (action == 0)
-				action = m_curAction;
 			if (m_avatarDesc == null || action == 0)
 				return false;
 			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, 0);
@@ -176,6 +172,8 @@ package hy.game.avatar
 			if (m_animationsByPart)
 				m_animationsByPart.release();
 			m_animationsByPart = value;
+			if (m_animationsByPart)
+				initAvatar(m_animationsByPart.avatarDes);
 		}
 
 		public function get animationsByParts() : SAvatarAnimationLibrary

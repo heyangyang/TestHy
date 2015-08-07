@@ -1,7 +1,7 @@
 package hy.game.avatar
 {
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.animation.SAnimation;
 	import hy.game.animation.SAnimationManager;
 	import hy.game.animation.SAnimationResource;
@@ -20,26 +20,31 @@ package hy.game.avatar
 	public class SAvatarAnimationLibrary extends SReference
 	{
 		private var m_animationByActionAndDir : Dictionary;
+		private var m_avatarDes : SAvatarDescription;
+		private var m_avatarId : String;
 		/**
-		 * 部件名称
+		 * 加载所有的动画
 		 */
-		private var m_partName : String;
+		private var loader_count : int = 0;
+		private var loader_index : int = 0;
+		private var onReturnHanlder : Function;
 
-		public function SAvatarAnimationLibrary(priority : int, partName : String, avatarDesc : SAvatarDescription, needReversal : Boolean)
+		public function SAvatarAnimationLibrary(priority : int, avatarId : String, avatarDesc : SAvatarDescription)
 		{
-			m_partName = partName;
+			m_avatarId = avatarId;
+			m_avatarDes = avatarDesc;
 			m_animationByActionAndDir = new Dictionary();
-			createSinglePartAnimations(priority, avatarDesc, needReversal);
+			createSinglePartAnimations(priority, avatarDesc);
 		}
 
-		private function setAnimationByActionAndDir(action : uint, kind : uint, animationByDir : Dictionary) : void
+		private function setAnimationByActionAndDir(action : uint, animationByDir : Dictionary) : void
 		{
-			m_animationByActionAndDir[action + "." + kind] = animationByDir;
+			m_animationByActionAndDir[action] = animationByDir;
 		}
 
-		private function getAnimationByActionAndDir(action : uint, kind : uint) : Dictionary
+		private function getAnimationByActionAndDir(action : uint) : Dictionary
 		{
-			return m_animationByActionAndDir[action + "." + kind];
+			return m_animationByActionAndDir[action];
 		}
 
 		/**
@@ -50,20 +55,17 @@ package hy.game.avatar
 		 * @return
 		 *
 		 */
-		public function gotoAnimation(action : uint, kind : uint, dir : int) : SAnimation
+		public function gotoAnimation(action : uint, dir : int) : SAnimation
 		{
-			var dir2Animation : Dictionary = getAnimationByActionAndDir(action, kind);
+			var dir2Animation : Dictionary = getAnimationByActionAndDir(action);
 			return dir2Animation[dir];
 		}
 
 		/**
-		 * 加载所有的动画
+		 * 加载所有动画
+		 * @param complete
 		 *
 		 */
-		private var loader_count : int = 0;
-		private var loader_index : int = 0;
-		private var onReturnHanlder : Function;
-
 		public function loaderAnimation(complete : Function = null) : void
 		{
 			var animation : SAnimationResource;
@@ -98,18 +100,7 @@ package hy.game.avatar
 		 */
 		public function get isLoaded() : Boolean
 		{
-			var animation : SAnimation;
-			var animationByDir : Dictionary;
-			for each (animationByDir in m_animationByActionAndDir)
-			{
-				for each (animation in animationByDir)
-				{
-					if (!animation.isLoaded)
-						return false;
-					break;
-				}
-			}
-			return true;
+			return loader_index >= loader_count;
 		}
 
 		override protected function destroy() : void
@@ -136,12 +127,11 @@ package hy.game.avatar
 		 * @return
 		 *
 		 */
-		private function createSinglePartAnimations(priority : int, avatarDesc : SAvatarDescription, allNeedReversalPart : Boolean) : void
+		private function createSinglePartAnimations(priority : int, avatarDesc : SAvatarDescription) : void
 		{
-			if (!m_partName || avatarDesc == null)
+			if (!m_avatarId || avatarDesc == null)
 				return;
 
-			var needReversalPart : Boolean;
 			var animationByDir : Dictionary;
 			var partDesc : SAvatarPartDescription;
 			var dirs : Array;
@@ -154,21 +144,19 @@ package hy.game.avatar
 			//构建每个动作的8方向动画
 			for each (var actionDesc : SAvatarActionDescription in avatarDesc.actionDescByActionMap)
 			{
-				needReversalPart = allNeedReversalPart;
 				animationByDir = new Dictionary();
-				setAnimationByActionAndDir(actionDesc.type, actionDesc.kind, animationByDir);
-				partDesc = actionDesc.partDescByName[m_partName];
+				setAnimationByActionAndDir(actionDesc.type, animationByDir);
+				partDesc = actionDesc.partDescByName[m_avatarId];
 				if (!partDesc)
 					continue;
 				dirs = actionDesc.directions; //当前有的方向数据
-				if (needReversalPart)
-					actionDesc.directions = dirs = EnumDirection.getReversalDirs(dirs);
-
+				//翻转所有动画
+				actionDesc.directions = dirs = EnumDirection.getReversalDirs(dirs);
 
 				//构建该动作的方向动画			
 				for each (dir in dirs)
 				{
-					needReversal = needReversalPart && EnumDirection.needMirrorReversal(dir);
+					needReversal = EnumDirection.needMirrorReversal(dir);
 					if (needReversal)
 					{
 						revrsalDir = EnumDirection.getMirrorReversal(dir);
@@ -196,40 +184,9 @@ package hy.game.avatar
 			}
 		}
 
-		/**
-		 * 根据一个部件描述和某些方向得到一堆动画描述（实际上是根据部件描述得到动画，方向位于同一文件内）
-		 * @param partDesc
-		 * @param dirs
-		 * @param needReversalPart
-		 * @return
-		 *
-		 */
-		private function getAnimationDescByPartDescAndDirs(partDesc : SAvatarPartDescription, dirs : Array, needReversalPart : Boolean) : Array
+		public function get avatarDes() : SAvatarDescription
 		{
-			var ids : Array = [];
-			var dirNeedReversal : Boolean;
-			var otherComposeingId : String;
-			for each (var dir : int in dirs)
-			{
-				dirNeedReversal = needReversalPart && EnumDirection.needMirrorReversal(dir);
-				if (dirNeedReversal)
-				{ //如果需要反转
-					dir = EnumDirection.getMirrorReversal(dir);
-				}
-				otherComposeingId = partDesc.getAnimationIdByDir(dir);
-
-				if (ids.indexOf(otherComposeingId) == -1)
-					ids.push(otherComposeingId);
-			}
-			var descs : Array = [];
-			if (ids != null)
-			{
-				for each (var id : String in ids)
-				{
-					descs.push(SAnimationManager.getInstance().getAnimationDescription(id));
-				}
-			}
-			return descs;
+			return m_avatarDes;
 		}
 	}
 }
