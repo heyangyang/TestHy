@@ -32,10 +32,6 @@ package hy.game.avatar
 		private var m_correctDir : uint = EnumDirection.EAST;
 		private var m_dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
 		/**
-		 * 当前动画已持续的时间
-		 */
-		protected var m_curAnimationDurations : int;
-		/**
 		 * 当前帧逝去时间
 		 */
 		protected var m_curFrameElapsedTime : int;
@@ -72,6 +68,9 @@ package hy.game.avatar
 		 * 当前已经循环的次数
 		 */
 		protected var m_curLoop : int;
+
+		private var m_skipFrames : int
+		private var m_nextFrame : SAnimationFrame;
 
 		public function SAvatar(desc : SAvatarDescription)
 		{
@@ -146,7 +145,7 @@ package hy.game.avatar
 			gotoFrame(frame);
 			return m_curAnimationFrame;
 		}
-		
+
 		/**
 		 * 是否有这个方向
 		 * @param curDir
@@ -174,7 +173,7 @@ package hy.game.avatar
 			return false;
 		}
 
-		public function gotoNextFrame(elapsedTime : int, frameDuration : int = 0, durationScale : Number = 1, checkAttackFrame : Boolean = false) : SAnimationFrame
+		public function gotoNextFrame(elapsedTime : int) : SAnimationFrame
 		{
 			if (!m_curAnimation)
 				return null;
@@ -183,82 +182,64 @@ package hy.game.avatar
 			if (m_isPaused)
 				return m_curAnimationFrame;
 
-			if (frameDuration == 0)
-				frameDuration = m_curAnimationFrame.duration;
-
-			if (durationScale != 1)
-				frameDuration = Math.round(frameDuration * durationScale);
-
 			m_isJustStarted = false;
-
+			m_curFrameDuration = m_curAnimationFrame.duration;
 			m_curFrameElapsedTime += elapsedTime;
-			m_curAnimationDurations += elapsedTime;
 
-			//如果该帧停留的次数超过了定义的次数，获取下一帧
-			if (m_curFrameElapsedTime >= frameDuration)
+			if (m_curFrameElapsedTime < m_curFrameDuration)
+				return m_curAnimationFrame;
+			//要强制跳的帧数
+			m_skipFrames = m_curFrameElapsedTime / m_curFrameDuration;
+			//大于一帧的跳帧情况
+			if (m_skipFrames > 1)
 			{
-				//要强制跳的帧数
-				var skipFrames : int = (frameDuration > 0 ? (m_curFrameElapsedTime / frameDuration) : m_curFrameElapsedTime);
-				if (skipFrames >= 2)
+				do
 				{
-					var nextFrame : SAnimationFrame;
-					//大于一帧的跳帧情况
-					do
+					m_curFrameElapsedTime -= m_curFrameDuration;
+					m_curFrameIndex += 1;
+					if (m_curFrameIndex >= totalFrame)
 					{
-						m_curFrameElapsedTime -= frameDuration;
-						m_curFrameIndex += 1;
-						if (m_curFrameIndex >= totalFrame)
-						{
-							m_curFrameIndex = totalFrame;
-							break;
-						}
-						else
-						{
-							frameDuration = 0;
-							nextFrame = getFrame(m_curFrameIndex + 1);
-							if (nextFrame)
-							{
-								frameDuration = nextFrame.duration;
-								if (durationScale != 1)
-									frameDuration = Math.round(frameDuration * durationScale);
-							}
-						}
-					} while (m_curFrameElapsedTime >= frameDuration)
-				}
-				else
-				{
-					//求余值 
-					m_curFrameElapsedTime = m_curFrameElapsedTime % frameDuration;
-					m_curFrameIndex += skipFrames;
-				}
-
-				//如果播放到动画尾，重新从第一帧开始播放
-				if (m_curFrameIndex >= totalFrame)
-				{
-					m_curLoop++;
-					//从0帧开始跳转 当前帧索引 相对于 总帧数 的余数
-					var startFameIndex : int = m_curFrameIndex % totalFrame;
-					//如果需要记录结束 ，则不跳转
-					if (m_loops > 0 && m_curLoop >= m_loops)
-					{
-						gotoFrame(totalFrame);
-						m_isLoopEnd = true;
+						m_curFrameIndex = totalFrame;
+						break;
 					}
 					else
 					{
-						m_curAnimationDurations = 0;
-						m_isJustStarted = true;
-						gotoFrame(startFameIndex + 1);
+						m_nextFrame = getFrame(m_curFrameIndex + 1);
+						m_curFrameDuration = m_nextFrame.duration;
 					}
+				} while (m_curFrameElapsedTime >= m_curFrameDuration)
+			}
+			else
+			{
+				//求余值 
+				m_curFrameElapsedTime = m_curFrameElapsedTime % m_curFrameDuration;
+				m_curFrameIndex += m_skipFrames;
+			}
+
+			//如果播放到动画尾，重新从第一帧开始播放
+			if (m_curFrameIndex >= totalFrame)
+			{
+				m_curLoop++;
+				//从0帧开始跳转 当前帧索引 相对于 总帧数 的余数
+				m_curFrameIndex = m_curFrameIndex % totalFrame;
+				//如果需要记录结束 ，则不跳转
+				if (m_loops > 0 && m_curLoop >= m_loops)
+				{
+					gotoFrame(totalFrame);
+					m_isLoopEnd = true;
 				}
 				else
 				{
+					m_isJustStarted = true;
 					gotoFrame(m_curFrameIndex + 1);
 				}
 			}
-			m_curFrameDuration = frameDuration;
+			else
+			{
+				gotoFrame(m_curFrameIndex + 1);
+			}
 
-			if (m_curFrameIndex >= totalFrame && m_curFrameElapsedTime >= frameDuration)
+			if (m_curFrameIndex >= totalFrame && m_curFrameElapsedTime >= m_curFrameDuration)
 				m_isEnd = true;
 			return m_curAnimationFrame;
 		}
@@ -274,33 +255,27 @@ package hy.game.avatar
 			m_curFrameElapsedTime = 0;
 			m_curFrameIndex = frame - 1;
 
-			if (m_curAnimation)
+			m_curAnimation.constructFrames(frame);
+			m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
+			while (m_curAnimationFrame && m_curAnimationFrame.duration <= 0)
 			{
-				m_curAnimation.constructFrames(frame);
-				m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-				while (m_curAnimationFrame && m_curAnimationFrame.duration <= 0)
+				frame++;
+				m_curFrameIndex = frame - 1;
+				if (m_curFrameIndex >= 0 && m_curFrameIndex < totalFrame)
 				{
-					frame++;
+					m_curAnimation.constructFrames(frame);
+					m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
+				}
+				else
+				{
+					frame = totalFrame;
 					m_curFrameIndex = frame - 1;
-					if (m_curFrameIndex >= 0 && m_curFrameIndex < totalFrame)
-					{
-						m_curAnimation.constructFrames(frame);
-						m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-					}
-					else
-					{
-						frame = totalFrame;
-						m_curFrameIndex = frame - 1;
-						m_curAnimation.constructFrames(frame);
-						m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
-						break;
-					}
+					m_curAnimation.constructFrames(frame);
+					m_curAnimationFrame = m_curAnimation.getFrame(m_curFrameIndex);
+					break;
 				}
 			}
-			if (frame < totalFrame)
-				m_isEnd = false;
-			else
-				m_isEnd = true;
+			m_isEnd = frame >= totalFrame;
 			return m_curAnimationFrame;
 		}
 
@@ -317,7 +292,6 @@ package hy.game.avatar
 			m_curFrameElapsedTime = 0;
 			m_isEnd = false;
 			m_isLoopEnd = false;
-			m_curAnimationDurations = 0;
 			m_isJustStarted = true;
 			m_curLoop = 0;
 		}
@@ -377,11 +351,6 @@ package hy.game.avatar
 		public function set loops(value : int) : void
 		{
 			m_loops = value;
-		}
-
-		public function get curAnimationDurations() : int
-		{
-			return m_curAnimationDurations;
 		}
 
 		public function getFrameDurations(frame : int = 1) : int
@@ -532,7 +501,7 @@ package hy.game.avatar
 		{
 			return m_dirMode;
 		}
-		
+
 		public function dispose() : void
 		{
 			animationsByParts = null;

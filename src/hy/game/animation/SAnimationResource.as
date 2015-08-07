@@ -60,7 +60,6 @@ package hy.game.animation
 				onLoaderComplete();
 				onLoaderComplete = null;
 			}
-			constructFromParser();
 		}
 
 		/**
