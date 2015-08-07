@@ -1,7 +1,8 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-	
+	import flash.geom.Matrix;
+
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
@@ -9,6 +10,7 @@ package hy.game.render
 	import hy.game.core.interfaces.IRender;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
+	import hy.rpg.utils.UtilsCommon;
 
 	use namespace name_part;
 
@@ -20,6 +22,7 @@ package hy.game.render
 	public class SRender implements IRender, IRecycle
 	{
 		private static var ids : uint = 0;
+		private static var matrix : Matrix = new Matrix();
 		/**
 		 * 唯一id
 		 */
@@ -218,8 +221,22 @@ package hy.game.render
 			m_parent = value;
 		}
 
-		public function rotate(rotate : Number) : void
+		/**
+		 * 通过弧度旋转
+		 * @param rotate 相对于原矩阵要旋转的弧度值
+		 * @param pointX 旋转基点
+		 * @param pointY 旋转基点
+		 */
+		public function rotate(rotate : Number, pointX : int = 0, pointY : int = 0) : void
 		{
+			var angle : int = UtilsCommon.getAngleByRotate(rotate);
+			matrix.identity();
+			matrix.translate(-pointX, -pointY);
+			matrix.rotate(rotate);
+			matrix.translate(pointX, pointY);
+			m_render.rotation = angle;
+			x += matrix.tx;
+			y += matrix.ty;
 		}
 
 		public function get x() : Number
@@ -510,7 +527,7 @@ package hy.game.render
 				m_childs[i][field] = value;
 			}
 		}
-		
+
 		/**
 		 * 回收
 		 *

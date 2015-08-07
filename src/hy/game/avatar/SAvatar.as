@@ -20,7 +20,6 @@ package hy.game.avatar
 		private var m_avatarDesc : SAvatarDescription;
 		// 当前动作
 		private var m_curAction : uint;
-		private var m_curKind : uint;
 
 		public function SAvatar()
 		{
@@ -41,7 +40,7 @@ package hy.game.avatar
 		 */
 		public function gotoDirection(dir : int) : SAnimationFrame
 		{
-			return gotoAnimation(m_curAction, m_curKind, dir, m_curFrameIndex, 0);
+			return gotoAnimation(m_curAction, dir, m_curFrameIndex, 0);
 		}
 
 		/**
@@ -52,7 +51,7 @@ package hy.game.avatar
 		 * @return
 		 *
 		 */
-		public function gotoAnimation(action : uint, kind : uint, dir : int, frame : int, loops : int) : SAnimationFrame
+		public function gotoAnimation(action : uint, dir : int, frame : int, loops : int) : SAnimationFrame
 		{
 			if (m_avatarDesc == null)
 			{
@@ -61,20 +60,17 @@ package hy.game.avatar
 			}
 			if (action != 0)
 			{
-				if (hasAction(action, kind))
+				if (hasAction(action, 0))
 				{
 					m_curAction = action;
-					m_curKind = kind;
 				}
 				else
 				{
 					m_curAction = 0;
-					m_curKind = 0;
 					var avaliaAction : Array = getAvaliableAction(action);
 					if (avaliaAction)
 					{
 						m_curAction = avaliaAction[0];
-						m_curKind = avaliaAction[1];
 					}
 				}
 			}
@@ -89,12 +85,12 @@ package hy.game.avatar
 
 			if (m_correctDir != 0)
 			{
-				if (!hasDir(m_correctDir, m_curAction, m_curKind))
+				if (!hasDir(m_correctDir, m_curAction))
 				{
 					m_correctDir = getAvaliableDir(0, 0);
 				}
 			}
-			m_curAnimation = m_animationsByPart.gotoAnimation(m_curAction, m_curKind, m_correctDir);
+			m_curAnimation = m_animationsByPart.gotoAnimation(m_curAction, 0, m_correctDir);
 			m_loops = loops;
 			gotoFrame(frame);
 			return m_curAnimationFrame;
@@ -105,16 +101,13 @@ package hy.game.avatar
 		 * @param curDir
 		 * @return
 		 */
-		public function hasDir(curDir : int, action : uint, kind : uint) : Boolean
+		public function hasDir(curDir : int, action : uint) : Boolean
 		{
 			if (action == 0)
-			{
 				action = m_curAction;
-				kind = m_curKind;
-			}
 			if (m_avatarDesc == null || action == 0)
 				return false;
-			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, kind);
+			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, 0);
 			if (actionDesc)
 			{
 				var dirs : Array = actionDesc.directions;
@@ -162,10 +155,7 @@ package hy.game.avatar
 		public function getAvaliableDir(action : uint, kind : uint) : int
 		{
 			if (!action)
-			{
 				action = m_curAction;
-				kind = m_curKind;
-			}
 			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, kind);
 			if (actionDesc)
 			{
@@ -196,11 +186,6 @@ package hy.game.avatar
 		public function get curAction() : uint
 		{
 			return m_curAction;
-		}
-
-		public function get curKind() : uint
-		{
-			return m_curKind;
 		}
 
 		override public function dispose() : void

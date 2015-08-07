@@ -159,6 +159,11 @@ package hy.game.avatar
 			m_avatar.animationsByParts = animations;
 		}
 
+		public function get avatarId() : String
+		{
+			return m_avatarId;
+		}
+
 		public function dispose() : void
 		{
 			if (m_avatar)

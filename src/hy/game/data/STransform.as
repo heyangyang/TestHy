@@ -1,7 +1,7 @@
 package hy.game.data
 {
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 	use namespace name_part;
@@ -65,6 +65,8 @@ package hy.game.data
 		{
 			if (m_x == value)
 				return;
+			if (value < 0)
+				value = 0;
 			m_x = value;
 			if ((m_change & C_XYZ) == 0)
 				m_change += C_XYZ;
@@ -79,6 +81,8 @@ package hy.game.data
 		{
 			if (m_y == value)
 				return;
+			if (value < 0)
+				value = 0;
 			m_y = value;
 			if ((m_change & C_XYZ) == 0)
 				m_change += C_XYZ;

@@ -36,7 +36,7 @@ package hy.game.core.interfaces
 		function set needLayerSort(value : Boolean) : void;
 		function onLayerSort() : void;
 
-		function rotate(rotate : Number) : void;
+		function rotate(rotate : Number, pointX : int = 0, pointY : int = 0) : void;
 
 		function get x() : Number;
 		function set x(value : Number) : void;

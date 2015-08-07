@@ -34,7 +34,14 @@ package hy.game.components
 		 * 是否使用滤镜
 		 */
 		protected var m_isUseFilters : Boolean;
+		/**
+		 * 当前滤镜
+		 */
 		protected var m_filters : Array;
+		/**
+		 * 是否使用默认模型
+		 */
+		protected var m_useDefaultAvatar : Boolean;
 
 		public function SAvatarComponent(type : * = null)
 		{
@@ -60,6 +67,7 @@ package hy.game.components
 			needReversal = false;
 			m_isRide = false;
 			m_isUseFilters = true;
+			m_useDefaultAvatar = true;
 		}
 
 		/**
@@ -70,6 +78,9 @@ package hy.game.components
 		{
 			super.onStart();
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+//			if (m_useDefaultAvatar)
+//				onLoadAvatarComplete(defaultAvatar);
+//			m_useDefaultAvatar && onLoadAvatarComplete(defaultAvatar);
 			setAvatarId(m_data.avatarId);
 		}
 
@@ -144,9 +155,9 @@ package hy.game.components
 		protected function changeAnimation() : void
 		{
 			if (m_isRide)
-				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, 0, m_dir, 0, 0);
+				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, m_dir, 0, 0);
 			else
-				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
+				tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
 		}
 
 		public function setAvatarId(avatarId : String) : void
