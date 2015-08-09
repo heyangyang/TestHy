@@ -9,7 +9,7 @@ package hy.game.update
 	import flash.utils.Dictionary;
 	
 	import hy.game.cfg.Config;
-	import hy.game.components.SMouseComponent;
+	import hy.game.components.SCollisionComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
@@ -47,10 +47,10 @@ package hy.game.update
 			return m_stageY;
 		}
 
-		private static var m_mouseComponents : Vector.<SMouseComponent> = new Vector.<SMouseComponent>();
+		private static var m_mouseComponents : Vector.<SCollisionComponent> = new Vector.<SCollisionComponent>();
 		private static var m_numComponent : int = 0;
 
-		public static function addComponent(com : SMouseComponent) : void
+		public static function addComponent(com : SCollisionComponent) : void
 		{
 			if (m_mouseComponents.indexOf(com) == -1)
 			{
@@ -59,7 +59,7 @@ package hy.game.update
 			}
 		}
 
-		public static function removeComponent(com : SMouseComponent) : void
+		public static function removeComponent(com : SCollisionComponent) : void
 		{
 			var index : int = m_mouseComponents.indexOf(com);
 			if (index != -1)
@@ -70,8 +70,8 @@ package hy.game.update
 		}
 
 		private var mouse_dic : Dictionary = new Dictionary();
-		private var m_updateComponent : SMouseComponent;
-		private var m_currComponent : SMouseComponent;
+		private var m_updateComponent : SCollisionComponent;
+		private var m_currComponent : SCollisionComponent;
 		/**
 		 * 鼠标位置相对于屏幕
 		 */

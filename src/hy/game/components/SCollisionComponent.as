@@ -9,11 +9,11 @@ package hy.game.components
 	import hy.rpg.components.ComponentWing;
 
 	/**
-	 * 鼠标事件组件
+	 * 鼠标碰撞组件
 	 * @author hyy
 	 *
 	 */
-	public class SMouseComponent extends Component
+	public class SCollisionComponent extends Component
 	{
 		private static var mouseOverGlowFilters : Array = [new GlowFilter(0xffff00, 1, 6, 6, 2)];
 		private static var nullFilters : Array = [];
@@ -24,7 +24,7 @@ package hy.game.components
 		private var m_wing : SAvatarComponent;
 		private var m_mount : SAvatarComponent;
 
-		public function SMouseComponent(type : * = null)
+		public function SCollisionComponent(type : * = null)
 		{
 			super(type);
 		}

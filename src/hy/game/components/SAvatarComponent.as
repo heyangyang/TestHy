@@ -117,7 +117,7 @@ package hy.game.components
 				{
 					m_isRide = m_data.isRide;
 					if (m_height > 0)
-						m_transform.height = m_height - (m_isRide ? 20 : 0);
+						m_transform.height = m_height - (m_isRide ? 30 : 0);
 				}
 				changeAnimation();
 			}

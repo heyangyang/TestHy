@@ -1,5 +1,6 @@
 package hy.game.core
 {
+	import hy.game.data.SPoint;
 	import hy.game.data.SRectangle;
 	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
@@ -49,6 +50,19 @@ package hy.game.core
 		}
 
 		private static var visualRect : SRectangle = new SRectangle();
+		private static var m_point : SPoint = new SPoint();
+
+		/**
+		 * 获得可视范围内的一点
+		 * @return
+		 *
+		 */
+		public static function getVisualPoint() : SPoint
+		{
+			m_point.x = visualRect.x + Math.random() * visualRect.width;
+			m_point.y = visualRect.y + Math.random() * visualRect.height;
+			return m_point;
+		}
 
 		/**
 		 * 是否在场景内
@@ -242,6 +256,20 @@ package hy.game.core
 			return m_sceneH;
 		}
 
+		/**
+		 * 屏幕大小
+		 * @return
+		 *
+		 */
+		public function get screenW() : int
+		{
+			return m_screenW;
+		}
+
+		public function get screenH() : int
+		{
+			return m_screenH;
+		}
 
 	}
 }
