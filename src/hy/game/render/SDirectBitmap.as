@@ -1,6 +1,5 @@
 package hy.game.render
 {
-	import flash.display.BitmapData;
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
 	
