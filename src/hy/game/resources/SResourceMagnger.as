@@ -6,9 +6,11 @@ package hy.game.resources
 	import flash.system.LoaderContext;
 	import flash.utils.Dictionary;
 
+	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
+	import hy.game.render.SDirectBitmapData;
 	import hy.game.render.SRenderBitmapData;
 
 	use namespace name_part;
@@ -186,14 +188,20 @@ package hy.game.resources
 		 * @return
 		 *
 		 */
-		public function getImageById(id : String) : IBitmapData
+		public function getImageById(id : String, supportDirectX = false) : IBitmapData
 		{
 			if (m_globalImage[id])
 				return m_globalImage[id];
 			var resClass : Class = getClass(id);
 			var source : BitmapData = new resClass();
-			var bitmapData : SRenderBitmapData = new SRenderBitmapData(source.width, source.height, true, 0);
-			bitmapData.draw(source);
+			var bitmapData : IBitmapData = new SRenderBitmapData(source.width, source.height, true, 0);
+			SRenderBitmapData(bitmapData).draw(source);
+			if (supportDirectX)
+			{
+				var bmd : SRenderBitmapData = bitmapData as SRenderBitmapData;
+				bitmapData = SDirectBitmapData.fromDirectBitmapData(bmd);
+				bmd.dispose();
+			}
 			source.dispose();
 			m_globalImage[id] = bitmapData;
 			return bitmapData;

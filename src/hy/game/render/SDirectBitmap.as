@@ -39,17 +39,6 @@ package hy.game.render
 			return texture as IBitmapData;
 		}
 
-		public function set normal_bitmapData(value : BitmapData) : void
-		{
-
-		}
-
-		public function get normal_bitmapData() : BitmapData
-		{
-			return null;
-		}
-
-
 		public function set filters(value : Array) : void
 		{
 

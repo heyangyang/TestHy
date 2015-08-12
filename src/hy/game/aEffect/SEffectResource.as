@@ -2,7 +2,8 @@ package hy.game.aEffect
 {
 	import flash.system.System;
 	import flash.utils.ByteArray;
-
+	
+	import hy.game.cfg.Config;
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -63,7 +64,8 @@ package hy.game.aEffect
 				onLoadComplete(null);
 				return;
 			}
-			var resource : SResource = SReferenceManager.getInstance().createResource(m_effectId);
+			
+			var resource : SResource = SReferenceManager.getInstance().createResource(m_effectId + (Config.supportDirectX ? "_atf" : ""));
 			if (resource)
 			{
 				if (resource.isLoading)
