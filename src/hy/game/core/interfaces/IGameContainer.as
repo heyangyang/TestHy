@@ -8,8 +8,6 @@ package hy.game.core.interfaces
 		function set priority(value : int) : void;
 		function get priority() : int;
 
-		function get numChildren() : int;
-
 		function addObject(object : GameObject) : void;
 		function removeObject(object : GameObject) : void;
 
@@ -23,5 +21,7 @@ package hy.game.core.interfaces
 		function changeDepthSort() : void;
 
 		function update() : void;
+
+		function get container() : IContainer;
 	}
 }

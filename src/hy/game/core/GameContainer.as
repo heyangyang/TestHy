@@ -1,8 +1,6 @@
 package hy.game.core
 {
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-
+	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
@@ -10,7 +8,7 @@ package hy.game.core
 
 	use namespace name_part;
 
-	public class GameContainer extends Sprite implements IGameContainer
+	public class GameContainer implements IGameContainer
 	{
 		private var m_tag : String;
 		private var m_priority : int;
@@ -19,13 +17,15 @@ package hy.game.core
 		protected var m_objects : Vector.<GameObject>;
 		protected var m_renders : Vector.<IRender>;
 		protected var m_numRender : int;
+		protected var m_container : IContainer;
 
-		public function GameContainer()
+		public function GameContainer(container : IContainer)
 		{
 			super();
 			m_objects = new Vector.<GameObject>();
 			m_renders = new Vector.<IRender>();
 			m_numRender = 0;
+			m_container = container;
 		}
 
 		/**
@@ -36,9 +36,9 @@ package hy.game.core
 		 */
 		public function addChildRender(render : IRender, index : int) : void
 		{
-			if (index > numChildren)
-				index = numChildren;
-			addChildAt(render.render as DisplayObject, index);
+			if (index > m_container.numChildren)
+				index = m_container.numChildren;
+			m_container.addGameChildAt(render.render, index);
 		}
 
 		/**
@@ -49,14 +49,14 @@ package hy.game.core
 		 */
 		public function getRenderIndex(render : IRender) : int
 		{
-			return getChildIndex(render.render as DisplayObject);
+			return m_container.getGameChildIndex(render.render);
 		}
 
 		public function setChildRenderIndex(render : IRender, index : int) : void
 		{
 			if (getRenderIndex(render) == index)
 				return;
-			setChildIndex(render.render as DisplayObject, index);
+			m_container.setGameChildIndex(render.render, index);
 		}
 
 		/**
@@ -69,7 +69,7 @@ package hy.game.core
 			if (m_renders.indexOf(render) != -1)
 				return;
 			m_renders.push(render);
-			addChild(render.render as DisplayObject);
+			m_container.addGameChild(render.render);
 			render.index = m_numRender++;
 			render.container = this;
 			m_depthSort = true;
@@ -86,7 +86,7 @@ package hy.game.core
 			if (index == -1)
 				return;
 			m_renders.splice(index, 1);
-			removeChild(render.render as DisplayObject);
+			m_container.removeGameChild(render.render);
 			m_numRender--;
 			render.container = null;
 		}
@@ -198,8 +198,8 @@ package hy.game.core
 		protected function updateChildIndex(render : IRender) : void
 		{
 			render.index = render_index;
-			if (getChildIndex(render.render as DisplayObject) != render_index)
-				setChildIndex(render.render as DisplayObject, render_index++);
+			if (m_container.getGameChildIndex(render.render) != render_index)
+				m_container.setGameChildIndex(render.render, render_index++);
 			else
 				render_index += 1;
 			for (var i : int = 0; i < render.numChildren; i++)
@@ -239,6 +239,11 @@ package hy.game.core
 				object.update();
 			}
 			m_depthSort && updateDepthSort();
+		}
+
+		public function get container() : IContainer
+		{
+			return m_container;
 		}
 	}
 }

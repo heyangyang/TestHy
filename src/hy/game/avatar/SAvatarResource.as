@@ -3,6 +3,7 @@ package hy.game.avatar
 	import flash.system.System;
 	import flash.utils.ByteArray;
 
+	import hy.game.cfg.Config;
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -75,7 +76,8 @@ package hy.game.avatar
 				invokeNotifyByArray();
 				return;
 			}
-			var resource : SResource = SReferenceManager.getInstance().createResource(m_avatarId);
+
+			var resource : SResource = SReferenceManager.getInstance().createResource(m_avatarId + (Config.supportDirectX ? "_atf" : ""));
 
 			if (resource)
 			{

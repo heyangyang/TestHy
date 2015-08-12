@@ -3,6 +3,7 @@ package hy.game.render
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 
+	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
@@ -55,7 +56,10 @@ package hy.game.render
 		public function SRender()
 		{
 			id = ids++;
-			m_render = new SRenderBitmap();
+			if (Config.supportDirectX)
+				m_render = new SDirectBitmap();
+			else
+				m_render = new SRenderBitmap();
 		}
 
 		public function notifyAddedToRender() : void

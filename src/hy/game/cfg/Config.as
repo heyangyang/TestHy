@@ -67,7 +67,7 @@ package hy.game.cfg
 		/**
 		 * 是否支持Gpu加速
 		 */
-		public static var supportDirectX : Boolean = false;
+		public static var supportDirectX : Boolean = true;
 
 		public function Config()
 		{
