@@ -38,9 +38,6 @@ package hy.game.core.event
     {
         private var mEventListeners:Dictionary;
         
-        /** Helper object. */
-        private static var sBubbleChains:Array = [];
-        
         /** Creates an EventDispatcher. */
         public function SEventDispatcher()
         {  }

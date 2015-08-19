@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
@@ -39,7 +39,7 @@ package hy.game.render
 		protected var m_scaleY : Number;
 		protected var m_numChildren : int;
 		protected var m_alpha : Number;
-		protected var m_rotation : int;
+		protected var m_rotation : Number;
 		protected var m_zDepth : int;
 		protected var m_index : int;
 		protected var m_layer : int;
