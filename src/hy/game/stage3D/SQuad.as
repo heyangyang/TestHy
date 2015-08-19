@@ -1,5 +1,7 @@
 package hy.game.stage3D
 {
+	import flash.geom.Matrix;
+
 	import hy.game.stage3D.utils.SVertexData;
 
 	public class SQuad extends SDisplayObject
@@ -53,6 +55,11 @@ package hy.game.stage3D
 				mTinted = true;
 			else
 				mTinted = mVertexData.tinted;
+		}
+
+		public function copyVertexDataTransformedTo(targetData : SVertexData, matrix : Matrix = null) : void
+		{
+			mVertexData.copyTransformedTo(targetData, 0, matrix, 0, 4);
 		}
 
 		public override function render() : void
