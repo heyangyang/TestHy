@@ -15,9 +15,9 @@ package hy.game.data
 		private var m_bottom : int;
 		private var m_right : int;
 
-		public function SRectangle()
+		public function SRectangle(x : int = 0, y : int = 0, w : int = 0, h : int = 0)
 		{
-			super();
+			updateRectangle(x, y, w, h);
 		}
 
 		/**

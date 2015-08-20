@@ -3,7 +3,7 @@ package hy.game.render
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 
@@ -24,8 +24,10 @@ package hy.game.render
 			return bitmapData as IBitmapData;
 		}
 
-		public function removeChild() : void
+		public function removeFromParent(dispose : Boolean = false) : void
 		{
+			if (dispose && bitmapData)
+				bitmapData.dispose();
 			parent && parent.removeChild(this);
 		}
 

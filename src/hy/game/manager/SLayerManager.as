@@ -5,7 +5,7 @@ package hy.game.manager
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameContainer;
 	import hy.game.core.GameObject;
@@ -16,8 +16,7 @@ package hy.game.manager
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
 	import hy.game.render.SRenderContainer;
-
-	import starling.base.Game3D;
+	import hy.game.stage3D.SStage3D;
 
 	use namespace name_part;
 
@@ -88,7 +87,7 @@ package hy.game.manager
 			if (gameContainer.container is SRenderContainer)
 				m_stage.addChild(gameContainer.container as DisplayObject);
 			else
-				Game3D.stage3D.addChild(gameContainer.container as SDirectContainer);
+				SStage3D.stage.addChild(gameContainer.container as SDirectContainer);
 			m_list.push(gameContainer);
 			m_dictionary[tag] = gameContainer;
 			m_needSort = true;

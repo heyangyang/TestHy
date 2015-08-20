@@ -14,14 +14,10 @@ package hy.game.stage3D.utils
         /** The offset of position data (x, y) within a vertex. */
         public static const POSITION_OFFSET:int = 0;
         
-        /** The offset of color data (r, g, b, a) within a vertex. */
-        public static const COLOR_OFFSET:int = 2;
-        
         /** The offset of texture coordinates (u, v) within a vertex. */
         public static const TEXCOORD_OFFSET:int = 2;
         
         private var mRawData:Vector.<Number>;
-        private var mPremultipliedAlpha:Boolean;
         private var mNumVertices:int;
 
         /** Helper object. */
@@ -29,10 +25,9 @@ package hy.game.stage3D.utils
         private static var sHelperPoint3D:Vector3D = new Vector3D();
         
         /** Create a new VertexData object with a specified number of vertices. */
-        public function SVertexData(numVertices:int, premultipliedAlpha:Boolean=false)
+        public function SVertexData(numVertices:int)
         {
             mRawData = new <Number>[];
-            mPremultipliedAlpha = premultipliedAlpha;
             this.numVertices = numVertices;
         }
 
@@ -43,7 +38,7 @@ package hy.game.stage3D.utils
             if (numVertices < 0 || vertexID + numVertices > mNumVertices)
                 numVertices = mNumVertices - vertexID;
             
-            var clone:SVertexData = new SVertexData(0, mPremultipliedAlpha);
+            var clone:SVertexData = new SVertexData(0);
             clone.mNumVertices = numVertices;
             clone.mRawData = mRawData.slice(vertexID * ELEMENTS_PER_VERTEX,
                                          numVertices * ELEMENTS_PER_VERTEX);
@@ -86,10 +81,6 @@ package hy.game.stage3D.utils
                     targetRawData[int(targetIndex++)] = matrix.d * y + matrix.b * x + matrix.ty;
                     targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
                     targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
-//                    targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
-//                    targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
-//                    targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
-//                    targetRawData[int(targetIndex++)] = mRawData[int(sourceIndex++)];
                 }
             }
             else
@@ -131,64 +122,6 @@ package hy.game.stage3D.utils
             var offset:int = vertexID * ELEMENTS_PER_VERTEX + POSITION_OFFSET;
             position.x = mRawData[offset];
             position.y = mRawData[int(offset+1)];
-        }
-        
-        /** Updates the RGB color and alpha value of a vertex in one step. */
-        public function setColorAndAlpha(vertexID:int, color:uint, alpha:Number):void
-        {
-            if (alpha < 0.001)    alpha = 0.001; // zero alpha would wipe out all color data
-            else if (alpha > 1.0) alpha = 1.0;
-            
-            var offset:int = vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET;
-            var multiplier:Number = mPremultipliedAlpha ? alpha : 1.0;
-            
-            mRawData[offset]        = ((color >> 16) & 0xff) / 255.0 * multiplier;
-            mRawData[int(offset+1)] = ((color >>  8) & 0xff) / 255.0 * multiplier;
-            mRawData[int(offset+2)] = ( color        & 0xff) / 255.0 * multiplier;
-            mRawData[int(offset+3)] = alpha;
-        }
-        
-        /** Updates the RGB color values of a vertex (alpha is not changed). */
-        public function setColor(vertexID:int, color:uint):void
-        {
-            var offset:int = vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET;
-            var multiplier:Number = mPremultipliedAlpha ? mRawData[int(offset+3)] : 1.0;
-            mRawData[offset]        = ((color >> 16) & 0xff) / 255.0 * multiplier;
-            mRawData[int(offset+1)] = ((color >>  8) & 0xff) / 255.0 * multiplier;
-            mRawData[int(offset+2)] = ( color        & 0xff) / 255.0 * multiplier;
-        }
-        
-        /** Returns the RGB color of a vertex (no alpha). */
-        public function getColor(vertexID:int):uint
-        {
-            var offset:int = vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET;
-            var divisor:Number = mPremultipliedAlpha ? mRawData[int(offset+3)] : 1.0;
-            
-            if (divisor == 0) return 0;
-            else
-            {
-                var red:Number   = mRawData[offset]        / divisor;
-                var green:Number = mRawData[int(offset+1)] / divisor;
-                var blue:Number  = mRawData[int(offset+2)] / divisor;
-                
-                return (int(red*255) << 16) | (int(green*255) << 8) | int(blue*255);
-            }
-        }
-        
-        /** Updates the alpha value of a vertex (range 0-1). */
-        public function setAlpha(vertexID:int, alpha:Number):void
-        {
-            if (mPremultipliedAlpha)
-                setColorAndAlpha(vertexID, getColor(vertexID), alpha);
-            else
-                mRawData[int(vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET + 3)] = alpha;
-        }
-        
-        /** Returns the alpha value of a vertex in the range 0-1. */
-        public function getAlpha(vertexID:int):Number
-        {
-            var offset:int = vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET + 3;
-            return mRawData[offset];
         }
         
         /** Updates the texture coordinates of a vertex (range 0-1). */
@@ -236,42 +169,6 @@ package hy.game.stage3D.utils
             }
         }
         
-        /** Sets all vertices of the object to the same color values. */
-        public function setUniformColor(color:uint):void
-        {
-            for (var i:int=0; i<mNumVertices; ++i)
-                setColor(i, color);
-        }
-        
-        /** Sets all vertices of the object to the same alpha values. */
-        public function setUniformAlpha(alpha:Number):void
-        {
-            for (var i:int=0; i<mNumVertices; ++i)
-                setAlpha(i, alpha);
-        }
-        
-        /** Multiplies the alpha value of subsequent vertices with a certain factor. */
-        public function scaleAlpha(vertexID:int, factor:Number, numVertices:int=1):void
-        {
-            if (factor == 1.0) return;
-            if (numVertices < 0 || vertexID + numVertices > mNumVertices)
-                numVertices = mNumVertices - vertexID;
-             
-            var i:int;
-            
-            if (mPremultipliedAlpha)
-            {
-                for (i=0; i<numVertices; ++i)
-                    setAlpha(vertexID+i, getAlpha(vertexID+i) * factor);
-            }
-            else
-            {
-                var offset:int = vertexID * ELEMENTS_PER_VERTEX + COLOR_OFFSET + 3;
-                for (i=0; i<numVertices; ++i)
-                    mRawData[int(offset + i*ELEMENTS_PER_VERTEX)] *= factor;
-            }
-        }
-        
         /** Calculates the bounds of the vertices, which are optionally transformed by a matrix. 
          *  If you pass a 'resultRect', the result will be stored in this rectangle 
          *  instead of creating a new object. To use all vertices for the calculation, set
@@ -290,7 +187,7 @@ package hy.game.stage3D.utils
                     resultRect.setEmpty();
                 else
                 {
-                    MatrixUtil.transformCoords(transformationMatrix, 0, 0, sHelperPoint);
+                    SMatrixUtil.transformCoords(transformationMatrix, 0, 0, sHelperPoint);
                     resultRect.setTo(sHelperPoint.x, sHelperPoint.y, 0, 0);
                 }
             }
@@ -323,7 +220,7 @@ package hy.game.stage3D.utils
                         y = mRawData[int(offset+1)];
                         offset += ELEMENTS_PER_VERTEX;
                         
-                        MatrixUtil.transformCoords(transformationMatrix, x, y, sHelperPoint);
+                        SMatrixUtil.transformCoords(transformationMatrix, x, y, sHelperPoint);
                         
                         if (minX > sHelperPoint.x) minX = sHelperPoint.x;
                         if (maxX < sHelperPoint.x) maxX = sHelperPoint.x;
@@ -356,11 +253,11 @@ package hy.game.stage3D.utils
             if (numVertices == 0)
             {
                 if (transformationMatrix)
-                    MatrixUtil.transformCoords3D(transformationMatrix, 0, 0, 0, sHelperPoint3D);
+                    SMatrixUtil.transformCoords3D(transformationMatrix, 0, 0, 0, sHelperPoint3D);
                 else
                     sHelperPoint3D.setTo(0, 0, 0);
 
-                MathUtil.intersectLineWithXYPlane(camPos, sHelperPoint3D, sHelperPoint);
+                SMathUtil.intersectLineWithXYPlane(camPos, sHelperPoint3D, sHelperPoint);
                 resultRect.setTo(sHelperPoint.x, sHelperPoint.y, 0, 0);
             }
             else
@@ -377,11 +274,11 @@ package hy.game.stage3D.utils
                     offset += ELEMENTS_PER_VERTEX;
 
                     if (transformationMatrix)
-                        MatrixUtil.transformCoords3D(transformationMatrix, x, y, 0, sHelperPoint3D);
+                        SMatrixUtil.transformCoords3D(transformationMatrix, x, y, 0, sHelperPoint3D);
                     else
                         sHelperPoint3D.setTo(x, y, 0);
 
-                    MathUtil.intersectLineWithXYPlane(camPos, sHelperPoint3D, sHelperPoint);
+                    SMathUtil.intersectLineWithXYPlane(camPos, sHelperPoint3D, sHelperPoint);
 
                     if (minX > sHelperPoint.x) minX = sHelperPoint.x;
                     if (maxX < sHelperPoint.x) maxX = sHelperPoint.x;
@@ -408,8 +305,6 @@ package hy.game.stage3D.utils
                 result += "  [Vertex " + i + ": " +
                     "x="   + position.x.toFixed(1)    + ", " +
                     "y="   + position.y.toFixed(1)    + ", " +
-                    "rgb=" + getColor(i).toString(16) + ", " +
-                    "a="   + getAlpha(i).toFixed(2)   + ", " +
                     "u="   + texCoords.x.toFixed(4)   + ", " +
                     "v="   + texCoords.y.toFixed(4)   + "]"  +
                     (i == numVertices-1 ? "\n" : ",\n");
@@ -418,61 +313,6 @@ package hy.game.stage3D.utils
             return result + "]";
         }
         
-        // properties
-        
-        /** Indicates if any vertices have a non-white color or are not fully opaque. */
-        public function get tinted():Boolean
-        {
-            var offset:int = COLOR_OFFSET;
-            
-            for (var i:int=0; i<mNumVertices; ++i)
-            {
-                for (var j:int=0; j<4; ++j)
-                    if (mRawData[int(offset+j)] != 1.0) return true;
-
-                offset += ELEMENTS_PER_VERTEX;
-            }
-            
-            return false;
-        }
-        
-        /** Changes the way alpha and color values are stored. Optionally updates all exisiting 
-         *  vertices. */
-        public function setPremultipliedAlpha(value:Boolean, updateData:Boolean=true):void
-        {
-            if (value == mPremultipliedAlpha) return;
-            
-            if (updateData)
-            {
-                var dataLength:int = mNumVertices * ELEMENTS_PER_VERTEX;
-                
-                for (var i:int=COLOR_OFFSET; i<dataLength; i += ELEMENTS_PER_VERTEX)
-                {
-                    var alpha:Number = mRawData[int(i+3)];
-                    var divisor:Number = mPremultipliedAlpha ? alpha : 1.0;
-                    var multiplier:Number = value ? alpha : 1.0;
-                    
-                    if (divisor != 0)
-                    {
-                        mRawData[i]        = mRawData[i]        / divisor * multiplier;
-                        mRawData[int(i+1)] = mRawData[int(i+1)] / divisor * multiplier;
-                        mRawData[int(i+2)] = mRawData[int(i+2)] / divisor * multiplier;
-                    }
-                }
-            }
-            
-            mPremultipliedAlpha = value;
-        }
-		
-        
-       /** Indicates if the rgb values are stored premultiplied with the alpha value.
-        *  If you change this value, the color data is updated accordingly. If you don't want
-        *  that, use the 'setPremultipliedAlpha' method instead. */
-        public function get premultipliedAlpha():Boolean { return mPremultipliedAlpha; }
-        public function set premultipliedAlpha(value:Boolean):void
-        {
-            setPremultipliedAlpha(value);
-        }
         
         /** The total number of vertices. */
         public function get numVertices():int { return mNumVertices; }
@@ -481,7 +321,7 @@ package hy.game.stage3D.utils
             mRawData.fixed = false;
             mRawData.length = value * ELEMENTS_PER_VERTEX;
             
-            var startIndex:int = mNumVertices * ELEMENTS_PER_VERTEX + COLOR_OFFSET + 3;
+            var startIndex:int = mNumVertices * ELEMENTS_PER_VERTEX  + 3;
             var endIndex:int = mRawData.length;
             
             for (var i:int=startIndex; i<endIndex; i += ELEMENTS_PER_VERTEX)

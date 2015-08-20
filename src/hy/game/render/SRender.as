@@ -79,7 +79,7 @@ package hy.game.render
 
 		public function notifyRemovedFromRender() : void
 		{
-			m_render && m_render.removeChild();
+			m_render && m_render.removeFromParent();
 			for (var i : int = 0; i < m_numChildren; i++)
 			{
 				m_childs[i].notifyRemovedFromRender();

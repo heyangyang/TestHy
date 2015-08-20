@@ -2,8 +2,8 @@ package hy.game.stage3D.utils
 {
     import flash.geom.Point;
     import flash.geom.Vector3D;
-
-    import starling.errors.AbstractClassError;
+    
+    import hy.game.stage3D.errors.AbstractClassError;
 
     /** A utility class containing methods you might need for maths problems. */
     public class SMathUtil

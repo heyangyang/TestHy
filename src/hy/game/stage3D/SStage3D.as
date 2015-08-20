@@ -3,40 +3,67 @@ package hy.game.stage3D
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
+	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DRenderMode;
+	import flash.display3D.Context3DTriangleFace;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
 
-	import starling.core.Starling;
-	import starling.utils.SystemUtil;
-	import starling.utils.execute;
+	import hy.game.core.event.SEvent;
+	import hy.game.core.event.SEventDispatcher;
+	import hy.game.namespaces.name_part;
+	import hy.game.stage3D.display.SDisplayObjectContainer;
+	import hy.game.stage3D.utils.SystemUtil;
 
-	public class SStage3D
+	use namespace name_part;
+
+	public class SStage3D extends SEventDispatcher
 	{
 		public static var handleLostContext : Boolean;
+		public static var multitouchEnabled : Boolean;
 		private static var sCurrent : SStage3D;
 
 		public static function get current() : SStage3D
 		{
 			return sCurrent;
 		}
+
+		public static function get context() : Context3D
+		{
+			return sCurrent.context;
+		}
+
+		public static function get stage() : SDisplayObjectContainer
+		{
+			return sCurrent.mContainer;
+		}
+
 		private var mStage3D : Stage3D;
+		private var mStage : Stage;
+		private var mContainer : SDisplayObjectContainer;
 		private var mProfile : String;
 		private var mStageWidth : int;
 		private var mStageHeight : int;
 		private var mContext : Context3D;
+		private var mAntiAliasing : int;
+		private var mEnableErrorChecking : Boolean;
+		private var mSupportHighResolutions : Boolean;
+		private var mStarted : Boolean;
+		private var mViewPort : Rectangle;
+		private var mPreviousViewPort : Rectangle;
 
-		public function SStage3D(rootClass : Class, stage : Stage, viewPort : Rectangle = null, stage3D : Stage3D = null, renderMode : String = "auto", profile : Object = "baselineConstrained")
+		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = "baselineConstrained")
 		{
-			if (viewPort == null)
-				viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-			if (stage3D == null)
-				stage3D = stage.stage3Ds[0];
-			mStage3D = stage3D;
-			mStageWidth = viewPort.width;
-			mStageHeight = viewPort.height;
+			viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			mStage = stage;
+			mStage3D = stage.stage3Ds[0];
+			mContainer = new SDisplayObjectContainer();
+			mStageWidth = mViewPort.width;
+			mStageHeight = mViewPort.height;
+			mPreviousViewPort = new Rectangle();
 			sCurrent = this;
 			mStage3D.addEventListener(Event.CONTEXT3D_CREATE, onContextCreated, false, 10, true);
 			mStage3D.addEventListener(ErrorEvent.ERROR, onStage3DError, false, 10, true);
@@ -85,7 +112,7 @@ package hy.game.stage3D
 
 				try
 				{
-					execute(mStage3D.requestContext3D, renderMode, currentProfile);
+					mStage3D.requestContext3D(renderMode, currentProfile)
 				}
 				catch (error : Error)
 				{
@@ -131,7 +158,7 @@ package hy.game.stage3D
 
 		private function onContextCreated(event : Event) : void
 		{
-			if (!Starling.handleLostContext && mContext)
+			if (!handleLostContext && mContext)
 			{
 				event.stopImmediatePropagation();
 				trace("[Stage3D] Enable 'handleLostContext' to avoid this error.");
@@ -145,7 +172,67 @@ package hy.game.stage3D
 		private function initialize() : void
 		{
 			mContext = mStage3D.context3D;
-			mContext.enableErrorChecking = false;
+			mContext.enableErrorChecking = mEnableErrorChecking;
+			SRenderSupport.sContext = mContext;
+			dispatchEventWith(SEvent.ROOT_CREATED);
+			mStage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+		}
+
+		public function start() : void
+		{
+			mStarted = true;
+		}
+
+		public function stop() : void
+		{
+			mStarted = false;
+		}
+
+		private function onEnterFrame(event : Event) : void
+		{
+			mStarted && render();
+		}
+
+		public function render() : void
+		{
+			if (!contextValid)
+				return;
+
+			updateViewPort();
+
+			mContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			mContext.setCulling(Context3DTriangleFace.NONE);
+			mContext.clear(0, 0, 0);
+			mContainer.render();
+			mContext.present();
+		}
+
+
+		private function updateViewPort(forceUpdate : Boolean = false) : void
+		{
+			if (forceUpdate || mPreviousViewPort.width != mViewPort.width || mPreviousViewPort.height != mViewPort.height || mPreviousViewPort.x != mViewPort.x || mPreviousViewPort.y != mViewPort.y)
+			{
+				mPreviousViewPort.setTo(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height);
+
+				if (mProfile == "baselineConstrained")
+					configureBackBuffer(32, 32, mAntiAliasing, true);
+
+				mStage3D.x = mViewPort.x;
+				mStage3D.y = mViewPort.y;
+
+				configureBackBuffer(mViewPort.width, mViewPort.height, mAntiAliasing, true, mSupportHighResolutions);
+			}
+		}
+
+		private function configureBackBuffer(width : int, height : int, antiAlias : int, enableDepthAndStencil : Boolean, wantsBestResolution : Boolean = false) : void
+		{
+			enableDepthAndStencil &&= SystemUtil.supportsDepthAndStencil;
+
+			var configureBackBuffer : Function = mContext.configureBackBuffer;
+			var methodArgs : Array = [width, height, antiAlias, enableDepthAndStencil];
+			if (configureBackBuffer.length > 4)
+				methodArgs.push(wantsBestResolution);
+			configureBackBuffer.apply(mContext, methodArgs);
 		}
 
 		public function get stageWidth() : int
@@ -163,6 +250,79 @@ package hy.game.stage3D
 			return mProfile;
 		}
 
+		public function get context() : Context3D
+		{
+			return mContext;
+		}
+
+		public function get antiAliasing() : int
+		{
+			return mAntiAliasing;
+		}
+
+		public function set antiAliasing(value : int) : void
+		{
+			if (mAntiAliasing != value)
+			{
+				mAntiAliasing = value;
+				if (contextValid)
+					updateViewPort(true);
+			}
+		}
+
+		public function get enableErrorChecking() : Boolean
+		{
+			return mEnableErrorChecking;
+		}
+
+		public function set enableErrorChecking(value : Boolean) : void
+		{
+			mEnableErrorChecking = value;
+			if (mContext)
+				mContext.enableErrorChecking = value;
+		}
+
+		private function onStage3DError(event : ErrorEvent) : void
+		{
+			if (event.errorID == 3702)
+			{
+				var mode : String = Capabilities.playerType == "Desktop" ? "renderMode" : "wmode";
+				trace("Context3D not available! Possible reasons: wrong " + mode + " or missing device support.");
+			}
+			else
+				trace("Stage3D error: " + event.text);
+		}
+
+		public function get contextValid() : Boolean
+		{
+			return mContext && mContext.driverInfo != "Disposed";
+		}
+
+		public function get supportHighResolutions() : Boolean
+		{
+			return mSupportHighResolutions;
+		}
+
+		public function set supportHighResolutions(value : Boolean) : void
+		{
+			if (mSupportHighResolutions != value)
+			{
+				mSupportHighResolutions = value;
+				if (contextValid)
+					updateViewPort(true);
+			}
+		}
+
+		public function get viewPort() : Rectangle
+		{
+			return mViewPort;
+		}
+
+		public function set viewPort(value : Rectangle) : void
+		{
+			mViewPort = value.clone();
+			SRenderSupport.setProjectionMatrix(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height, mViewPort.width, mViewPort.height);
+		}
 
 	}
 }

@@ -5,31 +5,21 @@ package hy.game.render
 	
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
-	
-	import starling.display.Image;
-	import starling.textures.Texture;
+	import hy.game.stage3D.display.SImage;
+	import hy.game.stage3D.texture.STexture;
 
-	public class SDirectBitmap extends Image implements IBitmap
+	public class SDirectBitmap extends SImage implements IBitmap
 	{
-		private static var nullTexture : SDirectBitmapData
-
 		public function SDirectBitmap(texture : SDirectBitmapData = null)
 		{
-			if (nullTexture == null)
-				nullTexture = SDirectBitmapData.directEmpty(2, 2);
-			if (texture == null)
-				texture = nullTexture;
 			super(texture);
 		}
 
 		public function set data(value : IBitmapData) : void
 		{
-			if (value == null)
-				value = nullTexture;
 			if (value is SDirectBitmapData && texture != value)
 			{
-				this.texture = value as Texture;
-				this.readjustSize();
+				this.texture = value as STexture;
 			}
 		}
 
@@ -70,11 +60,9 @@ package hy.game.render
 		}
 
 
-		public function destroy() : void
+		public override function dispose() : void
 		{
-			removeChild();
-			if (texture)
-				texture.dispose();
+			super.dispose();
 		}
 
 	}

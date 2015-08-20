@@ -2,11 +2,10 @@ package hy.game.render
 {
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IDisplay;
-	
-	import starling.base.SSprite;
-	import starling.display.DisplayObject;
+	import hy.game.stage3D.display.SDisplayObject;
+	import hy.game.stage3D.display.SDisplayObjectContainer;
 
-	public class SDirectContainer extends SSprite implements IContainer
+	public class SDirectContainer extends SDisplayObjectContainer implements IContainer
 	{
 		public function SDirectContainer()
 		{
@@ -15,17 +14,17 @@ package hy.game.render
 
 		public function addGameChildAt(child : IDisplay, index : int) : void
 		{
-			if (child is DisplayObject)
+			if (child is SDisplayObject)
 			{
-				addChildAt(child as DisplayObject, index);
+				addChildAt(child as SDisplayObject, index);
 			}
 		}
 
 		public function addGameChild(child : IDisplay) : void
 		{
-			if (child is DisplayObject)
+			if (child is SDisplayObject)
 			{
-				addChild(child as DisplayObject);
+				addChild(child as SDisplayObject);
 			}
 		}
 
@@ -36,17 +35,17 @@ package hy.game.render
 
 		public function getGameChildIndex(child : IDisplay) : int
 		{
-			return this.getChildIndex(child as DisplayObject);
+			return this.getChildIndex(child as SDisplayObject);
 		}
 
 		public function setGameChildIndex(child : IDisplay, index : int) : void
 		{
-			this.setChildIndex(child as DisplayObject, index);
+			this.setChildIndex(child as SDisplayObject, index);
 		}
 
 		public function removeGameChild(child : IDisplay) : void
 		{
-			this.removeChild(child as DisplayObject);
+			this.removeChild(child as SDisplayObject);
 		}
 
 		public function get sparent() : IContainer

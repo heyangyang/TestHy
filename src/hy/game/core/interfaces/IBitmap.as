@@ -38,7 +38,7 @@ package hy.game.core.interfaces
 		function set filters(value : Array) : void;
 		function get filters() : Array;
 
-		function removeChild() : void;
+		function removeFromParent(dispose:Boolean=false) : void;
 
 		function set colorTransform(value : ColorTransform) : void;
 		function get colorTransform() : ColorTransform;
