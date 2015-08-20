@@ -12,15 +12,17 @@ package hy.game.stage3D
 	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
 
+	import hy.game.core.SMainGameFrame;
 	import hy.game.core.event.SEvent;
 	import hy.game.core.event.SEventDispatcher;
+	import hy.game.core.interfaces.IEnterFrame;
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.display.SDisplayObjectContainer;
 	import hy.game.stage3D.utils.SystemUtil;
 
 	use namespace name_part;
 
-	public class SStage3D extends SEventDispatcher
+	public class SStage3D extends SEventDispatcher implements IEnterFrame
 	{
 		public static var handleLostContext : Boolean;
 		public static var multitouchEnabled : Boolean;
@@ -175,7 +177,7 @@ package hy.game.stage3D
 			mContext.enableErrorChecking = mEnableErrorChecking;
 			SRenderSupport.sContext = mContext;
 			dispatchEventWith(SEvent.ROOT_CREATED);
-			mStage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+			SMainGameFrame.getInstance().addGameFrame(this);
 		}
 
 		public function start() : void
@@ -188,7 +190,7 @@ package hy.game.stage3D
 			mStarted = false;
 		}
 
-		private function onEnterFrame(event : Event) : void
+		public function update() : void
 		{
 			mStarted && render();
 		}
@@ -199,7 +201,7 @@ package hy.game.stage3D
 				return;
 
 			updateViewPort();
-
+			SRenderSupport.reset();
 			mContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			mContext.setCulling(Context3DTriangleFace.NONE);
 			mContext.clear(0, 0, 0);

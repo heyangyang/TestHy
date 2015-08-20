@@ -9,6 +9,7 @@ package hy.game
 	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameDispatcher;
+	import hy.game.core.SMainGameFrame;
 	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
@@ -65,12 +66,12 @@ package hy.game
 			m_current = this;
 			SDebug.init(current_stage);
 		}
-		
-		public function onStart():void
+
+		public function onStart() : void
 		{
+			SMainGameFrame.getInstance().init(current_stage);
 			SMouseUpdateMangaer.getInstance().init(current_stage);
 			SLayerManager.getInstance().init(current_stage);
-			SUpdateManager.getInstance().init(current_stage);
 			SKeyboardManager.getInstance().init(current_stage);
 			SReferenceManager.getInstance();
 			SPreLoad.getInstance();
@@ -79,6 +80,9 @@ package hy.game
 			SoundManager.getInstance();
 			STimeControl.getInstance();
 			ManagerGameCreate.getInstance();
+			//添加序列渲染
+			SMainGameFrame.getInstance().addGameFrame(SLayerManager.getInstance());
+			SMainGameFrame.getInstance().addGameFrame(SUpdateManager.getInstance());
 		}
 
 		protected function onResizeHandler(event : Event) : void

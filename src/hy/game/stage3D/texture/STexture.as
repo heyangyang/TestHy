@@ -102,11 +102,6 @@ package hy.game.stage3D.texture
 			return null;
 		}
 
-		public function get premultipliedAlpha() : Boolean
-		{
-			return false;
-		}
-
 		public function get mipMapping() : Boolean
 		{
 			return false;

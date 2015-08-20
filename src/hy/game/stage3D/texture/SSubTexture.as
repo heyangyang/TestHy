@@ -40,14 +40,13 @@ package hy.game.stage3D.texture
 
 			if (mOffest)
 			{
-				return;
-				var deltaRight : Number = mOffest.x - mRegion.width;
-				var deltaBottom : Number = mOffest.y - mRegion.height;
-
-				vertexData.translateVertex(0, -mOffest.x, -mOffest.y);
-				vertexData.translateVertex(1, -deltaRight, -mOffest.y);
-				vertexData.translateVertex(2, -mOffest.x, -deltaBottom);
-				vertexData.translateVertex(3, -deltaRight, -deltaBottom);
+//				var deltaRight : Number = mOffest.x - mRegion.width;
+//				var deltaBottom : Number = mOffest.y - mRegion.height;
+//
+//				vertexData.translateVertex(0, -mOffest.x, -mOffest.y);
+//				vertexData.translateVertex(1, -deltaRight, -mOffest.y);
+//				vertexData.translateVertex(2, -mOffest.x, -deltaBottom);
+//				vertexData.translateVertex(3, -deltaRight, -deltaBottom);
 			}
 		}
 
@@ -84,11 +83,6 @@ package hy.game.stage3D.texture
 		public override function get height() : int
 		{
 			return mRegion.height;
-		}
-
-		public override function get premultipliedAlpha() : Boolean
-		{
-			return mParent.premultipliedAlpha;
 		}
 
 		public override function get scale() : Number

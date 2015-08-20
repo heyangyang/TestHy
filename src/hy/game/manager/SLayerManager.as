@@ -2,15 +2,13 @@ package hy.game.manager
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
-	import flash.events.Event;
 	import flash.utils.Dictionary;
-	import flash.utils.getTimer;
 	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameContainer;
 	import hy.game.core.GameObject;
-	import hy.game.core.STime;
 	import hy.game.core.interfaces.IContainer;
+	import hy.game.core.interfaces.IEnterFrame;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
@@ -25,7 +23,7 @@ package hy.game.manager
 	 * @author hyy
 	 *
 	 */
-	public class SLayerManager extends SBaseManager
+	public class SLayerManager extends SBaseManager implements IEnterFrame
 	{
 		public static const LAYER_MAP : String = "map";
 		public static const LAYER_GAME : String = "game";
@@ -47,7 +45,7 @@ package hy.game.manager
 		private var m_dictionary : Dictionary;
 		private var m_stage : Stage;
 		private var m_needSort : Boolean;
-		private var m_elapsedTime : int;
+
 
 		public function SLayerManager()
 		{
@@ -67,7 +65,6 @@ package hy.game.manager
 			addLayer(LAYER_UI, EnumPriority.PRIORITY_6, new SRenderContainer());
 			addLayer(LAYER_ALERT, EnumPriority.PRIORITY_5, new SRenderContainer());
 			addLayer(LAYER_GUIDE, EnumPriority.PRIORITY_4, new SRenderContainer());
-			start();
 
 			function createContainer() : IContainer
 			{
@@ -93,17 +90,8 @@ package hy.game.manager
 			m_needSort = true;
 		}
 
-		private function start() : void
+		public function update() : void
 		{
-			m_elapsedTime = getTimer();
-			m_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 999);
-		}
-
-		private function onEnterFrame(evt : Event) : void
-		{
-			STime.getTimer = getTimer();
-			STime.deltaTime = STime.getTimer - m_elapsedTime;
-			m_elapsedTime = STime.getTimer;
 			m_needSort && onSort();
 			for (var i : int = m_list.length - 1; i >= 0; i--)
 			{

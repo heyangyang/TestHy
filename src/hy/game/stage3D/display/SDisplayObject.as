@@ -3,9 +3,10 @@ package hy.game.stage3D.display
 	import flash.geom.Matrix;
 
 	import hy.game.core.event.SEventDispatcher;
+	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.errors.AbstractMethodError;
-	import hy.game.stage3D.utils.SMathUtil;
 	import hy.game.stage3D.texture.SBlendMode;
+	import hy.game.stage3D.utils.SMathUtil;
 
 
 
@@ -26,6 +27,10 @@ package hy.game.stage3D.display
 		private var mParent : SDisplayObjectContainer;
 		private var mTransformationMatrix : Matrix;
 		protected var mOrientationChanged : Boolean;
+		/**
+		 * 记录索引位置 
+		 */
+		name_part var mIndex : int;
 
 		public function SDisplayObject()
 		{

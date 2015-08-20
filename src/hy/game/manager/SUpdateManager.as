@@ -1,13 +1,9 @@
 package hy.game.manager
 {
-	import flash.display.Stage;
-	import flash.events.Event;
-	import flash.utils.getTimer;
-	
-	import hy.game.core.STime;
+	import hy.game.core.interfaces.IEnterFrame;
 	import hy.game.core.interfaces.IUpdate;
 
-	public class SUpdateManager extends SBaseManager
+	public class SUpdateManager extends SBaseManager implements IEnterFrame
 	{
 		private static var instance : SUpdateManager;
 
@@ -28,12 +24,7 @@ package hy.game.manager
 			super();
 		}
 
-		public function init(stage : Stage) : void
-		{
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 998);
-		}
-
-		private function onEnterFrame(evt : Event) : void
+		public function update() : void
 		{
 			m_prioritySort && onSort();
 			for (var i : int = m_number - 1; i >= 0; i--)
@@ -43,7 +34,6 @@ package hy.game.manager
 					continue;
 				m_update.update();
 			}
-			STime.passedTime = getTimer() - STime.getTimer;
 		}
 
 		public function register(update : IUpdate) : void
