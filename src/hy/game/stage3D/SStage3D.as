@@ -11,7 +11,7 @@ package hy.game.stage3D
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
-	
+
 	import hy.game.core.SMainGameFrame;
 	import hy.game.core.event.SEvent;
 	import hy.game.core.event.SEventDispatcher;
@@ -210,6 +210,7 @@ package hy.game.stage3D
 			mContext.setRenderToBackBuffer();
 			mContainer.render();
 			mContext.present();
+			SRenderSupport.finishDraw();
 		}
 
 

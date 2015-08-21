@@ -48,7 +48,8 @@ package hy.game.stage3D
 		private static var sMeshIndexData : Vector.<uint>;
 		private static var sDrawCount : int;
 		private static var sUpdateCameraMatrix3D : Boolean;
-		private static var sVertexBufferList : Array = [];
+		private static var sVertexBufferList : Vector.<VertexBuffer3D> = new Vector.<VertexBuffer3D>();
+		private static var sVertexBufferNum:int;
 
 		/**
 		 * 更新纹理次数
@@ -96,6 +97,23 @@ package hy.game.stage3D
 		}
 
 		/**
+		 * 结束后，检测缓冲区 
+		 * 
+		 */
+		public static function finishDraw() : void
+		{
+			if(sDrawCount<sVertexBufferNum*2)	
+				return;
+			var deleteCount:int=sVertexBufferNum-sDrawCount;
+			while(deleteCount>0)
+			{
+				sVertexBuffer=sVertexBufferList.pop();
+				sVertexBuffer.dispose();
+				deleteCount--;
+			}
+			sVertexBuffer=null;
+		}
+		/**
 		 * 创建网格
 		 * @param mRawData
 		 * @return
@@ -107,6 +125,7 @@ package hy.game.stage3D
 			{
 				sVertexBuffer = sContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
 				sVertexBufferList.push(sVertexBuffer);
+				sVertexBufferNum++;
 			}
 			else
 			{
