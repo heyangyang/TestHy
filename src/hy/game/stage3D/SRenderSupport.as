@@ -35,7 +35,7 @@ package hy.game.stage3D
 		private static var sProgramNameCache : Dictionary = new Dictionary();
 		private static var sContextData : Dictionary = new Dictionary(true);
 		private static var sAssembler : AGALMiniAssembler = new AGALMiniAssembler();
-		private static var sRenderAlpha : Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, .5, 1.0, 1.0, 1.0, .5];
+		private static var sRenderAlpha : Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0,1, 1.0, 1.0, 1.0, 1];
 		private static var sMatrixData : Vector.<Number> = new <Number>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		private static var sPoint3D : Vector3D = new Vector3D();
 		private static var sCurProgram : Program3D;
@@ -46,31 +46,33 @@ package hy.game.stage3D
 		private static var sVertexBuffer : VertexBuffer3D;
 		private static var sIndexBuffer : IndexBuffer3D;
 		private static var sMeshIndexData : Vector.<uint>;
-		private static var sDrawCount:int;
-		private static var sUpdateCameraMatrix3D:Boolean;
+		private static var sDrawCount : int;
+		private static var sUpdateCameraMatrix3D : Boolean;
+		private static var sVertexBufferList : Array = [];
 
 		/**
-		 * 更新纹理次数 
-		 * @return 
-		 * 
+		 * 更新纹理次数
+		 * @return
+		 *
 		 */
-		public static function get drawCount():int
+		public static function get drawCount() : int
 		{
 			return sDrawCount
 		}
-		
+
 		public function SRenderSupport()
 		{
 		}
 
-		public static function reset():void
+		public static function reset() : void
 		{
-			sDrawCount=0;
+			sDrawCount = 0;
 		}
-		
+
 		public static function supportImage(image : SImage) : void
 		{
 			sDrawCount++;
+			updateProgram(image.texture, image.tinted, image.smoothing);
 			//混合模式
 			setBlendFactors(!image.tinted, image.blendMode);
 			//透明度
@@ -78,20 +80,19 @@ package hy.game.stage3D
 			//投影矩阵
 			if(sUpdateCameraMatrix3D)
 			{
-				sUpdateCameraMatrix3D=false;
+				sUpdateCameraMatrix3D = false;
 				sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sProjectionMatrix3D, true);
 			}
 			//创建网格
-			createVertexBuffer(image.rawData);
+			createVertexBuffer(image.vertexData);
 			//xy坐标
 			sContext.setVertexBufferAt(0, sVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
-			//uv坐标
-			sContext.setVertexBufferAt(2, sVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//纹理
 			sContext.setTextureAt(0, image.texture.base);
+			//uv坐标
+			sContext.setVertexBufferAt(2, sVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();
-
 		}
 
 		/**
@@ -100,18 +101,25 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		public static function createVertexBuffer(mRawData : Vector.<Number>) : VertexBuffer3D
+		public static function createVertexBuffer(vertexData : SVertexData) : VertexBuffer3D
 		{
-			if (sVertexBuffer == null)
-				sVertexBuffer = sContext.createVertexBuffer(mRawData.length / SVertexData.ELEMENTS_PER_VERTEX, SVertexData.ELEMENTS_PER_VERTEX);
-			sVertexBuffer.uploadFromVector(mRawData, 0, mRawData.length / SVertexData.ELEMENTS_PER_VERTEX);
+			if (sVertexBufferList[sDrawCount - 1] == null)
+			{
+				sVertexBuffer = sContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
+				sVertexBufferList.push(sVertexBuffer);
+			}
+			else
+			{
+				sVertexBuffer = sVertexBufferList[sDrawCount - 1];
+			}
+			sVertexBuffer.uploadFromVector(vertexData.rawData, 0, vertexData.numVertices);
 			return sVertexBuffer;
 		}
 
 		/**
-		 * 创建索引，并且提交索引 
-		 * @return 
-		 * 
+		 * 创建索引，并且提交索引
+		 * @return
+		 *
 		 */
 		public static function createMeshIndexBuffer() : VertexBuffer3D
 		{
@@ -152,6 +160,7 @@ package hy.game.stage3D
 			if (sCurProgram == program)
 				return;
 			sCurProgram = program;
+			sUpdateCameraMatrix3D = true;
 			sContext.setProgram(sCurProgram);
 		}
 
@@ -206,7 +215,7 @@ package hy.game.stage3D
 
 					fragmentShader = fragmentShader.replace("<???>", getTextureLookupFlags(texture.format, texture.mipMapping, texture.repeat, smoothing));
 				}
-				trace(vertexShader, fragmentShader)
+				trace(vertexShader, fragmentShader, programName)
 				program = registerProgramFromSource(programName, vertexShader, fragmentShader);
 			}
 
@@ -219,17 +228,17 @@ package hy.game.stage3D
 		 * @param blendMode
 		 *
 		 */
-		private static var sPremultipliedAlpha:Boolean;
-		private static var sBlendMode:String;
-		
+		private static var sPremultipliedAlpha : Boolean;
+		private static var sBlendMode : String;
+
 		public static function setBlendFactors(premultipliedAlpha : Boolean, blendMode : String = "normal") : void
 		{
-			if(sPremultipliedAlpha == premultipliedAlpha && sBlendMode==blendMode)
+			if (sPremultipliedAlpha == premultipliedAlpha && sBlendMode == blendMode)
 				return;
+			sBlendMode = blendMode;
+			sPremultipliedAlpha == premultipliedAlpha;
 			if (blendMode == SBlendMode.AUTO)
 				blendMode = SBlendMode.NORMAL;
-			sBlendMode=blendMode;
-			sPremultipliedAlpha == premultipliedAlpha;
 			var blendFactors : Array = SBlendMode.getBlendFactors(blendMode, premultipliedAlpha);
 			sContext.setBlendFactors(blendFactors[0], blendFactors[1]);
 		}
@@ -383,9 +392,9 @@ package hy.game.stage3D
 			sProjectionMatrix3D = new Matrix3D();
 			sProjectionMatrix3D.copyRawDataFrom(sMatrixData);
 			sProjectionMatrix3D.prependTranslation(-stageWidth / 2.0 - offsetX, -stageHeight / 2.0 - offsetY, focalLength);
-			
+
 			//提交矩阵
-			sUpdateCameraMatrix3D=true;
+			sUpdateCameraMatrix3D = true;
 		}
 	}
 }

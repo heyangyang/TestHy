@@ -6,7 +6,7 @@ package hy.game.stage3D.texture
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.errors.MissingContextError;

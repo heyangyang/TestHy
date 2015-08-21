@@ -6,7 +6,7 @@ package hy.game.stage3D.texture
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.render.SDirectBitmapData;
 
 

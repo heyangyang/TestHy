@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
-	
+
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.stage3D.display.SImage;

@@ -1,7 +1,7 @@
 package hy.game.stage3D.display
 {
 	import flash.geom.Matrix;
-
+	
 	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
@@ -66,9 +66,9 @@ package hy.game.stage3D.display
 			return super.transformationMatrix;
 		}
 
-		public override function get rawData() : Vector.<Number>
+		public function get vertexData() : SVertexData
 		{
-			return mSupportVertexData.rawData;
+			return mSupportVertexData;
 		}
 
 		public override function render() : void
@@ -76,7 +76,6 @@ package hy.game.stage3D.display
 			if (mTexture == null)
 				return;
 			transformationMatrix;
-			SRenderSupport.updateProgram(mTexture, tinted, mSmoothing);
 			SRenderSupport.supportImage(this);
 		}
 	}

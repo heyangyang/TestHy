@@ -11,7 +11,7 @@ package hy.game.stage3D
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
-
+	
 	import hy.game.core.SMainGameFrame;
 	import hy.game.core.event.SEvent;
 	import hy.game.core.event.SEventDispatcher;
@@ -202,9 +202,12 @@ package hy.game.stage3D
 
 			updateViewPort();
 			SRenderSupport.reset();
+			mContext.clear(0, 0, 0);
 			mContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			mContext.setCulling(Context3DTriangleFace.NONE);
-			mContext.clear(0, 0, 0);
+			mContext.setStencilReferenceValue(0);
+			mContext.setScissorRectangle(null);
+			mContext.setRenderToBackBuffer();
 			mContainer.render();
 			mContext.present();
 		}

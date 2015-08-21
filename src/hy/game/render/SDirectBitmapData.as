@@ -14,6 +14,11 @@ package hy.game.render
 			return STexture.fromBitmapData(data, false, optimizeForRenderToTexture, scale, format, repeat) as SDirectBitmapData;
 		}
 		
+		public static function directEmpty(width : Number, height : Number, premultipliedAlpha : Boolean = true, mipMapping : Boolean = true, optimizeForRenderToTexture : Boolean = false, scale : Number = -1, format : String = "bgra", repeat : Boolean = false) : SDirectBitmapData
+		{
+			return STexture.empty(width, height, premultipliedAlpha, mipMapping, optimizeForRenderToTexture, scale, format, repeat) as SDirectBitmapData;
+		}
+		
 		protected var _rect : Rectangle;
 
 		public function SDirectBitmapData()

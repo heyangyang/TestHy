@@ -16,7 +16,7 @@ package hy.game.stage3D.display
 			mTinted = color != 0xffffff;
 			mVertexData = new SVertexData(4);
 			setSize(width, height);
-			//this.color = color;
+			this.color = color;
 		}
 
 
@@ -70,11 +70,6 @@ package hy.game.stage3D.display
 		public function get tinted() : Boolean
 		{
 			return mTinted;
-		}
-
-		public function get rawData() : Vector.<Number>
-		{
-			return mVertexData.rawData;
 		}
 	}
 }
