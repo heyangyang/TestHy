@@ -42,6 +42,7 @@ package hy.game.stage3D
 		private static var sCurAlpha : Number;
 		name_part static var sContext : Context3D;
 		private static var sProjectionMatrix3D : Matrix3D;
+		private static var sPositionMatrix3D : Matrix3D;
 		private static var sProjectionMatrix : Matrix;
 		private static var sVertexBuffer : VertexBuffer3D;
 		private static var sIndexBuffer : IndexBuffer3D;
@@ -72,7 +73,6 @@ package hy.game.stage3D
 
 		public static function supportImage(image : SImage) : void
 		{
-			sDrawCount++;
 			updateProgram(image.texture, image.tinted, image.smoothing);
 			//混合模式
 			setBlendFactors(!image.tinted, image.blendMode);
@@ -84,6 +84,9 @@ package hy.game.stage3D
 				sUpdateCameraMatrix3D = false;
 				sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sProjectionMatrix3D, true);
 			}
+//			sPositionMatrix3D.copyFrom(sProjectionMatrix3D);
+//			sPositionMatrix3D.appendTranslation(image.x,image.y,0);
+//			sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sPositionMatrix3D, true);
 			//创建网格
 			createVertexBuffer(image.vertexData);
 			//xy坐标
@@ -94,6 +97,7 @@ package hy.game.stage3D
 			sContext.setVertexBufferAt(2, sVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();
+			sDrawCount++;
 		}
 
 		/**
@@ -121,7 +125,7 @@ package hy.game.stage3D
 		 */
 		public static function createVertexBuffer(vertexData : SVertexData) : VertexBuffer3D
 		{
-			if (sVertexBufferList[sDrawCount - 1] == null)
+			if (sDrawCount>=sVertexBufferNum)
 			{
 				sVertexBuffer = sContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
 				sVertexBufferList.push(sVertexBuffer);
@@ -129,7 +133,7 @@ package hy.game.stage3D
 			}
 			else
 			{
-				sVertexBuffer = sVertexBufferList[sDrawCount - 1];
+				sVertexBuffer = sVertexBufferList[sDrawCount];
 			}
 			sVertexBuffer.uploadFromVector(vertexData.rawData, 0, vertexData.numVertices);
 			return sVertexBuffer;
@@ -411,7 +415,7 @@ package hy.game.stage3D
 			sProjectionMatrix3D = new Matrix3D();
 			sProjectionMatrix3D.copyRawDataFrom(sMatrixData);
 			sProjectionMatrix3D.prependTranslation(-stageWidth / 2.0 - offsetX, -stageHeight / 2.0 - offsetY, focalLength);
-
+			sPositionMatrix3D=new Matrix3D();
 			//提交矩阵
 			sUpdateCameraMatrix3D = true;
 		}
