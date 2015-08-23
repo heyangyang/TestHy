@@ -41,6 +41,10 @@ package hy.game.render
 			return transform.colorTransform;
 		}
 
+		public function set dropShadow(value:Boolean):void
+		{
+		}
+		
 		public function dispose() : void
 		{
 			if (bitmapData)

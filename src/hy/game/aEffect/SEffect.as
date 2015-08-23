@@ -181,7 +181,7 @@ package hy.game.aEffect
 			}
 
 			//如果播放到动画尾，重新从第一帧开始播放
-			if (m_curFrameIndex >= totalFrame)
+			if (m_curFrameIndex > totalFrame)
 			{
 				m_curLoop++;
 				//从0帧开始跳转 当前帧索引 相对于 总帧数 的余数

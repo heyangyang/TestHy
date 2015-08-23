@@ -532,6 +532,11 @@ package hy.game.render
 			}
 		}
 
+		public function set dropShadow(value:Boolean):void
+		{
+			m_render.dropShadow = value;
+		}
+		
 		/**
 		 * 回收
 		 *

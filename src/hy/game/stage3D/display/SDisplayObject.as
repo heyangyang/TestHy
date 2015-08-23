@@ -79,8 +79,8 @@ package hy.game.stage3D.display
 
 			if (mRotation == 0.0)
 			{
-//				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, -mPivotX * mScaleX, -mPivotY * mScaleY);
-				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, mX - mPivotX * mScaleX, mY - mPivotY * mScaleY);
+				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, -mPivotX * mScaleX, -mPivotY * mScaleY);
+//				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, mX - mPivotX * mScaleX, mY - mPivotY * mScaleY);
 			}
 			else
 			{
@@ -90,10 +90,10 @@ package hy.game.stage3D.display
 				var b : Number = mScaleX * sin;
 				var c : Number = mScaleY * -sin;
 				var d : Number = mScaleY * cos;
-//				var tx : Number = -mPivotX * a - mPivotY * c;
-//				var ty : Number = -mPivotX * b - mPivotY * d;
-				var tx : Number = mX - mPivotX * a - mPivotY * c;
-				var ty : Number = mY - mPivotX * b - mPivotY * d;
+				var tx : Number = -mPivotX * a - mPivotY * c;
+				var ty : Number = -mPivotX * b - mPivotY * d;
+//				var tx : Number = mX - mPivotX * a - mPivotY * c;
+//				var ty : Number = mY - mPivotX * b - mPivotY * d;
 
 				mTransformationMatrix.setTo(a, b, c, d, tx, ty);
 			}

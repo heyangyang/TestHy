@@ -36,6 +36,7 @@ package hy.game.stage3D
 		private static var sContextData : Dictionary = new Dictionary(true);
 		private static var sAssembler : AGALMiniAssembler = new AGALMiniAssembler();
 		private static var sRenderAlpha : Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0,1, 1.0, 1.0, 1.0, 1];
+		private static var sDropShadow : Vector.<Number> = new <Number>[.0, .0, .0, .8, .0, .0, .0, .8, .0, .0, .0,.8, .0, .0, .0, .8];
 		private static var sMatrixData : Vector.<Number> = new <Number>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		private static var sPoint3D : Vector3D = new Vector3D();
 		private static var sCurProgram : Program3D;
@@ -51,7 +52,6 @@ package hy.game.stage3D
 		private static var sUpdateCameraMatrix3D : Boolean;
 		private static var sVertexBufferList : Vector.<VertexBuffer3D> = new Vector.<VertexBuffer3D>();
 		private static var sVertexBufferNum:int;
-
 		/**
 		 * 更新纹理次数
 		 * @return
@@ -76,25 +76,26 @@ package hy.game.stage3D
 			updateProgram(image.texture, image.tinted, image.smoothing);
 			//混合模式
 			setBlendFactors(!image.tinted, image.blendMode);
-			//透明度
-			setAlpha(image.alpha);
 			//投影矩阵
 			if(sUpdateCameraMatrix3D)
 			{
 				sUpdateCameraMatrix3D = false;
 				sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sProjectionMatrix3D, true);
 			}
-//			sPositionMatrix3D.copyFrom(sProjectionMatrix3D);
-//			sPositionMatrix3D.appendTranslation(image.x,image.y,0);
-//			sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sPositionMatrix3D, true);
 			//创建网格
 			createVertexBuffer(image.vertexData);
 			//xy坐标
 			sContext.setVertexBufferAt(0, sVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//纹理
-			sContext.setTextureAt(0, image.texture.base);
+			sContext.setTextureAt(0, image.base);
 			//uv坐标
 			sContext.setVertexBufferAt(2, sVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			//设置xy
+			sPositionMatrix3D.copyFrom(sProjectionMatrix3D);
+			sPositionMatrix3D.prependTranslation(image.x,image.y,0);
+			//透明度
+			setAlpha(image.alpha);
+			sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sPositionMatrix3D, true);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();
 			sDrawCount++;
@@ -238,7 +239,6 @@ package hy.game.stage3D
 
 					fragmentShader = fragmentShader.replace("<???>", getTextureLookupFlags(texture.format, texture.mipMapping, texture.repeat, smoothing));
 				}
-				trace(vertexShader, fragmentShader, programName)
 				program = registerProgramFromSource(programName, vertexShader, fragmentShader);
 			}
 

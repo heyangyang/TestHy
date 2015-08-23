@@ -303,7 +303,7 @@ package hy.game.resources
 			{
 				m_currCount++;
 				reload();
-				error("load again: ", m_currCount, request.url);
+				warning("load again: ", m_currCount, request.url);
 				return;
 			}
 			removeLoader();

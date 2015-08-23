@@ -17,7 +17,7 @@ package hy.game.render
 
 		public function set data(value : IBitmapData) : void
 		{
-			if (value is SDirectBitmapData && texture != value)
+			if (texture != value)
 			{
 				this.texture = value as STexture;
 			}
@@ -58,7 +58,6 @@ package hy.game.render
 			this.x = rect.x;
 			this.y = rect.y;
 		}
-
 
 		public override function dispose() : void
 		{

@@ -59,6 +59,7 @@ package hy.game.components
 		override protected function init() : void
 		{
 			super.init();
+			m_render.dropShadow = true;
 			m_avatar = new SAvatar();
 			m_lazyAvatar = new SAvatarResource(m_avatar);
 		}

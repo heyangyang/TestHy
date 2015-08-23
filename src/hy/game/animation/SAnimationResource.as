@@ -106,7 +106,7 @@ package hy.game.animation
 					m_currFrameAnimation.frameX = offset.x;
 					m_currFrameAnimation.frameY = offset.y;
 				}
-				if (++m_finishIndex >= total_frames)
+				if (++m_finishIndex > total_frames)
 					m_isFinish = true;
 				m_currFrameAnimation.frameData = getBitmapDataByIndex(m_curFrameIndex);
 				if (!m_currFrameAnimation.frameData)

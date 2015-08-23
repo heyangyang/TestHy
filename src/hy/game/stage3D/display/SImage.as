@@ -1,5 +1,6 @@
 package hy.game.stage3D.display
 {
+	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
 	
 	import hy.game.stage3D.SRenderSupport;
@@ -11,11 +12,13 @@ package hy.game.stage3D.display
 	{
 		private var mTexture : STexture;
 		private var mSmoothing : String;
+		private var mDropShadow:Boolean;
 		protected var mSupportVertexData : SVertexData;
 
-		public function SImage(texture : STexture = null)
+		public function SImage(value : STexture = null)
 		{
-			this.texture = texture;
+			if(value)
+				this.texture = value;
 			super(0, 0, 0xffffff, true);
 		}
 
@@ -23,19 +26,27 @@ package hy.game.stage3D.display
 		{
 			return mTexture;
 		}
-
-		public function set texture(texture : STexture) : void
+		
+		public function get base() : TextureBase
 		{
-			if (!texture)
+			return mTexture.base;
+		}
+
+		public function set texture(value : STexture) : void
+		{
+			if (!value)
+			{
+				mTexture=null;
 				return;
+			}
 			mVertexData.setTexCoords(0, 0.0, 0.0);
 			mVertexData.setTexCoords(1, 1.0, 0.0);
 			mVertexData.setTexCoords(2, 0.0, 1.0);
 			mVertexData.setTexCoords(3, 1.0, 1.0);
 
-			setSize(texture.width, texture.height);
+			setSize(value.width, value.height);
 			mSupportVertexData = new SVertexData(4);
-			mTexture = texture;
+			mTexture = value;
 			mTexture.adjustVertexData(mVertexData);
 			copyVertexDataTransformedTo(mSupportVertexData, transformationMatrix);
 			mSmoothing = STextureSmoothing.BILINEAR;
@@ -65,6 +76,17 @@ package hy.game.stage3D.display
 				copyVertexDataTransformedTo(mSupportVertexData, super.transformationMatrix);
 			return super.transformationMatrix;
 		}
+		
+		public override function get width():Number
+		{
+			return mTexture?mTexture.width:0;
+		}
+		
+		public override function get height():Number
+		{
+			return mTexture?mTexture.height:0;
+		}
+
 
 		public function get vertexData() : SVertexData
 		{
@@ -78,5 +100,16 @@ package hy.game.stage3D.display
 			transformationMatrix;
 			SRenderSupport.supportImage(this);
 		}
+
+		public function get dropShadow():Boolean
+		{
+			return mDropShadow;
+		}
+
+		public function set dropShadow(value:Boolean):void
+		{
+			mDropShadow = value;
+		}
+
 	}
 }

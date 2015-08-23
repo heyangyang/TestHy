@@ -38,7 +38,7 @@ package hy.game.core.interfaces
 		function set filters(value : Array) : void;
 		function get filters() : Array;
 
-		function removeFromParent(dispose:Boolean=false) : void;
+		function removeFromParent(dispose : Boolean = false) : void;
 
 		function set colorTransform(value : ColorTransform) : void;
 		function get colorTransform() : ColorTransform;
@@ -47,6 +47,8 @@ package hy.game.core.interfaces
 		function set blendMode(value : String) : void;
 
 		function set scrollRect(rect : Rectangle) : void;
+
+		function set dropShadow(value : Boolean) : void;
 
 		function dispose() : void;
 	}
