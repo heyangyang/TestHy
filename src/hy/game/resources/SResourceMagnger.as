@@ -65,6 +65,8 @@ package hy.game.resources
 
 		public function SResourceMagnger(count : int = 1)
 		{
+			if (instance)
+				error("instance != null");
 			m_maxLoadCount = count;
 		}
 

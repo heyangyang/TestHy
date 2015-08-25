@@ -27,6 +27,8 @@ package hy.game.resources
 
 		public function SPreLoad()
 		{
+			if (instance)
+				error("instance != null");
 			resourceMgr = SResourceMagnger.getInstance();
 		}
 

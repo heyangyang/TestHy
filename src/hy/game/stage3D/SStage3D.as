@@ -56,9 +56,11 @@ package hy.game.stage3D
 		private var mStarted : Boolean;
 		private var mViewPort : Rectangle;
 		private var mPreviousViewPort : Rectangle;
+		private var mRenderSupport : SRenderSupport;
 
 		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = "baselineConstrained")
 		{
+			mRenderSupport = SRenderSupport.getInstance();
 			viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			mStage = stage;
 			mStage3D = stage.stage3Ds[0];
@@ -175,7 +177,7 @@ package hy.game.stage3D
 		{
 			mContext = mStage3D.context3D;
 			mContext.enableErrorChecking = mEnableErrorChecking;
-			SRenderSupport.sContext = mContext;
+			mRenderSupport.mContext = mContext;
 			dispatchEventWith(SEvent.ROOT_CREATED);
 			SMainGameFrame.getInstance().addGameFrame(this);
 		}
@@ -201,7 +203,7 @@ package hy.game.stage3D
 				return;
 
 			updateViewPort();
-			SRenderSupport.reset();
+			mRenderSupport.reset();
 			mContext.clear(0, 0, 0);
 			mContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			mContext.setCulling(Context3DTriangleFace.NONE);
@@ -210,7 +212,7 @@ package hy.game.stage3D
 			mContext.setRenderToBackBuffer();
 			mContainer.render();
 			mContext.present();
-			SRenderSupport.finishDraw();
+			mRenderSupport.finishDraw();
 		}
 
 
@@ -327,7 +329,7 @@ package hy.game.stage3D
 		public function set viewPort(value : Rectangle) : void
 		{
 			mViewPort = value.clone();
-			SRenderSupport.setProjectionMatrix(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height, mViewPort.width, mViewPort.height);
+			mRenderSupport.setProjectionMatrix(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height, mViewPort.width, mViewPort.height);
 		}
 
 	}

@@ -2,8 +2,10 @@ package hy.game.data
 {
 	import flash.geom.ColorTransform;
 
+	import hy.game.core.SCameraObject;
 	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
+
 	use namespace name_part;
 
 	/**
@@ -17,198 +19,213 @@ package hy.game.data
 		public static const C_WH : int = Math.pow(2, 1);
 		public static const C_ALPHA : int = Math.pow(2, 2);
 
-		private var m_x : int;
-		private var m_y : int;
-		private var m_z : int;
-		private var m_centerOffsetY : int;
+		private var mScreenX : int;
+		private var mScreenY : int;
 
-		private var m_scale : Number;
+		private var mX : int;
+		private var mY : int;
+		private var mZ : int;
+		private var mCenterOffsetY : int;
 
-		private var m_alpha : Number;
+		private var mScale : Number;
 
-		private var m_filters : Array;
+		private var mAlpha : Number;
 
-		private var m_transform : ColorTransform;
+		private var mFilters : Array;
 
-		private var m_blendMode : String;
+		private var mTransform : ColorTransform;
 
-		private var m_width : int;
-		private var m_height : int;
+		private var mBlendMode : String;
 
-		private var m_change : int;
+		private var mWidth : int;
+		private var mHeight : int;
+
+		private var mChange : int;
 
 		public var dir : int;
 
-		private var m_rectangle : SRectangle;
+		private var mRectangle : SRectangle;
 
-		name_part var mx : int;
-		name_part var my : int;
+		name_part var mAddX : int;
+		name_part var mAddY : int;
 
 		public var isMouseOver : Boolean;
 
 		public function STransform()
 		{
-			m_rectangle = new SRectangle();
+			mRectangle = new SRectangle();
 		}
 
 		public function get rectangle() : SRectangle
 		{
-			return m_rectangle;
+			return mRectangle;
 		}
 
 		public function get x() : int
 		{
-			return m_x;
+			return mX;
 		}
 
 		public function set x(value : int) : void
 		{
-			if (m_x == value)
+			mScreenX = value - SCameraObject.sceneX;
+			if (mX == value)
 				return;
 			if (value < 0)
 				value = 0;
-			m_x = value;
-			if ((m_change & C_XYZ) == 0)
-				m_change += C_XYZ;
+			mX = value;
+			if ((mChange & C_XYZ) == 0)
+				mChange += C_XYZ;
 		}
 
 		public function get y() : int
 		{
-			return m_y;
+			return mY;
 		}
 
 		public function set y(value : int) : void
 		{
-			if (m_y == value)
+			if (mY == value)
 				return;
 			if (value < 0)
 				value = 0;
-			m_y = value;
-			if ((m_change & C_XYZ) == 0)
-				m_change += C_XYZ;
+			mY = value;
+			mScreenY = mY - SCameraObject.sceneY;
+			if ((mChange & C_XYZ) == 0)
+				mChange += C_XYZ;
 		}
 
 		public function get z() : int
 		{
-			return m_z;
+			return mZ;
 		}
 
 		public function set z(value : int) : void
 		{
-			if (m_z == value)
+			if (mZ == value)
 				return;
-			m_z = value;
-			if ((m_change & C_XYZ) == 0)
-				m_change += C_XYZ;
+			mZ = value;
+			if ((mChange & C_XYZ) == 0)
+				mChange += C_XYZ;
+		}
+
+		public function get screenX() : int
+		{
+			return mScreenX;
+		}
+
+		public function get screenY() : int
+		{
+			return mScreenY;
 		}
 
 		public function get centerOffsetY() : int
 		{
-			return m_centerOffsetY;
+			return mCenterOffsetY;
 		}
 
 		public function set centerOffsetY(value : int) : void
 		{
-			if (m_centerOffsetY == value)
+			if (mCenterOffsetY == value)
 				return;
-			m_centerOffsetY = value;
-			if ((m_change & C_XYZ) == 0)
-				m_change += C_XYZ;
+			mCenterOffsetY = value;
+			if ((mChange & C_XYZ) == 0)
+				mChange += C_XYZ;
 		}
 
 		public function get scale() : Number
 		{
-			return m_scale;
+			return mScale;
 		}
 
 		public function set scale(value : Number) : void
 		{
-			if (m_scale == value)
+			if (mScale == value)
 				return;
-			m_scale = value;
+			mScale = value;
 		}
 
 		public function get alpha() : Number
 		{
-			return m_alpha;
+			return mAlpha;
 		}
 
 		public function set alpha(value : Number) : void
 		{
-			if (m_alpha == value)
+			if (mAlpha == value)
 				return;
-			m_alpha = value;
-			if ((m_change & C_ALPHA) == 0)
-				m_change += C_ALPHA;
+			mAlpha = value;
+			if ((mChange & C_ALPHA) == 0)
+				mChange += C_ALPHA;
 		}
 
 		public function get filters() : Array
 		{
-			return m_filters;
+			return mFilters;
 		}
 
 		public function set filters(value : Array) : void
 		{
-			if (m_filters == value)
+			if (mFilters == value)
 				return;
-			m_filters = value;
+			mFilters = value;
 		}
 
 		public function get transform() : ColorTransform
 		{
-			return m_transform;
+			return mTransform;
 		}
 
 		public function set transform(value : ColorTransform) : void
 		{
-			if (m_transform == value)
+			if (mTransform == value)
 				return;
-			m_transform = value;
+			mTransform = value;
 		}
 
 		public function get blendMode() : String
 		{
-			return m_blendMode;
+			return mBlendMode;
 		}
 
 		public function set blendMode(value : String) : void
 		{
-			if (m_blendMode == value)
+			if (mBlendMode == value)
 				return;
-			m_blendMode = value;
+			mBlendMode = value;
 		}
 
 		public function isChangeFiled(key : int) : Boolean
 		{
-			return (m_change & key) != 0;
+			return (mChange & key) != 0;
 		}
 
 		public function set width(value : int) : void
 		{
-			if (m_width == value)
+			if (mWidth == value)
 				return;
-			m_width = value;
-			if ((m_change & C_WH) == 0)
-				m_change += C_WH;
+			mWidth = value;
+			if ((mChange & C_WH) == 0)
+				mChange += C_WH;
 		}
 
 		public function get width() : int
 		{
-			return m_width;
+			return mWidth;
 		}
 
 		public function set height(value : int) : void
 		{
-			if (m_height == value)
+			if (mHeight == value)
 				return;
-			m_height = value;
-			if ((m_change & C_WH) == 0)
-				m_change += C_WH;
+			mHeight = value;
+			if ((mChange & C_WH) == 0)
+				mChange += C_WH;
 		}
 
 		public function get height() : int
 		{
-			return m_height;
+			return mHeight;
 		}
 
 		/**
@@ -220,9 +237,9 @@ package hy.game.data
 		 */
 		public function contains(x : int, y : int) : Boolean
 		{
-			if (x < m_x + m_rectangle.x || x > m_x + m_rectangle.right)
+			if (x < mX + mRectangle.x || x > mX + mRectangle.right)
 				return false;
-			if (y < m_y + m_rectangle.y || y > m_y + m_rectangle.bottom)
+			if (y < mY + mRectangle.y || y > mY + mRectangle.bottom)
 				return false;
 			return true;
 		}
@@ -231,19 +248,19 @@ package hy.game.data
 		{
 			if (isChangeFiled(C_XYZ))
 			{
-				render.x = m_x;
-				render.y = m_y;
+				render.x = mX;
+				render.y = mY;
 			}
 			if (isChangeFiled(C_ALPHA))
-				render.alpha = m_alpha;
+				render.alpha = mAlpha;
 		}
 
 		name_part function changAll() : void
 		{
-			m_change = 0;
-			m_change += C_XYZ;
-			m_change += C_WH;
-			m_change += C_ALPHA;
+			mChange = 0;
+			mChange += C_XYZ;
+			mChange += C_WH;
+			mChange += C_ALPHA;
 		}
 
 		/**
@@ -252,7 +269,7 @@ package hy.game.data
 		 */
 		name_part function hasChanged() : void
 		{
-			m_change = 0;
+			mChange = 0;
 		}
 	}
 }

@@ -3,7 +3,7 @@ package hy.game.manager
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.GameContainer;
 	import hy.game.core.GameObject;
@@ -13,6 +13,7 @@ package hy.game.manager
 	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
+	import hy.game.render.SRender;
 	import hy.game.render.SRenderContainer;
 	import hy.game.stage3D.SStage3D;
 
@@ -25,12 +26,16 @@ package hy.game.manager
 	 */
 	public class SLayerManager extends SBaseManager implements IEnterFrame
 	{
-		public static const LAYER_MAP : String = "map";
-		public static const LAYER_GAME : String = "game";
-		public static const LAYER_WEATHER : String = "weather";
-		public static const LAYER_UI : String = "ui";
-		public static const LAYER_ALERT : String = "alert";
-		public static const LAYER_GUIDE : String = "guide";
+		public static const LAYER_MAP : String = "1_map";
+		public static const LAYER_EFFECT_BOTTOM : String = "2_effect_bottom";
+		public static const LAYER_ENTITY : String = "3_entity";
+		public static const LAYER_EFFECT_TOP : String = "4_effect_top";
+		public static const LAYER_NAME : String = "5_name";
+		public static const LAYER_HP : String = "5_hp";
+		public static const LAYER_OTHER : String = "6_other";
+		public static const LAYER_WEATHER : String = "7_weather";
+		public static const LAYER_UI : String = "8_ui";
+		public static const LAYER_ALERT : String = "9_alert";
 
 		private static var instance : SLayerManager;
 
@@ -49,6 +54,8 @@ package hy.game.manager
 
 		public function SLayerManager()
 		{
+			if (instance)
+				error("instance != null");
 		}
 
 		public function init(stage : Stage) : void
@@ -60,11 +67,14 @@ package hy.game.manager
 			m_dictionary = new Dictionary();
 			//添加默认层级
 			addLayer(LAYER_MAP, EnumPriority.PRIORITY_9, createContainer());
-			addLayer(LAYER_GAME, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_WEATHER, EnumPriority.PRIORITY_7, createContainer());
+			addLayer(LAYER_EFFECT_BOTTOM, EnumPriority.PRIORITY_8, createContainer());
+			addLayer(LAYER_ENTITY, EnumPriority.PRIORITY_8, createContainer());
+			addLayer(LAYER_EFFECT_TOP, EnumPriority.PRIORITY_8, createContainer());
+			addLayer(LAYER_NAME, EnumPriority.PRIORITY_8, createContainer());
+			addLayer(LAYER_HP, EnumPriority.PRIORITY_8, createContainer());
+			addLayer(LAYER_OTHER, EnumPriority.PRIORITY_7, createContainer());
 			addLayer(LAYER_UI, EnumPriority.PRIORITY_6, new SRenderContainer());
 			addLayer(LAYER_ALERT, EnumPriority.PRIORITY_5, new SRenderContainer());
-			addLayer(LAYER_GUIDE, EnumPriority.PRIORITY_4, new SRenderContainer());
 
 			function createContainer() : IContainer
 			{
@@ -123,6 +133,28 @@ package hy.game.manager
 				return;
 			}
 			object.owner = gameContainer;
+		}
+
+		public function addRenderByType(type : String, render : SRender) : void
+		{
+			var gameContainer : IGameContainer = m_dictionary[type];
+			if (!gameContainer)
+			{
+				error("layer is not find :" + type);
+				return;
+			}
+			gameContainer.addRender(render);
+		}
+
+		public function removeRenderByType(type : String, render : SRender) : void
+		{
+			var gameContainer : IGameContainer = m_dictionary[type];
+			if (!gameContainer)
+			{
+				error("layer is not find :" + type);
+				return;
+			}
+			gameContainer.removeRender(render);
 		}
 	}
 }

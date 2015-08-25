@@ -20,6 +20,12 @@ package hy.game.avatar
 				instance = new SAvatarManager();
 			return instance;
 		}
+		
+		public function SAvatarManager()
+		{
+			if (instance)
+				error("instance != null");
+		}
 
 		private var m_avatarDescByAvatarId : Dictionary = new Dictionary();
 

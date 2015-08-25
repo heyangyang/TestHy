@@ -2,7 +2,7 @@ package hy.game.animation
 {
 	import flash.system.System;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.manager.SBaseManager;
 
 	/**
@@ -23,7 +23,8 @@ package hy.game.animation
 
 		public function SAnimationManager()
 		{
-			super();
+			if (instance)
+				error("instance != null");
 		}
 
 		/**

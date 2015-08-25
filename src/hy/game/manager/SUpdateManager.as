@@ -21,7 +21,8 @@ package hy.game.manager
 
 		public function SUpdateManager()
 		{
-			super();
+			if (instance)
+				error("instance != null");
 		}
 
 		public function update() : void

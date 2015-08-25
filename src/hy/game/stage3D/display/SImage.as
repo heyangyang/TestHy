@@ -98,7 +98,7 @@ package hy.game.stage3D.display
 			if (mTexture == null)
 				return;
 			transformationMatrix;
-			SRenderSupport.supportImage(this);
+			SRenderSupport.getInstance().supportImage(this);
 		}
 
 		public function get dropShadow():Boolean

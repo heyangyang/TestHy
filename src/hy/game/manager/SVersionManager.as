@@ -23,7 +23,8 @@ package hy.game.manager
 
 		public function SVersionManager()
 		{
-			super();
+			if (instance)
+				error("instance != null");
 			m_globalData = new Dictionary();
 		}
 

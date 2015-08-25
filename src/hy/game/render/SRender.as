@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
@@ -526,17 +526,19 @@ package hy.game.render
 
 		private function updateChildByField(field : String, value : *) : void
 		{
+			if (m_numChildren == 0)
+				return;
 			for (var i : int = 0; i < m_numChildren; i++)
 			{
 				m_childs[i][field] = value;
 			}
 		}
 
-		public function set dropShadow(value:Boolean):void
+		public function set dropShadow(value : Boolean) : void
 		{
 			m_render.dropShadow = value;
 		}
-		
+
 		/**
 		 * 回收
 		 *

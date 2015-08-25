@@ -1,7 +1,7 @@
 package hy.game.stage3D
 {
 	import com.adobe.utils.AGALMiniAssembler;
-	
+
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTextureFormat;
@@ -13,7 +13,8 @@ package hy.game.stage3D
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
-	
+
+	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.display.SImage;
 	import hy.game.stage3D.errors.MissingContextError;
@@ -29,29 +30,18 @@ package hy.game.stage3D
 	 * @author hyy
 	 *
 	 */
-	public class SRenderSupport
+	public class SRenderSupport extends SBaseManager
 	{
-		private static const QUAD_PROGRAM_NAME : String = "HY_q";
-		private static var sProgramNameCache : Dictionary = new Dictionary();
-		private static var sContextData : Dictionary = new Dictionary(true);
-		private static var sAssembler : AGALMiniAssembler = new AGALMiniAssembler();
-		private static var sRenderAlpha : Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0, 1, 1.0, 1.0, 1.0,1, 1.0, 1.0, 1.0, 1];
-		private static var sDropShadow : Vector.<Number> = new <Number>[.0, .0, .0, .8, .0, .0, .0, .8, .0, .0, .0,.8, .0, .0, .0, .8];
-		private static var sMatrixData : Vector.<Number> = new <Number>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		private static var sPoint3D : Vector3D = new Vector3D();
-		private static var sCurProgram : Program3D;
-		private static var sCurAlpha : Number;
-		name_part static var sContext : Context3D;
-		private static var sProjectionMatrix3D : Matrix3D;
-		private static var sPositionMatrix3D : Matrix3D;
-		private static var sProjectionMatrix : Matrix;
-		private static var sVertexBuffer : VertexBuffer3D;
-		private static var sIndexBuffer : IndexBuffer3D;
-		private static var sMeshIndexData : Vector.<uint>;
+		private static var instance : SRenderSupport;
+
+		public static function getInstance() : SRenderSupport
+		{
+			if (instance == null)
+				instance = new SRenderSupport();
+			return instance;
+		}
 		private static var sDrawCount : int;
-		private static var sUpdateCameraMatrix3D : Boolean;
-		private static var sVertexBufferList : Vector.<VertexBuffer3D> = new Vector.<VertexBuffer3D>();
-		private static var sVertexBufferNum:int;
+
 		/**
 		 * 更新纹理次数
 		 * @return
@@ -62,82 +52,110 @@ package hy.game.stage3D
 			return sDrawCount
 		}
 
+		name_part var mContext : Context3D;
+		private const QUAD_PROGRAM_NAME : String = "HY_q";
+		private var mProgramNameCache : Dictionary = new Dictionary();
+		private var mContextData : Dictionary = new Dictionary(true);
+		private var mAssembler : AGALMiniAssembler = new AGALMiniAssembler();
+		private var mRenderAlpha : Vector.<Number>;
+		private var mMatrixData : Vector.<Number>;
+		private var mPoint3D : Vector3D = new Vector3D();
+		private var mCurProgram : Program3D;
+		private var mCurAlpha : Number;
+		private var mProjectionMatrix3D : Matrix3D;
+		private var mPositionMatrix3D : Matrix3D;
+		private var mProjectionMatrix : Matrix;
+		private var mVertexBuffer : VertexBuffer3D;
+		private var mIndexBuffer : IndexBuffer3D;
+		private var mMeshIndexData : Vector.<uint>;
+		private var mUpdateCameraMatrix3D : Boolean;
+		private var mVertexBufferList : Vector.<VertexBuffer3D>;
+		private var mVertexBufferNum : int;
+
 		public function SRenderSupport()
 		{
+			if (instance)
+				error("instance != null");
+			mRenderAlpha = new Vector.<Number>();
+			mRenderAlpha.push(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+			mMatrixData = new Vector.<Number>();
+			mMatrixData.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			mVertexBufferList = new Vector.<VertexBuffer3D>();
 		}
 
-		public static function reset() : void
+		public function reset() : void
 		{
 			sDrawCount = 0;
 		}
 
-		public static function supportImage(image : SImage) : void
+		public function supportImage(image : SImage) : void
 		{
 			updateProgram(image.texture, image.tinted, image.smoothing);
 			//混合模式
 			setBlendFactors(!image.tinted, image.blendMode);
 			//投影矩阵
-			if(sUpdateCameraMatrix3D)
+			if (mUpdateCameraMatrix3D)
 			{
-				sUpdateCameraMatrix3D = false;
-				sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sProjectionMatrix3D, true);
+				mUpdateCameraMatrix3D = false;
+				mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mProjectionMatrix3D, true);
 			}
 			//创建网格
 			createVertexBuffer(image.vertexData);
 			//xy坐标
-			sContext.setVertexBufferAt(0, sVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			mContext.setVertexBufferAt(0, mVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//纹理
-			sContext.setTextureAt(0, image.base);
+			mContext.setTextureAt(0, image.base);
 			//uv坐标
-			sContext.setVertexBufferAt(2, sVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			mContext.setVertexBufferAt(2, mVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//设置xy
-			sPositionMatrix3D.copyFrom(sProjectionMatrix3D);
-			sPositionMatrix3D.prependTranslation(image.x,image.y,0);
+			mPositionMatrix3D.copyFrom(mProjectionMatrix3D);
+			mPositionMatrix3D.prependTranslation(image.x, image.y, 0);
 			//透明度
 			setAlpha(image.alpha);
-			sContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, sPositionMatrix3D, true);
+			mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mPositionMatrix3D, true);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();
 			sDrawCount++;
 		}
 
 		/**
-		 * 结束后，检测缓冲区 
-		 * 
+		 * 结束后，检测缓冲区
+		 *
 		 */
-		public static function finishDraw() : void
+		public function finishDraw() : void
 		{
-			if(sDrawCount<sVertexBufferNum*2)	
+			if (sDrawCount < mVertexBufferNum * 2)
 				return;
-			var deleteCount:int=sVertexBufferNum-sDrawCount;
-			while(deleteCount>0)
+			var deleteCount : int = mVertexBufferNum - sDrawCount;
+			while (deleteCount > 0)
 			{
-				sVertexBuffer=sVertexBufferList.pop();
-				sVertexBuffer.dispose();
+				mVertexBuffer = mVertexBufferList.pop();
+				mVertexBuffer.dispose();
 				deleteCount--;
 			}
-			sVertexBuffer=null;
+			mVertexBuffer = null;
 		}
+
 		/**
 		 * 创建网格
 		 * @param mRawData
 		 * @return
 		 *
 		 */
-		public static function createVertexBuffer(vertexData : SVertexData) : VertexBuffer3D
+		public function createVertexBuffer(vertexData : SVertexData) : VertexBuffer3D
 		{
-			if (sDrawCount>=sVertexBufferNum)
+			if (sDrawCount >= mVertexBufferNum)
 			{
-				sVertexBuffer = sContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
-				sVertexBufferList.push(sVertexBuffer);
-				sVertexBufferNum++;
+				mVertexBuffer = mContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
+				mVertexBufferList.push(mVertexBuffer);
+				mVertexBufferNum++;
 			}
 			else
 			{
-				sVertexBuffer = sVertexBufferList[sDrawCount];
+				mVertexBuffer = mVertexBufferList[sDrawCount];
 			}
-			sVertexBuffer.uploadFromVector(vertexData.rawData, 0, vertexData.numVertices);
-			return sVertexBuffer;
+			mVertexBuffer.uploadFromVector(vertexData.rawData, 0, vertexData.numVertices);
+			return mVertexBuffer;
 		}
 
 		/**
@@ -145,15 +163,16 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		public static function createMeshIndexBuffer() : VertexBuffer3D
+		public function createMeshIndexBuffer() : VertexBuffer3D
 		{
-			if (sMeshIndexData == null)
+			if (mMeshIndexData == null)
 			{
-				sMeshIndexData = new <uint>[0, 1, 2, 1, 3, 2];
-				sIndexBuffer = sContext.createIndexBuffer(sMeshIndexData.length);
-				sIndexBuffer.uploadFromVector(sMeshIndexData, 0, sMeshIndexData.length);
+				mMeshIndexData = new Vector.<uint>();
+				mMeshIndexData.push(0, 1, 2, 1, 3, 2);
+				mIndexBuffer = mContext.createIndexBuffer(mMeshIndexData.length);
+				mIndexBuffer.uploadFromVector(mMeshIndexData, 0, mMeshIndexData.length);
 			}
-			sContext.drawTriangles(sIndexBuffer, 0, 2);
+			mContext.drawTriangles(mIndexBuffer, 0, 2);
 			return null;
 		}
 
@@ -162,13 +181,13 @@ package hy.game.stage3D
 		 * @param alpha
 		 *
 		 */
-		private static function setAlpha(alpha : Number) : void
+		private function setAlpha(alpha : Number) : void
 		{
-			if (sCurAlpha == alpha)
+			if (mCurAlpha == alpha)
 				return;
-			sCurAlpha = alpha;
-			sRenderAlpha[3] = sRenderAlpha[7] = sRenderAlpha[11] = sRenderAlpha[15] = sCurAlpha;
-			sContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, sRenderAlpha);
+			mCurAlpha = alpha;
+			mRenderAlpha[3] = mRenderAlpha[7] = mRenderAlpha[11] = mRenderAlpha[15] = mCurAlpha;
+			mContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, mRenderAlpha);
 		}
 
 		/**
@@ -178,14 +197,14 @@ package hy.game.stage3D
 		 * @param smoothing
 		 *
 		 */
-		public static function updateProgram(texture : STexture, tinted : Boolean, smoothing : String) : void
+		public function updateProgram(texture : STexture, tinted : Boolean, smoothing : String) : void
 		{
 			var program : Program3D = getProgram(texture, tinted, smoothing);
-			if (sCurProgram == program)
+			if (mCurProgram == program)
 				return;
-			sCurProgram = program;
-			sUpdateCameraMatrix3D = true;
-			sContext.setProgram(sCurProgram);
+			mCurProgram = program;
+			mUpdateCameraMatrix3D = true;
+			mContext.setProgram(mCurProgram);
 		}
 
 		/**
@@ -196,14 +215,14 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		private static function getProgram(texture : STexture, tinted : Boolean, smoothing : String) : Program3D
+		private function getProgram(texture : STexture, tinted : Boolean, smoothing : String) : Program3D
 		{
 			var programName : String = QUAD_PROGRAM_NAME;
 
 			if (texture)
 				programName = getImageProgramName(tinted, texture.mipMapping, texture.repeat, texture.format, smoothing);
 
-			var program : Program3D = sContextData[programName];
+			var program : Program3D = mContextData[programName];
 
 			if (!program)
 			{
@@ -251,10 +270,10 @@ package hy.game.stage3D
 		 * @param blendMode
 		 *
 		 */
-		private static var sPremultipliedAlpha : Boolean;
-		private static var sBlendMode : String;
+		private var sPremultipliedAlpha : Boolean;
+		private var sBlendMode : String;
 
-		public static function setBlendFactors(premultipliedAlpha : Boolean, blendMode : String = "normal") : void
+		public function setBlendFactors(premultipliedAlpha : Boolean, blendMode : String = "normal") : void
 		{
 			if (sPremultipliedAlpha == premultipliedAlpha && sBlendMode == blendMode)
 				return;
@@ -263,7 +282,7 @@ package hy.game.stage3D
 			if (blendMode == SBlendMode.AUTO)
 				blendMode = SBlendMode.NORMAL;
 			var blendFactors : Array = SBlendMode.getBlendFactors(blendMode, premultipliedAlpha);
-			sContext.setBlendFactors(blendFactors[0], blendFactors[1]);
+			mContext.setBlendFactors(blendFactors[0], blendFactors[1]);
 		}
 
 		/**
@@ -271,13 +290,13 @@ package hy.game.stage3D
 		 * @param name
 		 *
 		 */
-		public static function deleteProgram(name : String) : void
+		public function deleteProgram(name : String) : void
 		{
-			var program : Program3D = sContextData[name];
+			var program : Program3D = mContextData[name];
 			if (program)
 			{
 				program.dispose();
-				delete sContextData[name];
+				delete mContextData[name];
 			}
 		}
 
@@ -289,11 +308,11 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		public static function registerProgramFromSource(name : String, vertexShader : String, fragmentShader : String) : Program3D
+		public function registerProgramFromSource(name : String, vertexShader : String, fragmentShader : String) : Program3D
 		{
 			deleteProgram(name);
 			var program : Program3D = assembleAgal(vertexShader, fragmentShader);
-			sContextData[name] = program;
+			mContextData[name] = program;
 			return program;
 		}
 
@@ -305,7 +324,7 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		private static function assembleAgal(vertexShader : String, fragmentShader : String, resultProgram : Program3D = null) : Program3D
+		private function assembleAgal(vertexShader : String, fragmentShader : String, resultProgram : Program3D = null) : Program3D
 		{
 			if (resultProgram == null)
 			{
@@ -315,7 +334,7 @@ package hy.game.stage3D
 				resultProgram = context.createProgram();
 			}
 
-			resultProgram.upload(sAssembler.assemble(Context3DProgramType.VERTEX, vertexShader), sAssembler.assemble(Context3DProgramType.FRAGMENT, fragmentShader));
+			resultProgram.upload(mAssembler.assemble(Context3DProgramType.VERTEX, vertexShader), mAssembler.assemble(Context3DProgramType.FRAGMENT, fragmentShader));
 			return resultProgram;
 		}
 
@@ -328,7 +347,7 @@ package hy.game.stage3D
 		 * @return
 		 *
 		 */
-		public static function getTextureLookupFlags(format : String, mipMapping : Boolean, repeat : Boolean = false, smoothing : String = "bilinear") : String
+		public function getTextureLookupFlags(format : String, mipMapping : Boolean, repeat : Boolean = false, smoothing : String = "bilinear") : String
 		{
 			var options : Array = ["2d", repeat ? "repeat" : "clamp"];
 
@@ -346,7 +365,7 @@ package hy.game.stage3D
 			return "<" + options.join() + ">";
 		}
 
-		private static function getImageProgramName(tinted : Boolean, mipMap : Boolean = true, repeat : Boolean = false, format : String = "bgra", smoothing : String = "bilinear") : String
+		private function getImageProgramName(tinted : Boolean, mipMap : Boolean = true, repeat : Boolean = false, format : String = "bgra", smoothing : String = "bilinear") : String
 		{
 			var bitField : uint = 0;
 
@@ -367,29 +386,29 @@ package hy.game.stage3D
 			else if (format == "compressedAlpha")
 				bitField |= 1 << 6;
 
-			var name : String = sProgramNameCache[bitField];
+			var name : String = mProgramNameCache[bitField];
 
 			if (name == null)
 			{
 				name = "QB_i." + bitField.toString(16);
-				sProgramNameCache[bitField] = name;
+				mProgramNameCache[bitField] = name;
 			}
 
 			return name;
 		}
 
 
-		public static function setProjectionMatrix(x : Number, y : Number, width : Number, height : Number, stageWidth : Number = 0, stageHeight : Number = 0, cameraPos : Vector3D = null) : void
+		public function setProjectionMatrix(x : Number, y : Number, width : Number, height : Number, stageWidth : Number = 0, stageHeight : Number = 0, cameraPos : Vector3D = null) : void
 		{
 			if (cameraPos == null)
 			{
-				cameraPos = sPoint3D;
+				cameraPos = mPoint3D;
 				cameraPos.setTo(stageWidth / 2, stageHeight / 2, // -> center of stage
 					stageWidth / Math.tan(0.5) * 0.5); // -> fieldOfView = 1.0 rad
 			}
-			sProjectionMatrix = new Matrix();
+			mProjectionMatrix = new Matrix();
 			// set up 2d (orthographic) projection
-			sProjectionMatrix.setTo(2.0 / width, 0, 0, -2.0 / height, -(2 * x + width) / width, (2 * y + height) / height);
+			mProjectionMatrix.setTo(2.0 / width, 0, 0, -2.0 / height, -(2 * x + width) / width, (2 * y + height) / height);
 
 			var focalLength : Number = Math.abs(cameraPos.z);
 			var offsetX : Number = cameraPos.x - stageWidth / 2;
@@ -400,24 +419,24 @@ package hy.game.stage3D
 			var scaleY : Number = stageHeight / height;
 
 			// set up general perspective
-			sMatrixData[0] = 2 * focalLength / stageWidth; // 0,0
-			sMatrixData[5] = -2 * focalLength / stageHeight; // 1,1  [negative to invert y-axis]
-			sMatrixData[10] = far / (far - near); // 2,2
-			sMatrixData[14] = -far * near / (far - near); // 2,3
-			sMatrixData[11] = 1; // 3,2
+			mMatrixData[0] = 2 * focalLength / stageWidth; // 0,0
+			mMatrixData[5] = -2 * focalLength / stageHeight; // 1,1  [negative to invert y-axis]
+			mMatrixData[10] = far / (far - near); // 2,2
+			mMatrixData[14] = -far * near / (far - near); // 2,3
+			mMatrixData[11] = 1; // 3,2
 			//			
 			//			// now zoom in to visible area
-			sMatrixData[0] *= scaleX;
-			sMatrixData[5] *= scaleY;
-			sMatrixData[8] = scaleX - 1 - 2 * scaleX * (x - offsetX) / stageWidth;
-			sMatrixData[9] = -scaleY + 1 + 2 * scaleY * (y - offsetY) / stageHeight;
+			mMatrixData[0] *= scaleX;
+			mMatrixData[5] *= scaleY;
+			mMatrixData[8] = scaleX - 1 - 2 * scaleX * (x - offsetX) / stageWidth;
+			mMatrixData[9] = -scaleY + 1 + 2 * scaleY * (y - offsetY) / stageHeight;
 
-			sProjectionMatrix3D = new Matrix3D();
-			sProjectionMatrix3D.copyRawDataFrom(sMatrixData);
-			sProjectionMatrix3D.prependTranslation(-stageWidth / 2.0 - offsetX, -stageHeight / 2.0 - offsetY, focalLength);
-			sPositionMatrix3D=new Matrix3D();
+			mProjectionMatrix3D = new Matrix3D();
+			mProjectionMatrix3D.copyRawDataFrom(mMatrixData);
+			mProjectionMatrix3D.prependTranslation(-stageWidth / 2.0 - offsetX, -stageHeight / 2.0 - offsetY, focalLength);
+			mPositionMatrix3D = new Matrix3D();
 			//提交矩阵
-			sUpdateCameraMatrix3D = true;
+			mUpdateCameraMatrix3D = true;
 		}
 	}
 }

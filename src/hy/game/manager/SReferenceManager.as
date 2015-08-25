@@ -73,6 +73,8 @@ package hy.game.manager
 
 		public function SReferenceManager()
 		{
+			if (instance)
+				error("instance != null");
 			check_dic[LOADER] = 30;
 			check_dic[MAP] = 50;
 			check_dic[ANIMATION] = 50;

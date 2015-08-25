@@ -259,8 +259,10 @@ package hy.game.core
 			transform.updateRender(m_render);
 			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.isMoving)
 			{
-				m_render.x = transform.x - SCameraObject.sceneX;
-				m_render.y = transform.y - SCameraObject.sceneY;
+				transform.x = transform.x;
+				transform.y = transform.y;
+				m_render.x = transform.screenX;
+				m_render.y = transform.screenY;
 				m_render.depth = transform.y;
 			}
 			//更新后，设置成为改变

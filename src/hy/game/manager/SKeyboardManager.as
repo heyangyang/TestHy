@@ -32,7 +32,8 @@ package hy.game.manager
 
 		public function SKeyboardManager()
 		{
-			super();
+			if (instance)
+				error("instance != null");
 			golbal_dic = new Dictionary();
 		}
 
