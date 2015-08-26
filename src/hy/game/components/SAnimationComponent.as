@@ -79,7 +79,7 @@ package hy.game.components
 
 		public function setLayer(value : int) : void
 		{
-			m_render.layer = value;
+			mRender.layer = value;
 		}
 
 		override public function update() : void
@@ -100,9 +100,9 @@ package hy.game.components
 			if (!m_updateFrame || m_updateFrame == m_currFrame)
 				return;
 			m_currFrame = m_updateFrame;
-			m_render.bitmapData = m_currFrame.frameData;
-			m_render.x = m_x + m_currFrame.x + m_offsetX;
-			m_render.y = m_y + m_currFrame.y + m_offsetY;
+			mRender.bitmapData = m_currFrame.frameData;
+			mRender.x = m_x + m_currFrame.x + mOffsetX;
+			mRender.y = m_y + m_currFrame.y + mOffsetY;
 		}
 
 		/**
@@ -123,8 +123,8 @@ package hy.game.components
 		protected function onLoadEffectComplete(effect : SEffect) : void
 		{
 			m_effect = effect;
-			m_effect.gotoEffect(m_transform.dir, 0, m_loops);
-			m_render.depth = m_render.y;
+			m_effect.gotoEffect(mTransform.dir, 0, m_loops);
+			mRender.depth = mRender.y;
 		}
 
 		override public function destroy() : void

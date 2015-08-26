@@ -9,11 +9,11 @@ package hy.game.core
 		/**
 		 * 更新优先级
 		 */
-		private var m_priority : int;
+		private var mPriority : int;
 		/**
 		 * 是否注册
 		 */
-		private var m_registerd : Boolean;
+		private var mRegisterd : Boolean;
 
 		name_part var isStart : Boolean;
 
@@ -48,24 +48,24 @@ package hy.game.core
 
 		public function get priority() : int
 		{
-			return m_priority;
+			return mPriority;
 		}
 
 		public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
-			m_priority = priority;
-			m_registerd = true;
+			mPriority = priority;
+			mRegisterd = true;
 			m_owner && m_owner.updatePrioritySort();
 		}
 
 		public function unRegisterd() : void
 		{
-			m_registerd = false;
+			mRegisterd = false;
 		}
 
 		public function get isRegisterd() : Boolean
 		{
-			return m_registerd;
+			return mRegisterd;
 		}
 	}
 }

@@ -2,8 +2,8 @@ package hy.game.data
 {
 	import flash.geom.ColorTransform;
 
+	import hy.game.core.SCall;
 	import hy.game.core.SCameraObject;
-	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 
 	use namespace name_part;
@@ -15,58 +15,48 @@ package hy.game.data
 	 */
 	public class STransform extends SObject
 	{
-		public static const C_XYZ : int = Math.pow(2, 0);
-		public static const C_WH : int = Math.pow(2, 1);
-		public static const C_ALPHA : int = Math.pow(2, 2);
+		private var mScreenX : Number;
+		private var mScreenY : Number;
 
-		private var mScreenX : int;
-		private var mScreenY : int;
-
-		private var mX : int;
-		private var mY : int;
-		private var mZ : int;
+		private var mX : Number;
+		private var mY : Number;
+		private var mZ : Number = 0;
 		private var mCenterOffsetY : int;
+		private var mPositionCall : SCall;
 
+		private var mWidth : int;
+		private var mHeight : int;
 		private var mScale : Number;
+		private var mSizeCall : SCall;
 
 		private var mAlpha : Number;
 
 		private var mFilters : Array;
-
 		private var mTransform : ColorTransform;
-
 		private var mBlendMode : String;
-
-		private var mWidth : int;
-		private var mHeight : int;
-
-		private var mChange : int;
 
 		public var dir : int;
 
-		private var mRectangle : SRectangle;
+		private var mMouseRectangle : SRectangle;
 
-		name_part var mAddX : int;
-		name_part var mAddY : int;
+		name_part var mAddX : Number;
+		name_part var mAddY : Number;
 
 		public var isMouseOver : Boolean;
 
 		public function STransform()
 		{
-			mRectangle = new SRectangle();
+			mMouseRectangle = new SRectangle();
+			mPositionCall = new SCall();
+			mSizeCall = new SCall();
 		}
 
-		public function get rectangle() : SRectangle
-		{
-			return mRectangle;
-		}
-
-		public function get x() : int
+		public function get x() : Number
 		{
 			return mX;
 		}
 
-		public function set x(value : int) : void
+		public function set x(value : Number) : void
 		{
 			mScreenX = value - SCameraObject.sceneX;
 			if (mX == value)
@@ -74,51 +64,63 @@ package hy.game.data
 			if (value < 0)
 				value = 0;
 			mX = value;
-			if ((mChange & C_XYZ) == 0)
-				mChange += C_XYZ;
+			mPositionCall.callUpdate();
 		}
 
-		public function get y() : int
+		public function get y() : Number
 		{
 			return mY;
 		}
 
-		public function set y(value : int) : void
+		public function set y(value : Number) : void
 		{
+			mScreenY = mY - SCameraObject.sceneY;
 			if (mY == value)
 				return;
 			if (value < 0)
 				value = 0;
 			mY = value;
-			mScreenY = mY - SCameraObject.sceneY;
-			if ((mChange & C_XYZ) == 0)
-				mChange += C_XYZ;
+			mPositionCall.callUpdate();
 		}
 
-		public function get z() : int
+		public function get z() : Number
 		{
 			return mZ;
 		}
 
-		public function set z(value : int) : void
+		public function set z(value : Number) : void
 		{
 			if (mZ == value)
 				return;
 			mZ = value;
-			if ((mChange & C_XYZ) == 0)
-				mChange += C_XYZ;
+			mPositionCall.callUpdate();
 		}
 
-		public function get screenX() : int
+		/**
+		 * 相对于屏幕的位置X
+		 * @return
+		 *
+		 */
+		public function get screenX() : Number
 		{
 			return mScreenX;
 		}
 
-		public function get screenY() : int
+		/**
+		 * 相对于屏幕的位置Y
+		 * @return
+		 *
+		 */
+		public function get screenY() : Number
 		{
 			return mScreenY;
 		}
 
+		/**
+		 * 中心点
+		 * @return
+		 *
+		 */
 		public function get centerOffsetY() : int
 		{
 			return mCenterOffsetY;
@@ -129,10 +131,14 @@ package hy.game.data
 			if (mCenterOffsetY == value)
 				return;
 			mCenterOffsetY = value;
-			if ((mChange & C_XYZ) == 0)
-				mChange += C_XYZ;
+			mPositionCall.callUpdate();
 		}
 
+		/**
+		 * 缩放
+		 * @return
+		 *
+		 */
 		public function get scale() : Number
 		{
 			return mScale;
@@ -143,8 +149,14 @@ package hy.game.data
 			if (mScale == value)
 				return;
 			mScale = value;
+			mSizeCall.callUpdate();
 		}
 
+		/**
+		 * 透明度
+		 * @return
+		 *
+		 */
 		public function get alpha() : Number
 		{
 			return mAlpha;
@@ -155,8 +167,6 @@ package hy.game.data
 			if (mAlpha == value)
 				return;
 			mAlpha = value;
-			if ((mChange & C_ALPHA) == 0)
-				mChange += C_ALPHA;
 		}
 
 		public function get filters() : Array
@@ -183,6 +193,11 @@ package hy.game.data
 			mTransform = value;
 		}
 
+		/**
+		 * 混合模式
+		 * @return
+		 *
+		 */
 		public function get blendMode() : String
 		{
 			return mBlendMode;
@@ -195,18 +210,12 @@ package hy.game.data
 			mBlendMode = value;
 		}
 
-		public function isChangeFiled(key : int) : Boolean
-		{
-			return (mChange & key) != 0;
-		}
-
 		public function set width(value : int) : void
 		{
 			if (mWidth == value)
 				return;
 			mWidth = value;
-			if ((mChange & C_WH) == 0)
-				mChange += C_WH;
+			mSizeCall.callUpdate();
 		}
 
 		public function get width() : int
@@ -219,13 +228,17 @@ package hy.game.data
 			if (mHeight == value)
 				return;
 			mHeight = value;
-			if ((mChange & C_WH) == 0)
-				mChange += C_WH;
+			mSizeCall.callUpdate();
 		}
 
 		public function get height() : int
 		{
 			return mHeight;
+		}
+
+		public function get rectangle() : SRectangle
+		{
+			return mMouseRectangle;
 		}
 
 		/**
@@ -237,39 +250,43 @@ package hy.game.data
 		 */
 		public function contains(x : int, y : int) : Boolean
 		{
-			if (x < mX + mRectangle.x || x > mX + mRectangle.right)
+			if (x < mX + mMouseRectangle.x || x > mX + mMouseRectangle.right)
 				return false;
-			if (y < mY + mRectangle.y || y > mY + mRectangle.bottom)
+			if (y < mY + mMouseRectangle.y || y > mY + mMouseRectangle.bottom)
 				return false;
 			return true;
 		}
 
-		public function updateRender(render : IRender) : void
+		public function excuteNotify() : void
 		{
-			if (isChangeFiled(C_XYZ))
-			{
-				render.x = mX;
-				render.y = mY;
-			}
-			if (isChangeFiled(C_ALPHA))
-				render.alpha = mAlpha;
-		}
-
-		name_part function changAll() : void
-		{
-			mChange = 0;
-			mChange += C_XYZ;
-			mChange += C_WH;
-			mChange += C_ALPHA;
+			mPositionCall.excuteNotify();
+			mSizeCall.excuteNotify();
 		}
 
 		/**
-		 * 改变后清零
+		 * 位置有变化
+		 * @param fun
 		 *
 		 */
-		name_part function hasChanged() : void
+		public function addPositionChange(fun : Function, index : int = -1) : void
 		{
-			mChange = 0;
+			mPositionCall.addNotify(fun, index);
+		}
+
+		/**
+		 * 大小有变化
+		 * @param fun
+		 *
+		 */
+		public function addSizeChange(fun : Function) : void
+		{
+			mSizeCall.addNotify(fun);
+		}
+
+		public function clearCall() : void
+		{
+			mPositionCall.clearNotify();
+			mSizeCall.clearNotify();
 		}
 	}
 }

@@ -194,7 +194,10 @@ package hy.game.core
 		public function set transform(value : STransform) : void
 		{
 			m_transform = value;
-			m_transform && m_transform.changAll();
+			if (!m_transform)
+				return;
+			m_transform.clearCall();
+			m_transform.addPositionChange(positionChange);
 		}
 
 		public function set activeStatus(value : Boolean) : void
@@ -250,24 +253,29 @@ package hy.game.core
 			updateTransform();
 		}
 
+		protected function positionChange() : void
+		{
+			transform.x = transform.x;
+			transform.y = transform.y;
+			m_render.x = transform.screenX;
+			m_render.y = transform.screenY;
+			m_render.depth = transform.y;
+		}
+
 		/**
 		 * 更新transform的一些信息
 		 *
 		 */
 		protected function updateTransform() : void
 		{
-			transform.updateRender(m_render);
-			if (transform.isChangeFiled(STransform.C_XYZ) || SCameraObject.isMoving)
+			if (SCameraObject.isMoving)
 			{
-				transform.x = transform.x;
-				transform.y = transform.y;
-				m_render.x = transform.screenX;
-				m_render.y = transform.screenY;
-				m_render.depth = transform.y;
+				positionChange();
 			}
 			//更新后，设置成为改变
-			transform.hasChanged();
+			transform.excuteNotify();
 		}
+
 
 		/**
 		 * 组件排序

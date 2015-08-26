@@ -3,7 +3,6 @@ package hy.game.core
 	import hy.game.data.SPoint;
 	import hy.game.data.SRectangle;
 	import hy.game.data.STransform;
-	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
 
 	use namespace name_part;
@@ -13,19 +12,19 @@ package hy.game.core
 	 * @author hyy
 	 *
 	 */
-	public class SCameraObject extends GameObject
+	public class SCameraObject extends SUpdate
 	{
 		private static var instance : SCameraObject;
 		private static var sVisualRect : SRectangle = new SRectangle();
 		private static var sPoint : SPoint = new SPoint();
 		private static var sIsMoving : Boolean;
-		private static var mSceneX : int = int.MIN_VALUE;
-		private static var mSceneY : int = int.MIN_VALUE;
+		private static var mSceneX : Number = NaN;
+		private static var mSceneY : Number = NaN;
 
 		/**
 		 * 物体在场景的位置X
 		 */
-		public static function get sceneX() : int
+		public static function get sceneX() : Number
 		{
 			return mSceneX;
 		}
@@ -33,7 +32,7 @@ package hy.game.core
 		/**
 		 * 物体在场景的位置Y
 		 */
-		public static function get sceneY() : int
+		public static function get sceneY() : Number
 		{
 			return mSceneY;
 		}
@@ -97,7 +96,7 @@ package hy.game.core
 		private var mScreenW : int;
 		private var mScreenH : int;
 		/**
-		 * 场景大小 
+		 * 场景大小
 		 */
 		private var mSceneW : int;
 		private var mSceneH : int;
@@ -115,12 +114,6 @@ package hy.game.core
 			mVisualRange = new SRectangle();
 		}
 
-		override public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
-		{
-			super.registerd(priority);
-			removeRender(m_render);
-		}
-
 		/**
 		 * 设置镜头跟随的对象
 		 * @param gameObject
@@ -130,6 +123,9 @@ package hy.game.core
 		{
 			this.mCurrent = gameObject;
 			this.mTransform = gameObject.transform;
+			this.mTransform.addPositionChange(updatePosition, 0);
+			mSceneX = mTransform.x - mScreenW * .5;
+			mSceneY = mTransform.y - mScreenH * .5;
 			mUpdatable = true;
 		}
 
@@ -189,52 +185,53 @@ package hy.game.core
 			sIsMoving = false;
 			if (mTransform == null)
 				return;
-			if (!mUpdatable && mTransform.mAddX == 0 && mTransform.mAddY == 0)
+			if (!mUpdatable)
 				return;
-
-			if (mUpdatable)
-			{
-				mUpdatable = false;
-				mSceneX = mTransform.x - mScreenW * .5;
-				mSceneY = mTransform.y - mScreenH * .5;
-			}
-
+			mUpdatable = false;
+			mSceneX = mTransform.x - mScreenW * .5;
+			mSceneY = mTransform.y - mScreenH * .5;
 			sIsMoving = true;
+			updatePosition();
+		}
 
-			//往左走
-			if (mSceneX > 0 && mTransform.x < mSceneX + mWalkRange.x)
-			{
-				mSceneX += mTransform.mAddX;
-			}
-			//往右走
-			else if (mTransform.x > mSceneX + mWalkRange.right && mSceneX < mSceneW - mScreenW)
-			{
-				mSceneX += mTransform.mAddX;
-			}
-
-			//往上走
-			if (mSceneY > 0 && mTransform.y < mSceneY + mWalkRange.y)
-			{
-				mSceneY += mTransform.mAddY;
-			}
-			//往下走
-			else if (mTransform.y > mSceneY + mWalkRange.bottom && mSceneY < mSceneH - mScreenH)
-			{
-				mSceneY += mTransform.mAddY;
-			}
-
-			mTransform.mAddY = mTransform.mAddX = 0;
-			//检测是否超出边界
-			if (mSceneX < 0)
-				mSceneX = 0;
-			else if (mSceneX + mScreenW > mSceneW)
-				mSceneX = mSceneW - mScreenW;
-
-			if (mSceneY < 0)
-				mSceneY = 0;
-			else if (mSceneY + mScreenH > mSceneH)
-				mSceneY = mSceneH - mScreenH;
-
+		private function updatePosition() : void
+		{
+//			//往左走
+//			if (mSceneX > 0 && mTransform.x < mSceneX + mWalkRange.x)
+//			{
+//				mSceneX += mTransform.mAddX;
+//			}
+//			//往右走
+//			else if (mTransform.x > mSceneX + mWalkRange.right && mSceneX < mSceneW - mScreenW)
+//			{
+//				mSceneX += mTransform.mAddX;
+//			}
+//
+//			//往上走
+//			if (mSceneY > 0 && mTransform.y < mSceneY + mWalkRange.y)
+//			{
+//				mSceneY += mTransform.mAddY;
+//			}
+//			//往下走
+//			else if (mTransform.y > mSceneY + mWalkRange.bottom && mSceneY < mSceneH - mScreenH)
+//			{
+//				mSceneY += mTransform.mAddY;
+//			}
+//
+//			mTransform.mAddY = mTransform.mAddX = 0.0;
+//			//检测是否超出边界
+//			if (mSceneX < 0)
+//				mSceneX = 0;
+//			else if (mSceneX + mScreenW > mSceneW)
+//				mSceneX = mSceneW - mScreenW;
+//
+//			if (mSceneY < 0)
+//				mSceneY = 0;
+//			else if (mSceneY + mScreenH > mSceneH)
+//				mSceneY = mSceneH - mScreenH;
+			//绑定人物在屏幕中间
+			mSceneX = mTransform.x - (mScreenW >> 1);
+			mSceneY = mTransform.y - (mScreenH >> 1);
 			//更新可视范围
 			sVisualRect.updateRectangle(mSceneX + mVisualRange.x, mSceneY + mVisualRange.y + 120, mVisualRange.width, mVisualRange.height - 120);
 		}

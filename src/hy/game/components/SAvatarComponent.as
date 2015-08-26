@@ -59,7 +59,7 @@ package hy.game.components
 		override protected function init() : void
 		{
 			super.init();
-			m_render.dropShadow = true;
+			mRender.dropShadow = true;
 			m_avatar = new SAvatar();
 			m_lazyAvatar = new SAvatarResource(m_avatar);
 		}
@@ -110,25 +110,25 @@ package hy.game.components
 				m_lazyAvatar.addNotifyCompleted(onLoadAvatarComplete);
 				m_lazyAvatar.loadResource();
 			}
-			if (m_dir != m_transform.dir || m_action != m_data.action || m_isRide != m_data.isRide)
+			if (m_dir != mTransform.dir || m_action != m_data.action || m_isRide != m_data.isRide)
 			{
-				m_dir = m_transform.dir;
+				m_dir = mTransform.dir;
 				m_action = m_data.action;
 				if (m_isRide != m_data.isRide)
 				{
 					m_isRide = m_data.isRide;
 					if (m_height > 0)
-						m_transform.height = m_height - (m_isRide ? 30 : 0);
+						mTransform.height = m_height - (m_isRide ? 30 : 0);
 				}
 				changeAnimation();
 			}
 			else
 				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);
 
-			if (m_isUseFilters && m_filters != m_transform.filters)
+			if (m_isUseFilters && m_filters != mTransform.filters)
 			{
-				m_filters = m_transform.filters;
-				m_render.filters = m_filters;
+				m_filters = mTransform.filters;
+				mRender.filters = m_filters;
 			}
 
 			if (m_useDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))
@@ -137,25 +137,25 @@ package hy.game.components
 			}
 			if (!tmp_frame || !tmp_frame.frameData)
 			{
-				m_render.bitmapData = null;
+				mRender.bitmapData = null;
 				return;
 			}
 			if (tmp_frame == m_frame)
 				return;
 			m_frame = tmp_frame;
-			m_transform.rectangle.contains(m_frame.rect);
+			mTransform.rectangle.contains(m_frame.rect);
 			if (needReversal != m_frame.needReversal)
 			{
 				needReversal = m_frame.needReversal;
-				m_render.scaleX = needReversal ? -1 : 1;
+				mRender.scaleX = needReversal ? -1 : 1;
 			}
 			m_frame.needReversal && m_frame.reverseData();
-			m_render.bitmapData = m_frame.frameData;
-			m_render.x = m_frame.x;
+			mRender.bitmapData = m_frame.frameData;
+			mRender.x = m_frame.x;
 			if (m_useCenterOffsetY)
-				m_render.y = m_frame.y + m_transform.centerOffsetY;
+				mRender.y = m_frame.y + mTransform.centerOffsetY;
 			else
-				m_render.y = m_frame.y;
+				mRender.y = m_frame.y;
 		}
 
 		/**

@@ -6,11 +6,12 @@ package hy.game.core
 	 * @author hyy
 	 *
 	 */
-	public class SNotify
+	public class SCall
 	{
 		private var mNotifyList : Vector.<Function>;
+		private var mIsUpdatable : Boolean;
 
-		public function SNotify()
+		public function SCall()
 		{
 		}
 
@@ -19,10 +20,15 @@ package hy.game.core
 		 * @param fun
 		 *
 		 */
-		public function addNotify(fun : Function) : void
+		public function addNotify(fun : Function, index : int = -1) : void
 		{
 			if (!fun || notifyList.indexOf(fun) != -1)
 				return;
+			if (index != -1)
+			{
+				mNotifyList.splice(0, 0, fun);
+				return;
+			}
 			mNotifyList.push(fun);
 		}
 
@@ -46,10 +52,18 @@ package hy.game.core
 		 */
 		public function excuteNotify() : void
 		{
+			if (!mIsUpdatable)
+				return;
+			mIsUpdatable = false;
 			for each (var fun : Function in mNotifyList)
 			{
 				fun();
 			}
+		}
+
+		public function callUpdate() : void
+		{
+			mIsUpdatable = true;
 		}
 
 		/**

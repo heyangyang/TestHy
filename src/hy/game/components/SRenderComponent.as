@@ -11,11 +11,11 @@ package hy.game.components
 	 */
 	public class SRenderComponent extends FrameComponent
 	{
-		protected var m_render : SRender;
-		protected var m_transform : STransform;
-		protected var m_offsetX : int;
-		protected var m_offsetY : int;
-		protected var m_isVisible : Boolean = true;
+		protected var mRender : SRender;
+		protected var mTransform : STransform;
+		protected var mOffsetX : int;
+		protected var mOffsetY : int;
+		protected var mIsVisible : Boolean = true;
 
 		public function SRenderComponent(type : * = null)
 		{
@@ -28,7 +28,7 @@ package hy.game.components
 		 */
 		override protected function init() : void
 		{
-			m_render = new SRender();
+			mRender = new SRender();
 		}
 
 		/**
@@ -38,14 +38,14 @@ package hy.game.components
 		override protected function onStart() : void
 		{
 			updateRenderVisible();
-			m_render.notifyAddedToRender();
-			m_transform = m_owner.transform;
+			mRender.notifyAddedToRender();
+			mTransform = m_owner.transform;
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_offsetX = m_offsetY = 0;
+			mOffsetX = mOffsetY = 0;
 		}
 
 		/**
@@ -54,9 +54,9 @@ package hy.game.components
 		 */
 		override public function notifyRemoved() : void
 		{
-			removeRender(m_render);
-			m_render.notifyRemovedFromRender();
-			m_transform = null;
+			removeRender(mRender);
+			mRender.notifyRemovedFromRender();
+			mTransform = null;
 		}
 
 		override public function update() : void
@@ -81,32 +81,32 @@ package hy.game.components
 
 		public function setOffsetXY(x : int, y : int) : void
 		{
-			m_offsetX = x;
-			m_offsetY = y;
+			mOffsetX = x;
+			mOffsetY = y;
 		}
 
 		public function set offsetX(value : int) : void
 		{
-			m_offsetX = value;
+			mOffsetX = value;
 		}
 
 		public function set offsetY(value : int) : void
 		{
-			m_offsetY = value;
+			mOffsetY = value;
 		}
 
 		public function setVisible(value : Boolean) : void
 		{
-			m_isVisible = value;
+			mIsVisible = value;
 			updateRenderVisible();
 		}
 
 		protected function updateRenderVisible() : void
 		{
-			if (m_isVisible)
-				addRender(m_render);
+			if (mIsVisible)
+				addRender(mRender);
 			else
-				removeRender(m_render);
+				removeRender(mRender);
 		}
 	}
 }
