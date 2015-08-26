@@ -15,11 +15,11 @@ package hy.game.cfg
 		/**
 		 * 分块宽度
 		 */
-		public static var TILE_WIDTH : int = 200;
+		public static var TILE_WIDTH : int = 256;
 		/**
 		 * 分块高度
 		 */
-		public static var TILE_HEIGHT : int = 200;
+		public static var TILE_HEIGHT : int = 256;
 
 		/**
 		 * 格子宽度
