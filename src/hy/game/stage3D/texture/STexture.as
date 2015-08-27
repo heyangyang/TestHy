@@ -137,6 +137,11 @@ package hy.game.stage3D.texture
 
 		}
 
+		public function get vertexData() : SVertexData
+		{
+			return null;
+		}
+
 		public function dispose() : void
 		{
 

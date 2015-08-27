@@ -99,8 +99,9 @@ package hy.game.stage3D
 				mUpdateCameraMatrix3D = false;
 				mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mProjectionMatrix3D, true);
 			}
+			mVertexBuffer = image.vertexBuffer3D;
 			//创建网格
-			createVertexBuffer(image.vertexData);
+			//createVertexBuffer(image.vertexData);
 			//xy坐标
 			mContext.setVertexBufferAt(0, mVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//纹理

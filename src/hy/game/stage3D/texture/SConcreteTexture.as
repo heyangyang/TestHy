@@ -9,6 +9,7 @@ package hy.game.stage3D.texture
 	import flash.utils.ByteArray;
 	
 	import hy.game.render.SDirectBitmapData;
+	import hy.game.stage3D.utils.SVertexData;
 
 
 	public class SConcreteTexture extends SDirectBitmapData
@@ -23,7 +24,8 @@ package hy.game.stage3D.texture
 		private var mScale : Number;
 		private var mRepeat : Boolean;
 		private var mDataUploaded : Boolean;
-
+		private var mVertexData : SVertexData;
+		
 		public function SConcreteTexture(base : TextureBase, format : String, width : int, height : int, mipMapping : Boolean, premultipliedAlpha : Boolean, optimizedForRenderTexture : Boolean = false, scale : Number = 1, repeat : Boolean = false)
 		{
 			mScale = scale <= 0 ? 1.0 : scale;
@@ -36,8 +38,22 @@ package hy.game.stage3D.texture
 			mOptimizedForRenderTexture = optimizedForRenderTexture;
 			mRepeat = repeat;
 			mDataUploaded = false;
+			mVertexData = new SVertexData(4);
+			mVertexData.setTexCoords(0, 0.0, 0.0);
+			mVertexData.setTexCoords(1, 1.0, 0.0);
+			mVertexData.setTexCoords(2, 0.0, 1.0);
+			mVertexData.setTexCoords(3, 1.0, 1.0);
+			mVertexData.setPosition(0, 0.0, 0.0);
+			mVertexData.setPosition(1, width, 0.0);
+			mVertexData.setPosition(2, 0.0, height);
+			mVertexData.setPosition(3, width, height);
 		}
 
+		public override function get vertexData() : SVertexData
+		{
+			return mVertexData;
+		}
+		
 		public function uploadAtfData(data : ByteArray, offset : int = 0) : void
 		{
 			var potTexture : Texture = mBase as Texture;

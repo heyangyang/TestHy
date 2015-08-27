@@ -111,7 +111,6 @@ package hy.game.stage3D.display
 			if (mX != value)
 			{
 				mX = value;
-				mOrientationChanged = true;
 			}
 		}
 
@@ -125,7 +124,6 @@ package hy.game.stage3D.display
 			if (mY != value)
 			{
 				mY = value;
-				mOrientationChanged = true;
 			}
 		}
 

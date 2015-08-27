@@ -1,25 +1,30 @@
 package hy.game.stage3D.display
 {
+	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
-
+	
 	import hy.game.stage3D.SRenderSupport;
+	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
 	import hy.game.stage3D.utils.SVertexData;
 
-	public class SImage extends SQuad
+	public class SImage extends SDisplayObject
 	{
 		private var mTexture : STexture;
 		private var mSmoothing : String;
 		private var mDropShadow : Boolean;
-		protected var mSupportVertexData : SVertexData;
+		private var mSupportVertexData : SVertexData;
+		private var mVertexBuffer : VertexBuffer3D;
 
 		public function SImage(value : STexture = null)
 		{
 			if (value)
 				this.texture = value;
-			super(0, 0, 0xffffff, true);
+			mSupportVertexData = new SVertexData(4);
+			mVertexBuffer = SStage3D.context.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
+			super();
 		}
 
 		public function get texture() : STexture
@@ -39,17 +44,15 @@ package hy.game.stage3D.display
 				mTexture = null;
 				return;
 			}
-			mVertexData.setTexCoords(0, 0.0, 0.0);
-			mVertexData.setTexCoords(1, 1.0, 0.0);
-			mVertexData.setTexCoords(2, 0.0, 1.0);
-			mVertexData.setTexCoords(3, 1.0, 1.0);
-
-			setSize(value.width, value.height);
-			mSupportVertexData = new SVertexData(4);
 			mTexture = value;
-			mTexture.adjustVertexData(mVertexData);
-			copyVertexDataTransformedTo(mSupportVertexData, transformationMatrix);
+			copyVertexDataTransformedTo(transformationMatrix);
+			mVertexBuffer.uploadFromVector(mSupportVertexData.rawData, 0, mSupportVertexData.numVertices);
 			mSmoothing = STextureSmoothing.BILINEAR;
+		}
+
+		public function copyVertexDataTransformedTo(matrix : Matrix = null) : void
+		{
+			mTexture.vertexData.copyTransformedTo(mSupportVertexData, 0, matrix, 0, 4);
 		}
 
 		public function get smoothing() : String
@@ -65,7 +68,7 @@ package hy.game.stage3D.display
 				throw new ArgumentError("Invalid smoothing mode: " + value);
 		}
 
-		public override function get tinted() : Boolean
+		public function get tinted() : Boolean
 		{
 			return true;
 		}
@@ -73,7 +76,10 @@ package hy.game.stage3D.display
 		public override function get transformationMatrix() : Matrix
 		{
 			if (mOrientationChanged)
-				copyVertexDataTransformedTo(mSupportVertexData, super.transformationMatrix);
+			{
+				copyVertexDataTransformedTo(super.transformationMatrix);
+				mVertexBuffer.uploadFromVector(mSupportVertexData.rawData, 0, mSupportVertexData.numVertices);
+			}
 			return super.transformationMatrix;
 		}
 
@@ -99,6 +105,11 @@ package hy.game.stage3D.display
 				return;
 			transformationMatrix;
 			SRenderSupport.getInstance().supportImage(this);
+		}
+
+		public function get vertexBuffer3D() : VertexBuffer3D
+		{
+			return mVertexBuffer;
 		}
 
 		public function get dropShadow() : Boolean

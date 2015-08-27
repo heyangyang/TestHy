@@ -214,9 +214,6 @@ package hy.game.core
 			if (!mUpdatable)
 				return;
 			mUpdatable = false;
-			sSceneX = mTransform.x - mScreenW * .5;
-			sSceneY = mTransform.y - mScreenH * .5;
-			sIsMoving = true;
 			updatePosition();
 			//强制更新坐标
 			mTransform.excuteNotify(true);
@@ -247,7 +244,8 @@ package hy.game.core
 //			}
 //
 //			mTransform.mAddY = mTransform.mAddX = 0.0;
-
+			sIsMoving = true;
+			
 			//绑定人物在屏幕中间
 			sSceneX = mTransform.x - (mScreenW >> 1);
 			sSceneY = mTransform.y - (mScreenH >> 1);
