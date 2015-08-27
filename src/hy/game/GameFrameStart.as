@@ -6,7 +6,8 @@ package hy.game
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	
+	import flash.geom.Rectangle;
+
 	import hy.game.cfg.Config;
 	import hy.game.core.GameDispatcher;
 	import hy.game.core.SMainGameFrame;
@@ -18,6 +19,7 @@ package hy.game
 	import hy.game.resources.SPreLoad;
 	import hy.game.resources.SResourceMagnger;
 	import hy.game.sound.SoundManager;
+	import hy.game.stage3D.SStage3D;
 	import hy.game.starter.SGameStartBase;
 	import hy.game.update.SMouseUpdateMangaer;
 	import hy.game.utils.SDebug;
@@ -90,6 +92,8 @@ package hy.game
 			Config.screenWidth = current_stage.stageWidth;
 			Config.screenHeight = current_stage.stageHeight;
 			GameDispatcher.dispatch(GameDispatcher.RESIZE);
+			if (SStage3D.current)
+				SStage3D.current.viewPort = new Rectangle(0, 0, Config.screenWidth, Config.screenHeight);
 		}
 
 		protected function onRightClickHandler(event : Event) : void

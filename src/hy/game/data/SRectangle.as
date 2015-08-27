@@ -8,12 +8,12 @@ package hy.game.data
 	 */
 	public class SRectangle extends SObject
 	{
-		private var m_x : int;
-		private var m_y : int;
-		private var m_w : int;
-		private var m_h : int;
-		private var m_bottom : int;
-		private var m_right : int;
+		private var mX : int;
+		private var mY : int;
+		private var mWidth : int;
+		private var mHeight : int;
+		private var mBottom : int;
+		private var mRight : int;
 
 		public function SRectangle(x : int = 0, y : int = 0, w : int = 0, h : int = 0)
 		{
@@ -30,25 +30,25 @@ package hy.game.data
 		 */
 		public function updateRectangle(x : int, y : int, w : int, h : int) : void
 		{
-			m_x = x;
-			m_y = y;
-			m_w = w;
-			m_h = h;
-			m_right = x + w;
-			m_bottom = y + h;
+			mX = x;
+			mY = y;
+			mWidth = w;
+			mHeight = h;
+			mRight = x + w;
+			mBottom = y + h;
 		}
 
 		public function contains(rect : SRectangle) : void
 		{
-			x = Math.min(m_x, rect.x);
-			y = Math.min(m_x, rect.y);
-			right = Math.max(m_right, rect.right);
-			bottom = Math.max(m_bottom, rect.bottom);
+			x = Math.min(mX, rect.x);
+			y = Math.min(mX, rect.y);
+			right = Math.max(mRight, rect.right);
+			bottom = Math.max(mBottom, rect.bottom);
 		}
 
 		public function containsByPoint(px : int, py : int) : Boolean
 		{
-			if (px >= m_x && px <= m_right && py >= m_y && py <= m_bottom)
+			if (px >= mX && px <= mRight && py >= mY && py <= mBottom)
 				return true;
 			return false;
 		}
@@ -60,46 +60,46 @@ package hy.game.data
 
 		public function get x() : int
 		{
-			return m_x;
+			return mX;
 		}
 
 		public function set x(value : int) : void
 		{
-			m_x = value;
-			m_right = m_x + m_w;
+			mX = value;
+			mRight = mX + mWidth;
 		}
 
 		public function get y() : int
 		{
-			return m_y;
+			return mY;
 		}
 
 		public function set y(value : int) : void
 		{
-			m_y = value;
-			m_bottom = m_y + m_h;
+			mY = value;
+			mBottom = mY + mHeight;
 		}
 
 		public function get width() : int
 		{
-			return m_w;
+			return mWidth;
 		}
 
 		public function set width(value : int) : void
 		{
-			m_w = value;
-			m_right = m_x + m_w;
+			mWidth = value;
+			mRight = mX + mWidth;
 		}
 
 		public function get height() : int
 		{
-			return m_h;
+			return mHeight;
 		}
 
 		public function set height(value : int) : void
 		{
-			m_h = value;
-			m_bottom = m_y + m_h;
+			mHeight = value;
+			mBottom = mY + mHeight;
 		}
 
 		/**
@@ -109,13 +109,13 @@ package hy.game.data
 		 */
 		public function get right() : int
 		{
-			return m_right;
+			return mRight;
 		}
 
 		public function set right(value : int) : void
 		{
-			m_right = value;
-			m_w = m_right - m_x;
+			mRight = value;
+			mWidth = mRight - mX;
 		}
 
 		/**
@@ -125,13 +125,18 @@ package hy.game.data
 		 */
 		public function get bottom() : int
 		{
-			return m_bottom;
+			return mBottom;
 		}
 
 		public function set bottom(value : int) : void
 		{
-			m_bottom = value;
-			m_h = m_bottom - m_y;
+			mBottom = value;
+			mHeight = mBottom - mY;
+		}
+
+		public function toString() : String
+		{
+			return "[ x : " + mX + " y : " + mY + " width : " + mWidth + " height : " + mHeight + "]";
 		}
 
 	}

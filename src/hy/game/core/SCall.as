@@ -48,11 +48,12 @@ package hy.game.core
 
 		/**
 		 * 实行处理通知
+		 * @param update 是否强制更新
 		 *
 		 */
-		public function excuteNotify() : void
+		public function excuteNotify(update : Boolean = false) : void
 		{
-			if (!mIsUpdatable)
+			if (!mIsUpdatable && !update)
 				return;
 			mIsUpdatable = false;
 			for each (var fun : Function in mNotifyList)

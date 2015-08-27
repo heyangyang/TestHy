@@ -8,7 +8,7 @@ package hy.game.starter
 	 */
 	public class SStartNode implements IStartNode
 	{
-		private var m_excuteHandler : Function;
+		private var mExcuteHandler : Function;
 
 		public function SStartNode()
 		{
@@ -37,7 +37,7 @@ package hy.game.starter
 
 		public function setHandler(excuteHandler : Function) : void
 		{
-			this.m_excuteHandler = excuteHandler;
+			this.mExcuteHandler = excuteHandler;
 		}
 
 		/**
@@ -46,8 +46,8 @@ package hy.game.starter
 		 */
 		protected function nextNode() : void
 		{
-			m_excuteHandler != null && m_excuteHandler();
-			m_excuteHandler = null;
+			mExcuteHandler != null && mExcuteHandler();
+			mExcuteHandler = null;
 		}
 
 		/**

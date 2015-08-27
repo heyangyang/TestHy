@@ -257,10 +257,10 @@ package hy.game.data
 			return true;
 		}
 
-		public function excuteNotify() : void
+		public function excuteNotify(update : Boolean = false) : void
 		{
-			mPositionCall.excuteNotify();
-			mSizeCall.excuteNotify();
+			mPositionCall.excuteNotify(update);
+			mSizeCall.excuteNotify(update);
 		}
 
 		/**

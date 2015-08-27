@@ -22,56 +22,62 @@ package hy.game.render
 	 */
 	public class SRender implements IRender, IRecycle
 	{
-		private static var ids : uint = 0;
-		private static var matrix : Matrix = new Matrix();
+		private static var sIds : uint = 0;
+		private static var sMatrix : Matrix = new Matrix();
 		/**
 		 * 唯一id
 		 */
-		name_part var id : uint;
-		protected var m_render : IBitmap;
-		protected var m_bitmapData : IBitmapData;
-		protected var m_name : String;
-		name_part var m_parentX : int;
-		name_part var m_parentY : int;
-		protected var m_x : int = int.MIN_VALUE;
-		protected var m_y : int = int.MIN_VALUE;
-		protected var m_scaleX : Number;
-		protected var m_scaleY : Number;
-		protected var m_numChildren : int;
-		protected var m_alpha : Number;
-		protected var m_rotation : Number;
-		protected var m_zDepth : int;
-		protected var m_index : int;
-		protected var m_layer : int;
-		protected var m_isSortLayer : Boolean;
-		protected var m_visible : Boolean;
-		protected var m_blendMode : String;
-		protected var m_parent : IRender;
-		protected var m_transform : ColorTransform
-		protected var m_filters : Array;
-		protected var m_childs : Vector.<IRender>;
-		protected var m_tmpIndex : int;
-		private var m_container : IGameContainer;
+		name_part var mId : uint;
+		protected var mRender : IBitmap;
+		protected var mBitmapData : IBitmapData;
+		protected var mName : String;
+		name_part var mParentX : int;
+		name_part var mParentY : int;
+		name_part var mParentAlpha : Number;
+		protected var mX : int = int.MIN_VALUE;
+		protected var mY : int = int.MIN_VALUE;
+		protected var mScaleX : Number;
+		protected var mScaleY : Number;
+		protected var mNumChildren : int;
+		protected var mAlpha : Number;
+		protected var mRotation : Number;
+		protected var mDepth : int;
+		protected var mIndex : int;
+		protected var mLayer : int;
+		protected var mIsSortLayer : Boolean;
+		protected var mVisible : Boolean;
+		protected var mBlendMode : String;
+		protected var mParent : IRender;
+		protected var mTransform : ColorTransform
+		protected var mFilters : Array;
+		protected var mChilds : Vector.<IRender>;
+		protected var mTmpIndex : int;
+		private var mContainer : IGameContainer;
 
 		public function SRender()
 		{
-			id = ids++;
+			mId = sIds++;
+			mAlpha = mParentAlpha = 1.0;
 			if (Config.supportDirectX)
-				m_render = new SDirectBitmap();
+				mRender = new SDirectBitmap();
 			else
-				m_render = new SRenderBitmap();
+				mRender = new SRenderBitmap();
 		}
 
 		public function notifyAddedToRender() : void
 		{
-			if (m_parent)
+			if (mParent)
 			{
-				m_parentX = m_parent.x;
-				m_parentY = m_parent.y;
-				m_zDepth = m_parent.zDepth;
-				var oldX : int = m_x;
-				var oldY : int = m_y;
-				m_x = m_y = int.MIN_VALUE;
+				mParentX = mParent.x;
+				mParentY = mParent.y;
+				mParentAlpha = mParent.alpha;
+				var oldAlpha : Number = mAlpha;
+				alpha = 0;
+				alpha = oldAlpha;
+				mDepth = mParent.zDepth;
+				var oldX : int = mX;
+				var oldY : int = mY;
+				mX = mY = int.MIN_VALUE;
 				x = oldX;
 				y = oldY;
 			}
@@ -79,17 +85,17 @@ package hy.game.render
 
 		public function notifyRemovedFromRender() : void
 		{
-			m_render && m_render.removeFromParent();
-			for (var i : int = 0; i < m_numChildren; i++)
+			mRender && mRender.removeFromParent();
+			for (var i : int = 0; i < mNumChildren; i++)
 			{
-				m_childs[i].notifyRemovedFromRender();
+				mChilds[i].notifyRemovedFromRender();
 			}
 		}
 
 		public function set container(value : IGameContainer) : void
 		{
-			m_container = value;
-			if (!m_container)
+			mContainer = value;
+			if (!mContainer)
 				notifyRemovedFromRender();
 		}
 
@@ -99,36 +105,36 @@ package hy.game.render
 		 */
 		private function updateIndex() : void
 		{
-			if (!m_container)
+			if (!mContainer)
 				return;
-			m_tmpIndex = m_container.getRenderIndex(this);
+			mTmpIndex = mContainer.getRenderIndex(this);
 			updateIndexByRender(this);
 		}
 
 		private function updateIndexByRender(render : SRender) : void
 		{
 			var child : SRender;
-			for (var i : int = 0; i < m_numChildren; i++)
+			for (var i : int = 0; i < mNumChildren; i++)
 			{
-				child = m_childs[i] as SRender;
-				m_container.setChildRenderIndex(child, ++m_tmpIndex);
+				child = mChilds[i] as SRender;
+				mContainer.setChildRenderIndex(child, ++mTmpIndex);
 				child.numChildren > 0 && updateIndexByRender(child);
 			}
 		}
 
 		public function addChild(child : IRender) : IRender
 		{
-			return addChildAt(child, m_numChildren);
+			return addChildAt(child, mNumChildren);
 		}
 
 		public function addChildAt(child : IRender, index : int) : IRender
 		{
 			if (childs.indexOf(child) == -1)
 			{
-				m_container && m_container.addChildRender(child as SRender, getRenderIndex(child));
-				m_numChildren++;
+				mContainer && mContainer.addChildRender(child as SRender, getRenderIndex(child));
+				mNumChildren++;
 				childs.push(child);
-				m_isSortLayer = true;
+				mIsSortLayer = true;
 				child.parent = this;
 				child.notifyAddedToRender();
 			}
@@ -144,10 +150,10 @@ package hy.game.render
 		private function getRenderIndex(child : IRender) : int
 		{
 			//父类所在容器的索引
-			var index : int = m_container.getRenderIndex(this) + 1;
-			for (var i : int = 0; i < m_numChildren; i++)
+			var index : int = mContainer.getRenderIndex(this) + 1;
+			for (var i : int = 0; i < mNumChildren; i++)
 			{
-				if (child.layer >= m_childs[i].layer)
+				if (child.layer >= mChilds[i].layer)
 					index++;
 			}
 			return index;
@@ -160,9 +166,9 @@ package hy.game.render
 
 		public function removeChildAt(index : int) : IRender
 		{
-			if (index < 0 || index >= m_numChildren)
+			if (index < 0 || index >= mNumChildren)
 				return null;
-			m_numChildren--;
+			mNumChildren--;
 			var child : IRender = childs.splice(index, 1)[0];
 			child.notifyRemovedFromRender();
 			child.parent = null;
@@ -171,7 +177,7 @@ package hy.game.render
 
 		public function getChildAt(index : int) : IRender
 		{
-			if (index < 0 || index >= m_numChildren)
+			if (index < 0 || index >= mNumChildren)
 				return null;
 			return childs[index];
 		}
@@ -184,7 +190,7 @@ package hy.game.render
 		public function getChildByName(name : String) : IRender
 		{
 			var child : IRender;
-			for (var i : int = 0; i < m_numChildren; i++)
+			for (var i : int = 0; i < mNumChildren; i++)
 			{
 				child = childs[i];
 				if (child.name == name)
@@ -195,34 +201,34 @@ package hy.game.render
 
 		private function get childs() : Vector.<IRender>
 		{
-			if (m_childs == null)
-				m_childs = new Vector.<IRender>();
-			return m_childs;
+			if (mChilds == null)
+				mChilds = new Vector.<IRender>();
+			return mChilds;
 		}
 
 		public function removeAllChildren() : void
 		{
-			while (m_numChildren > 0)
+			while (mNumChildren > 0)
 			{
-				removeChildAt(m_numChildren - 1);
+				removeChildAt(mNumChildren - 1);
 			}
 		}
 
 		public function get numChildren() : int
 		{
-			return m_numChildren;
+			return mNumChildren;
 		}
 
 		public function get parent() : IRender
 		{
-			return m_parent;
+			return mParent;
 		}
 
 		public function set parent(value : IRender) : void
 		{
-			if (m_parent == value)
+			if (mParent == value)
 				return;
-			m_parent = value;
+			mParent = value;
 		}
 
 		/**
@@ -234,192 +240,192 @@ package hy.game.render
 		public function rotate(rotate : Number, pointX : int = 0, pointY : int = 0) : void
 		{
 			var angle : int = UtilsCommon.getAngleByRotate(rotate);
-			matrix.identity();
-			matrix.translate(-pointX, -pointY);
-			matrix.rotate(rotate);
-			matrix.translate(pointX, pointY);
-			m_render.rotation = angle;
-			x += matrix.tx;
-			y += matrix.ty;
+			sMatrix.identity();
+			sMatrix.translate(-pointX, -pointY);
+			sMatrix.rotate(rotate);
+			sMatrix.translate(pointX, pointY);
+			mRender.rotation = angle;
+			x += sMatrix.tx;
+			y += sMatrix.ty;
 		}
 
 		public function get x() : Number
 		{
-			return m_x;
+			return mX;
 		}
 
 		public function set x(value : Number) : void
 		{
-			if (m_x == value)
+			if (mX == value)
 				return;
-			m_x = value;
-			if (m_render)
+			mX = value;
+			if (mRender)
 			{
-				m_render.x = m_x + m_parentX;
-				updateChildByField("parentX", m_x);
+				mRender.x = mX + mParentX;
+				updateChildByField("parentX", mX);
 			}
 		}
 
 		name_part function set parentX(value : Number) : void
 		{
-			if (m_parentX == value)
+			if (mParentX == value)
 				return;
-			m_parentX = value;
-			if (m_render)
-				m_render.x = m_x + m_parentX;
+			mParentX = value;
+			if (mRender)
+				mRender.x = mX + mParentX;
 		}
 
 		name_part function set parentY(value : Number) : void
 		{
-			if (m_parentY == value)
+			if (mParentY == value)
 				return;
-			m_parentY = value;
-			if (m_render)
-				m_render.y = m_y + m_parentY;
+			mParentY = value;
+			if (mRender)
+				mRender.y = mY + mParentY;
 		}
 
 		public function get y() : Number
 		{
-			return m_y;
+			return mY;
 		}
 
 		public function set y(value : Number) : void
 		{
-			if (m_y == value)
+			if (mY == value)
 				return;
-			m_y = value;
+			mY = value;
 
-			if (m_render)
+			if (mRender)
 			{
-				m_render.y = m_y + m_parentY;
-				updateChildByField("parentY", m_y);
+				mRender.y = mY + mParentY;
+				updateChildByField("parentY", mY);
 			}
 		}
 
 		public function get width() : Number
 		{
-			if (!m_render)
+			if (!mRender)
 				return 0;
-			return m_render.width;
+			return mRender.width;
 		}
 
 		public function get height() : Number
 		{
-			if (!m_render)
+			if (!mRender)
 				return 0;
-			return m_render.height;
+			return mRender.height;
 		}
 
 		public function get scaleX() : Number
 		{
-			return m_scaleX;
+			return mScaleX;
 		}
 
 		public function set scaleX(value : Number) : void
 		{
-			if (m_scaleX == value)
+			if (mScaleX == value)
 				return;
-			m_scaleX = value;
-			if (m_render)
-				m_render.scaleX = m_scaleX;
+			mScaleX = value;
+			if (mRender)
+				mRender.scaleX = mScaleX;
 		}
 
 		public function get scaleY() : Number
 		{
-			return m_scaleY;
+			return mScaleY;
 		}
 
 		public function set scaleY(value : Number) : void
 		{
-			if (m_scaleY == value)
+			if (mScaleY == value)
 				return;
-			m_scaleY = value;
-			if (m_render)
-				m_render.scaleY = m_scaleY;
+			mScaleY = value;
+			if (mRender)
+				mRender.scaleY = mScaleY;
 		}
 
 		public function get alpha() : Number
 		{
-			return m_alpha;
+			return mAlpha;
 		}
 
 		public function set alpha(value : Number) : void
 		{
-			if (m_alpha == value)
+			if (mAlpha == value)
 				return;
-			m_alpha = value;
-			if (m_render)
-				m_render.alpha = m_alpha;
+			mAlpha = value;
+			if (mRender)
+				mRender.alpha = mAlpha * mParentAlpha;
 		}
 
 		public function get filters() : Array
 		{
-			return m_filters;
+			return mFilters;
 		}
 
 		public function set filters(value : Array) : void
 		{
-			if (m_filters == value)
+			if (mFilters == value)
 				return;
-			m_filters = value;
-			if (m_render)
-				m_render.filters = m_filters;
+			mFilters = value;
+			if (mRender)
+				mRender.filters = mFilters;
 		}
 
 		public function get rotation() : Number
 		{
-			return m_rotation;
+			return mRotation;
 		}
 
 		public function set rotation(value : Number) : void
 		{
-			if (m_rotation == value)
+			if (mRotation == value)
 				return;
-			m_rotation = value;
-			if (m_render)
-				m_render.rotation = m_rotation;
+			mRotation = value;
+			if (mRender)
+				mRender.rotation = mRotation;
 		}
 
 		public function get blendMode() : String
 		{
-			return m_blendMode;
+			return mBlendMode;
 		}
 
 		public function set blendMode(value : String) : void
 		{
-			if (m_blendMode == value)
+			if (mBlendMode == value)
 				return;
-			m_blendMode = value;
-			if (m_render)
-				m_render.blendMode = m_blendMode;
+			mBlendMode = value;
+			if (mRender)
+				mRender.blendMode = mBlendMode;
 		}
 
 		public function get colorTransform() : ColorTransform
 		{
-			return m_transform;
+			return mTransform;
 		}
 
 		public function set colorTransform(value : ColorTransform) : void
 		{
-			if (m_transform == value)
+			if (mTransform == value)
 				return;
-			m_transform = value;
-			if (m_render)
-				m_render.colorTransform = m_transform;
+			mTransform = value;
+			if (mRender)
+				mRender.colorTransform = mTransform;
 		}
 
 		public function get visible() : Boolean
 		{
-			return m_visible;
+			return mVisible;
 		}
 
 		public function set visible(value : Boolean) : void
 		{
-			if (m_visible == value)
+			if (mVisible == value)
 				return;
-			m_visible = value;
-			if (m_render)
-				m_render.visible = m_visible;
+			mVisible = value;
+			if (mRender)
+				mRender.visible = mVisible;
 		}
 
 		/**
@@ -429,7 +435,7 @@ package hy.game.render
 		 */
 		public function get zDepth() : int
 		{
-			return m_zDepth;
+			return mDepth;
 		}
 
 		/**
@@ -439,18 +445,18 @@ package hy.game.render
 		 */
 		name_part function set depth(value : int) : void
 		{
-			m_zDepth = value;
-			m_container && m_container.changeDepthSort();
+			mDepth = value;
+			mContainer && mContainer.changeDepthSort();
 		}
 
 		public function get index() : int
 		{
-			return m_index;
+			return mIndex;
 		}
 
 		public function set index(value : int) : void
 		{
-			m_index = value;
+			mIndex = value;
 		}
 
 		/**
@@ -460,31 +466,31 @@ package hy.game.render
 		 */
 		public function get layer() : int
 		{
-			return m_layer;
+			return mLayer;
 		}
 
 		public function set layer(value : int) : void
 		{
-			m_layer = value;
-			if (m_parent)
-				m_parent.needLayerSort = true;
+			mLayer = value;
+			if (mParent)
+				mParent.needLayerSort = true;
 		}
 
 		public function get needLayerSort() : Boolean
 		{
-			return m_isSortLayer;
+			return mIsSortLayer;
 		}
 
 		public function set needLayerSort(value : Boolean) : void
 		{
-			m_isSortLayer = true;
+			mIsSortLayer = true;
 		}
 
 		public function onLayerSort() : void
 		{
-			m_childs.sort(onSortLayer);
+			mChilds.sort(onSortLayer);
 			updateIndex();
-			m_isSortLayer = false;
+			mIsSortLayer = false;
 		}
 
 		private function onSortLayer(a : SRender, b : SRender) : int
@@ -498,24 +504,24 @@ package hy.game.render
 
 		public function get name() : String
 		{
-			return m_name;
+			return mName;
 		}
 
 		public function set name(value : String) : void
 		{
-			m_name = value;
+			mName = value;
 		}
 
 		public function get render() : IBitmap
 		{
-			return m_render;
+			return mRender;
 		}
 
 		public function set bitmapData(value : IBitmapData) : void
 		{
-			if (m_bitmapData == value)
+			if (mBitmapData == value)
 				return;
-			m_bitmapData = value;
+			mBitmapData = value;
 			render.data = value;
 		}
 
@@ -526,17 +532,17 @@ package hy.game.render
 
 		private function updateChildByField(field : String, value : *) : void
 		{
-			if (m_numChildren == 0)
+			if (mNumChildren == 0)
 				return;
-			for (var i : int = 0; i < m_numChildren; i++)
+			for (var i : int = 0; i < mNumChildren; i++)
 			{
-				m_childs[i][field] = value;
+				mChilds[i][field] = value;
 			}
 		}
 
 		public function set dropShadow(value : Boolean) : void
 		{
-			m_render.dropShadow = value;
+			mRender.dropShadow = value;
 		}
 
 		/**
@@ -555,10 +561,10 @@ package hy.game.render
 				parent.removeChild(this);
 				parent = null;
 			}
-			while (m_numChildren > 0)
+			while (mNumChildren > 0)
 				removeChildAt(0);
 			bitmapData = null;
-			m_numChildren = 0;
+			mNumChildren = 0;
 		}
 	}
 }

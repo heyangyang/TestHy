@@ -222,7 +222,7 @@ package hy.game.core
 				return -1;
 			if (a.zDepth > b.zDepth)
 				return 1;
-			if (a.id > b.id)
+			if (a.mId > b.mId)
 				return 1;
 			return -1;
 		}

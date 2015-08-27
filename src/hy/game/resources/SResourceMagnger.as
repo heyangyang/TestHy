@@ -5,8 +5,7 @@ package hy.game.resources
 	import flash.system.ImageDecodingPolicy;
 	import flash.system.LoaderContext;
 	import flash.utils.Dictionary;
-
-	import hy.game.cfg.Config;
+	
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
@@ -63,7 +62,7 @@ package hy.game.resources
 		 */
 		private var m_globalImage : Dictionary = new Dictionary();
 
-		public function SResourceMagnger(count : int = 1)
+		public function SResourceMagnger(count : int = 2)
 		{
 			if (instance)
 				error("instance != null");
