@@ -33,60 +33,60 @@ package hy.game.resources
 			return instance;
 		}
 
-		public var context : LoaderContext;
+		private var mContext : LoaderContext;
 
 		/**
 		 * 需要下载的队列
 		 */
-		private var waitLoad_list : Vector.<SResource>;
+		private var mWaitLoadList : Vector.<SResource>;
 		/**
 		 * 正在加载的队列
 		 */
-		private var loading_list : Vector.<SResource>;
+		private var mLoadingList : Vector.<SResource>;
 		/**
 		 * 是否需要排序
 		 */
-		private var m_sort : Boolean;
+		private var mSort : Boolean;
 
 		/**
 		 * 最大并发加载数量
 		 */
-		private var m_maxLoadCount : int;
+		private var mMaxLoadCount : int;
 
-		private var m_bytesTotal : Number;
+		private var mBytesTotal : Number;
 
-		private var m_bytesLoaded : Number;
+		private var mBytesLoaded : Number;
 
 		/**
 		 * 图片库
 		 */
-		private var m_globalImage : Dictionary = new Dictionary();
+		private var mGlobalImage : Dictionary = new Dictionary();
 
 		public function SResourceMagnger(count : int = 2)
 		{
 			if (instance)
 				error("instance != null");
-			m_maxLoadCount = count;
+			mMaxLoadCount = count;
 		}
 
 		private function init() : void
 		{
-			context = new LoaderContext();
-			context.applicationDomain = ApplicationDomain.currentDomain;
-			context.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;
-			context.checkPolicyFile = false;
+			mContext = new LoaderContext();
+			mContext.applicationDomain = ApplicationDomain.currentDomain;
+			mContext.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;
+			mContext.checkPolicyFile = false;
 
-			m_sort = false;
-			waitLoad_list = new Vector.<SResource>();
-			loading_list = new Vector.<SResource>();
+			mSort = false;
+			mWaitLoadList = new Vector.<SResource>();
+			mLoadingList = new Vector.<SResource>();
 		}
 
 		name_part function addLoader(res : SResource) : Boolean
 		{
-			if (waitLoad_list.indexOf(res) != -1 || !res)
+			if (mWaitLoadList.indexOf(res) != -1 || !res)
 				return false;
-			waitLoad_list.push(res);
-			m_sort = true;
+			mWaitLoadList.push(res);
+			mSort = true;
 			loadNext();
 			return true;
 		}
@@ -96,13 +96,13 @@ package hy.game.resources
 			if (res.isLoaded)
 				return;
 			if (!res.isStartLoad)
-				removeLoaderByList(res, waitLoad_list);
+				removeLoaderByList(res, mWaitLoadList);
 			else
-				removeLoaderByList(res, loading_list);
+				removeLoaderByList(res, mLoadingList);
 			loadNext();
 			//清零
-			if (waitLoad_list.length == 0 || loading_list.length == 0)
-				m_bytesLoaded = m_bytesTotal = 0;
+			if (mWaitLoadList.length == 0 || mLoadingList.length == 0)
+				mBytesLoaded = mBytesTotal = 0;
 		}
 
 		/**
@@ -110,7 +110,7 @@ package hy.game.resources
 		 */
 		public function get bytesTotal() : Number
 		{
-			return m_bytesTotal;
+			return mBytesTotal;
 		}
 
 		/**
@@ -118,7 +118,7 @@ package hy.game.resources
 		 */
 		public function get bytesLoaded() : Number
 		{
-			return m_bytesLoaded;
+			return mBytesLoaded;
 		}
 
 		/**
@@ -129,11 +129,11 @@ package hy.game.resources
 		name_part function updateProgress(res : SResource) : void
 		{
 			//先减去上一次的进度
-			m_bytesLoaded -= res.old_bytesLoaded;
-			m_bytesTotal -= res.old_bytesTotal;
+			mBytesLoaded -= res.old_bytesLoaded;
+			mBytesTotal -= res.old_bytesTotal;
 			//加上更新后的进度
-			m_bytesLoaded += res.bytesLoaded;
-			m_bytesTotal += res.bytesTotal;
+			mBytesLoaded += res.bytesLoaded;
+			mBytesTotal += res.bytesTotal;
 		}
 
 		private function removeLoaderByList(res : SResource, list : Vector.<SResource>) : void
@@ -148,16 +148,16 @@ package hy.game.resources
 
 		private function loadNext() : void
 		{
-			if (loading_list.length >= m_maxLoadCount || waitLoad_list.length == 0)
+			if (mLoadingList.length >= mMaxLoadCount || mWaitLoadList.length == 0)
 				return;
-			m_sort && waitLoad_list.sort(onPrioritySortFun);
-			var res : SResource = waitLoad_list.pop();
+			mSort && mWaitLoadList.sort(onPrioritySortFun);
+			var res : SResource = mWaitLoadList.pop();
 			res.addNotifyCompleted(onCompleted);
 			res.addNotifyIOError(onCompleted);
-			loading_list.push(res);
-			m_bytesLoaded += res.bytesLoaded;
-			m_bytesTotal += res.bytesTotal;
-			res.startLoad(context);
+			mLoadingList.push(res);
+			mBytesLoaded += res.bytesLoaded;
+			mBytesTotal += res.bytesTotal;
+			res.startLoad(mContext);
 			res.isStartLoad = true;
 		}
 
@@ -191,8 +191,8 @@ package hy.game.resources
 		 */
 		public function getImageById(id : String, supportDirectX = false) : IBitmapData
 		{
-			if (m_globalImage[id])
-				return m_globalImage[id];
+			if (mGlobalImage[id])
+				return mGlobalImage[id];
 			var resClass : Class = getClass(id);
 			var source : BitmapData = new resClass();
 			var bitmapData : IBitmapData = new SRenderBitmapData(source.width, source.height, true, 0);
@@ -204,13 +204,13 @@ package hy.game.resources
 				bmd.dispose();
 			}
 			source.dispose();
-			m_globalImage[id] = bitmapData;
+			mGlobalImage[id] = bitmapData;
 			return bitmapData;
 		}
 
 		public function setMaxLoadCount(value : int) : void
 		{
-			m_maxLoadCount = value;
+			mMaxLoadCount = value;
 		}
 	}
 }

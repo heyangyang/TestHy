@@ -17,54 +17,54 @@ package hy.game.core.event
 		/* Public Properties                                                          */
 		/*============================================================================*/
 
-		private var _dispatcher : SEventDispatcher;
+		private var mDispatcher : SEventDispatcher;
 
 		/**
 		 * @private
 		 */
 		public function get dispatcher() : SEventDispatcher
 		{
-			return _dispatcher;
+			return mDispatcher;
 		}
 
-		private var _eventString : String;
+		private var mEventString : String;
 
 		/**
 		 * @private
 		 */
 		public function get eventString() : String
 		{
-			return _eventString;
+			return mEventString;
 		}
 
-		private var _listener : Function;
+		private var mListener : Function;
 
 		/**
 		 * @private
 		 */
 		public function get listener() : Function
 		{
-			return _listener;
+			return mListener;
 		}
 
-		private var _eventClass : Class;
+		private var mEventClass : Class;
 
 		/**
 		 * @private
 		 */
 		public function get eventClass() : Class
 		{
-			return _eventClass;
+			return mEventClass;
 		}
 
-		private var _callback : Function;
+		private var mCallback : Function;
 
 		/**
 		 * @private
 		 */
 		public function get callback() : Function
 		{
-			return _callback;
+			return mCallback;
 		}
 
 		/*============================================================================*/
@@ -76,16 +76,16 @@ package hy.game.core.event
 		 */
 		public function EventMapConfig(dispatcher : SEventDispatcher, eventString : String, listener : Function, eventClass : Class, callback : Function)
 		{
-			_dispatcher = dispatcher;
-			_eventString = eventString;
-			_listener = listener;
-			_eventClass = eventClass;
-			_callback = callback;
+			mDispatcher = dispatcher;
+			mEventString = eventString;
+			mListener = listener;
+			mEventClass = eventClass;
+			mCallback = callback;
 		}
 
 		public function equalTo(dispatcher : SEventDispatcher, eventString : String, listener : Function, eventClass : Class) : Boolean
 		{
-			return _eventString == eventString && _eventClass == eventClass && _dispatcher == dispatcher && _listener == listener;
+			return mEventString == eventString && mEventClass == eventClass && mDispatcher == dispatcher && mListener == listener;
 		}
 	}
 }

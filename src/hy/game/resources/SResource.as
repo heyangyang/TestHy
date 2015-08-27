@@ -25,11 +25,11 @@ package hy.game.resources
 		/**
 		 *优先级别
 		 */
-		private var m_priority : int;
+		private var mPriority : int;
 		/**
 		 * 加载地址
 		 */
-		private var m_url : String;
+		private var mUrl : String;
 
 		public var version : String;
 		/**
@@ -37,45 +37,46 @@ package hy.game.resources
 		 */
 		public var name : String;
 
-		private var m_isLoaded : Boolean = false;
+		private var mIsLoaded : Boolean = false;
 
-		private var m_isLoading : Boolean = false;
+		private var mIsLoading : Boolean = false;
 
-		private var m_isStartLoad : Boolean;
+		private var mIsStartLoad : Boolean;
 		/**
 		 * 当前重复加载次数
 		 */
-		private var m_currCount : int = 0;
+		private var mCurrCount : int = 0;
 		/**
 		 * 加载成功后回调
 		 */
-		protected var m_notifyCompleteds : Vector.<Function>;
+		protected var mNotifyCompleteds : Vector.<Function>;
 		/**
 		 * 报错后回调
 		 */
-		protected var m_notifyIOErrors : Vector.<Function>;
+		protected var mNotifyIOErrors : Vector.<Function>;
 		/**
 		 * 进度条
 		 */
-		protected var m_notifyProgresses : Vector.<Function>;
+		protected var mNotifyProgresses : Vector.<Function>;
 		/**
 		 * 加载地址
 		 */
-		protected var request : URLRequest;
-		private var m_bytesTotal : Number = 300 * 1000;
-		private var m_bytesLoaded : Number;
+		protected var mRequest : URLRequest;
+		private var mBytesTotal : Number = 300 * 1000;
+		private var mBytesLoaded : Number;
+		
 		name_part var old_bytesTotal : Number;
 		name_part var old_bytesLoaded : Number;
 
-		protected var context : LoaderContext;
+		protected var mContext : LoaderContext;
 
 		public function SResource(res_url : String, version : String)
 		{
-			this.m_url = res_url;
+			this.mUrl = res_url;
 			this.version = version;
 			if (version)
 				res_url += "?v=" + version;
-			this.request = new URLRequest(encodeURI(res_url));
+			this.mRequest = new URLRequest(encodeURI(res_url));
 		}
 
 
@@ -85,15 +86,15 @@ package hy.game.resources
 		 */
 		public function load() : void
 		{
-			if (m_isLoading)
+			if (mIsLoading)
 				return;
-			if (m_isLoaded)
+			if (mIsLoaded)
 			{
-				invokeNotifyByArray(m_notifyCompleteds);
+				invokeNotifyByArray(mNotifyCompleteds);
 				return;
 			}
 			if (SResourceMagnger.getInstance().addLoader(this))
-				this.m_isLoading = true;
+				this.mIsLoading = true;
 		}
 
 		/**
@@ -102,7 +103,7 @@ package hy.game.resources
 		 */
 		name_part function startLoad(context : LoaderContext = null) : void
 		{
-			this.context = context;
+			this.mContext = context;
 		}
 
 		/**
@@ -116,7 +117,7 @@ package hy.game.resources
 
 		name_part function set isStartLoad(value : Boolean) : void
 		{
-			m_isStartLoad = value;
+			mIsStartLoad = value;
 		}
 
 		/**
@@ -124,23 +125,23 @@ package hy.game.resources
 		 */
 		name_part function get isStartLoad() : Boolean
 		{
-			return m_isStartLoad;
+			return mIsStartLoad;
 		}
 
 		public function get url() : String
 		{
-			return m_url;
+			return mUrl;
 		}
 
 		public function setPriority(value : int) : SResource
 		{
-			m_priority = value;
+			mPriority = value;
 			return this;
 		}
 
 		public function get priority() : int
 		{
-			return m_priority;
+			return mPriority;
 		}
 		/**
 		 * 正在加载
@@ -149,7 +150,7 @@ package hy.game.resources
 		 */
 		public function get isLoading() : Boolean
 		{
-			return m_isLoading;
+			return mIsLoading;
 		}
 
 		/**
@@ -159,7 +160,7 @@ package hy.game.resources
 		 */
 		public function get isLoaded() : Boolean
 		{
-			return m_isLoaded;
+			return mIsLoaded;
 		}
 
 		/**
@@ -168,7 +169,7 @@ package hy.game.resources
 		 */
 		public function get bytesTotal() : Number
 		{
-			return m_bytesTotal;
+			return mBytesTotal;
 		}
 
 		/**
@@ -176,7 +177,7 @@ package hy.game.resources
 		 */
 		public function get bytesLoaded() : Number
 		{
-			return m_bytesLoaded;
+			return mBytesLoaded;
 		}
 
 		/**
@@ -198,10 +199,10 @@ package hy.game.resources
 		{
 			if (notifyFunction == null)
 				return this;
-			if (!m_notifyCompleteds)
-				m_notifyCompleteds = new Vector.<Function>();
-			if (m_notifyCompleteds.indexOf(notifyFunction) == -1)
-				m_notifyCompleteds.push(notifyFunction);
+			if (!mNotifyCompleteds)
+				mNotifyCompleteds = new Vector.<Function>();
+			if (mNotifyCompleteds.indexOf(notifyFunction) == -1)
+				mNotifyCompleteds.push(notifyFunction);
 			return this;
 		}
 
@@ -215,10 +216,10 @@ package hy.game.resources
 		{
 			if (notifyFunction == null)
 				return this;
-			if (!m_notifyIOErrors)
-				m_notifyIOErrors = new Vector.<Function>();
-			if (m_notifyIOErrors.indexOf(notifyFunction) == -1)
-				m_notifyIOErrors.push(notifyFunction);
+			if (!mNotifyIOErrors)
+				mNotifyIOErrors = new Vector.<Function>();
+			if (mNotifyIOErrors.indexOf(notifyFunction) == -1)
+				mNotifyIOErrors.push(notifyFunction);
 			return this;
 		}
 
@@ -232,10 +233,10 @@ package hy.game.resources
 		{
 			if (notifyFunction == null)
 				return this;
-			if (!m_notifyProgresses)
-				m_notifyProgresses = new Vector.<Function>();
-			if (m_notifyProgresses.indexOf(notifyFunction) == -1)
-				m_notifyProgresses.push(notifyFunction);
+			if (!mNotifyProgresses)
+				mNotifyProgresses = new Vector.<Function>();
+			if (mNotifyProgresses.indexOf(notifyFunction) == -1)
+				mNotifyProgresses.push(notifyFunction);
 			return this;
 		}
 
@@ -258,13 +259,13 @@ package hy.game.resources
 		protected function onProgressEvent(evt : ProgressEvent) : void
 		{
 			//记录上一次的数据
-			old_bytesTotal = m_bytesLoaded;
-			old_bytesLoaded = m_bytesLoaded;
+			old_bytesTotal = mBytesLoaded;
+			old_bytesLoaded = mBytesLoaded;
 			if (evt.bytesTotal > 0)
-				m_bytesTotal = evt.bytesTotal;
-			m_bytesLoaded = evt.bytesLoaded;
+				mBytesTotal = evt.bytesTotal;
+			mBytesLoaded = evt.bytesLoaded;
 			SResourceMagnger.getInstance().updateProgress(this);
-			invokeNotifyByArray(m_notifyProgresses);
+			invokeNotifyByArray(mNotifyProgresses);
 		}
 
 		protected function onDownloadError(evt : IOErrorEvent) : void
@@ -285,10 +286,10 @@ package hy.game.resources
 		protected function onDownLoadComplete(evt : Event) : void
 		{
 			removeLoader();
-			m_isLoaded = true;
-			m_isLoading = false;
+			mIsLoaded = true;
+			mIsLoading = false;
 			cleanListeners();
-			invokeNotifyByArray(m_notifyCompleteds);
+			invokeNotifyByArray(mNotifyCompleteds);
 		}
 
 		/**
@@ -299,18 +300,18 @@ package hy.game.resources
 		protected function onFailed(msg : String) : void
 		{
 			//3次尝试重新加载
-			if (m_currCount < Config.MAX_RELOAD)
+			if (mCurrCount < Config.MAX_RELOAD)
 			{
-				m_currCount++;
+				mCurrCount++;
 				reload();
-				warning("load again: ", m_currCount, request.url);
+				warning("load again: ", mCurrCount, mRequest.url);
 				return;
 			}
 			removeLoader();
-			m_isLoading = false;
-			error("load error: ", this.m_url);
+			mIsLoading = false;
+			error("load error: ", this.mUrl);
 			cleanListeners();
-			invokeNotifyByArray(m_notifyIOErrors);
+			invokeNotifyByArray(mNotifyIOErrors);
 		}
 
 		public function get data() : *
@@ -332,8 +333,8 @@ package hy.game.resources
 		 */
 		private function removeLoader() : void
 		{
-			m_isLoading = false;
-			m_isStartLoad && SResourceMagnger.getInstance().removeLoader(this);
+			mIsLoading = false;
+			mIsStartLoad && SResourceMagnger.getInstance().removeLoader(this);
 		}
 
 		/**
@@ -343,7 +344,7 @@ package hy.game.resources
 		public function stop() : void
 		{
 			removeLoader();
-			m_isLoading = false;
+			mIsLoading = false;
 			cleanListeners();
 		}
 
@@ -357,8 +358,8 @@ package hy.game.resources
 				return;
 			stop();
 			cleanListeners();
-			request = null;
-			context = null;
+			mRequest = null;
+			mContext = null;
 			super.destroy();
 		}
 

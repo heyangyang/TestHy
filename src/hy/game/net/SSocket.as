@@ -25,15 +25,15 @@
 	 */
 	public class SSocket extends Socket
 	{
-		private var m_bytes : ByteArray;
+		private var mBytes : ByteArray;
 		/**
 		 * 需要读取的包长
 		 */
-		private var nextMessageLength : int;
+		private var mNextMessageLength : int;
 		/**
 		 * 自增包序
 		 */
-		private var order : int = 0;
+		private var mOrder : int = 0;
 		/**
 		 * 包头长度
 		 */
@@ -41,17 +41,17 @@
 		/**
 		 * 加载成功后回调
 		 */
-		protected var m_notifyCompleteds : Vector.<Function>;
+		protected var mNotifyCompleteds : Vector.<Function>;
 		/**
 		 * 报错后回调
 		 */
-		protected var m_notifyIOErrors : Vector.<Function>;
+		protected var mNotifyIOErrors : Vector.<Function>;
 
 		public function SSocket()
 		{
 			objectEncoding = ObjectEncoding.AMF3;
 			endian = Endian.BIG_ENDIAN;
-			m_bytes = new ByteArray();
+			mBytes = new ByteArray();
 		}
 
 		override public function connect(ip : String, port : int) : void
@@ -68,10 +68,10 @@
 		 */
 		public function addNotifyCompleted(notifyFunction : Function) : void
 		{
-			if (!m_notifyCompleteds)
-				m_notifyCompleteds = new Vector.<Function>();
-			if (m_notifyCompleteds.indexOf(notifyFunction) == -1)
-				m_notifyCompleteds.push(notifyFunction);
+			if (!mNotifyCompleteds)
+				mNotifyCompleteds = new Vector.<Function>();
+			if (mNotifyCompleteds.indexOf(notifyFunction) == -1)
+				mNotifyCompleteds.push(notifyFunction);
 		}
 
 		/**
@@ -82,10 +82,10 @@
 		 */
 		public function addNotifyIOError(notifyFunction : Function) : void
 		{
-			if (!m_notifyIOErrors)
-				m_notifyIOErrors = new Vector.<Function>();
-			if (m_notifyIOErrors.indexOf(notifyFunction) == -1)
-				m_notifyIOErrors.push(notifyFunction);
+			if (!mNotifyIOErrors)
+				mNotifyIOErrors = new Vector.<Function>();
+			if (mNotifyIOErrors.indexOf(notifyFunction) == -1)
+				mNotifyIOErrors.push(notifyFunction);
 		}
 
 		private function invokeNotifyByArray(functions : Vector.<Function>) : void
@@ -130,16 +130,16 @@
 			//取对象
 			var sendBytes : SByteArray = SObjectManager.getObject(SByteArray);
 			sendBytes.writeShort(dataBytes.length); // 写入包长(不包括包头长度)
-			sendBytes.writeByte(order);
+			sendBytes.writeByte(mOrder);
 			sendBytes.writeShort(module);
 			sendBytes.writeBytes(dataBytes, 0, dataBytes.bytesAvailable);
 			writeBytes(sendBytes);
 			flush();
 
-			if (order >= 255)
-				order = 0;
+			if (mOrder >= 255)
+				mOrder = 0;
 			else
-				order++;
+				mOrder++;
 			//用完立马回收
 			SObjectManager.recycleObject(sendBytes);
 			SObjectManager.recycleObject(dataBytes);
@@ -180,7 +180,7 @@
 		 */
 		protected function onConnectHandler(event : Event) : void
 		{
-			invokeNotifyByArray(m_notifyCompleteds);
+			invokeNotifyByArray(mNotifyCompleteds);
 		}
 
 		/**
@@ -191,7 +191,7 @@
 		protected function ioErrorHandler(event : IOErrorEvent) : void
 		{
 			removeListener()
-			invokeNotifyByArray(m_notifyIOErrors);
+			invokeNotifyByArray(mNotifyIOErrors);
 			try
 			{
 				close();
@@ -209,7 +209,7 @@
 		protected function securityErrorHandler(event : SecurityErrorEvent) : void
 		{
 			removeListener()
-			invokeNotifyByArray(m_notifyIOErrors);
+			invokeNotifyByArray(mNotifyIOErrors);
 			try
 			{
 				close();
@@ -221,7 +221,7 @@
 
 		override public function close() : void
 		{
-			order = 0;
+			mOrder = 0;
 			super.close();
 		}
 
@@ -232,22 +232,22 @@
 		 */
 		private function socketDataHandler(event : ProgressEvent) : void
 		{
-			if (nextMessageLength > 0 && bytesAvailable >= nextMessageLength)
+			if (mNextMessageLength > 0 && bytesAvailable >= mNextMessageLength)
 			{
 				readMessage();
 			}
 
-			while (nextMessageLength == 0 && bytesAvailable >= HEAD_LENGTH)
+			while (mNextMessageLength == 0 && bytesAvailable >= HEAD_LENGTH)
 			{
-				nextMessageLength = readUnsignedShort();
+				mNextMessageLength = readUnsignedShort();
 
-				if (bytesAvailable >= nextMessageLength)
+				if (bytesAvailable >= mNextMessageLength)
 				{
 					readMessage();
 				}
 				else
 				{
-					nextMessageLength = length;
+					mNextMessageLength = length;
 					return;
 				}
 			}
@@ -255,10 +255,10 @@
 
 		private function readMessage() : void
 		{
-			m_bytes.clear();
-			readBytes(m_bytes, 0, nextMessageLength);
-			nextMessageLength = 0;
-			parseBytes(m_bytes.readUnsignedShort(), m_bytes);
+			mBytes.clear();
+			readBytes(mBytes, 0, mNextMessageLength);
+			mNextMessageLength = 0;
+			parseBytes(mBytes.readUnsignedShort(), mBytes);
 		}
 
 		/**

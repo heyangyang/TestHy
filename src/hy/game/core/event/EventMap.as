@@ -10,11 +10,11 @@ package hy.game.core.event
 		/* Private Properties                                                         */
 		/*============================================================================*/
 
-		private const _listeners : Vector.<EventMapConfig> = new Vector.<EventMapConfig>();
+		private const mListeners : Vector.<EventMapConfig> = new Vector.<EventMapConfig>();
 
-		private const _suspendedListeners : Vector.<EventMapConfig> = new Vector.<EventMapConfig>();
+		private const mSuspendedListeners : Vector.<EventMapConfig> = new Vector.<EventMapConfig>();
 
-		private var _suspended : Boolean = false;
+		private var mSuspended : Boolean = false;
 
 		/*============================================================================*/
 		/* Public Functions                                                           */
@@ -27,7 +27,7 @@ package hy.game.core.event
 		{
 			eventClass ||= SEvent;
 
-			const currentListeners : Vector.<EventMapConfig> = _suspended ? _suspendedListeners : _listeners;
+			const currentListeners : Vector.<EventMapConfig> = mSuspended ? mSuspendedListeners : mListeners;
 
 			var config : EventMapConfig;
 
@@ -52,7 +52,7 @@ package hy.game.core.event
 
 			currentListeners.push(config);
 
-			if (!_suspended)
+			if (!mSuspended)
 			{
 				dispatcher.addEventListener(eventString, callback);
 			}
@@ -65,7 +65,7 @@ package hy.game.core.event
 		{
 			eventClass ||= SEvent;
 
-			const currentListeners : Vector.<EventMapConfig> = _suspended ? _suspendedListeners : _listeners;
+			const currentListeners : Vector.<EventMapConfig> = mSuspended ? mSuspendedListeners : mListeners;
 
 			var i : int = currentListeners.length;
 
@@ -75,7 +75,7 @@ package hy.game.core.event
 
 				if (config.equalTo(dispatcher, eventString, listener, eventClass))
 				{
-					if (!_suspended)
+					if (!mSuspended)
 					{
 						dispatcher.removeEventListener(eventString, config.callback);
 					}
@@ -90,14 +90,14 @@ package hy.game.core.event
 		 */
 		public function unmapListeners() : void
 		{
-			const currentListeners : Vector.<EventMapConfig> = _suspended ? _suspendedListeners : _listeners;
+			const currentListeners : Vector.<EventMapConfig> = mSuspended ? mSuspendedListeners : mListeners;
 
 			var eventConfig : EventMapConfig;
 			var dispatcher : SEventDispatcher;
 
 			while ((eventConfig = currentListeners.pop()) != null)
 			{
-				if (!_suspended)
+				if (!mSuspended)
 				{
 					dispatcher = eventConfig.dispatcher;
 					dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback);
@@ -110,19 +110,19 @@ package hy.game.core.event
 		 */
 		public function suspend() : void
 		{
-			if (_suspended)
+			if (mSuspended)
 				return;
 
-			_suspended = true;
+			mSuspended = true;
 
 			var eventConfig : EventMapConfig;
 			var dispatcher : SEventDispatcher;
 
-			while ((eventConfig = _listeners.pop()) != null)
+			while ((eventConfig = mListeners.pop()) != null)
 			{
 				dispatcher = eventConfig.dispatcher;
 				dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback);
-				_suspendedListeners.push(eventConfig);
+				mSuspendedListeners.push(eventConfig);
 			}
 		}
 
@@ -131,19 +131,19 @@ package hy.game.core.event
 		 */
 		public function resume() : void
 		{
-			if (!_suspended)
+			if (!mSuspended)
 				return;
 
-			_suspended = false;
+			mSuspended = false;
 
 			var eventConfig : EventMapConfig;
 			var dispatcher : SEventDispatcher;
 
-			while ((eventConfig = _suspendedListeners.pop()) != null)
+			while ((eventConfig = mSuspendedListeners.pop()) != null)
 			{
 				dispatcher = eventConfig.dispatcher;
 				dispatcher.addEventListener(eventConfig.eventString, eventConfig.callback);
-				_listeners.push(eventConfig);
+				mListeners.push(eventConfig);
 			}
 		}
 

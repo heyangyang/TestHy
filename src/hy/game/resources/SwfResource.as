@@ -18,8 +18,8 @@ package hy.game.resources
 	 */
 	public class SwfResource extends SResource
 	{
-		private var loader : Loader;
-		private var appDomain : ApplicationDomain;
+		private var mLoader : Loader;
+		private var mAppDomain : ApplicationDomain;
 
 		public function SwfResource(res_url : String, version : String)
 		{
@@ -41,11 +41,11 @@ package hy.game.resources
 				context.applicationDomain = ApplicationDomain.currentDomain;
 			}
 
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onDownLoadComplete);
-			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mLoader = new Loader();
+			mLoader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onDownLoadComplete);
+			mLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mLoader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 			reload();
 		}
 
@@ -53,7 +53,7 @@ package hy.game.resources
 		{
 			try
 			{
-				loader.load(request, context);
+				mLoader.load(mRequest, mContext);
 			}
 			catch (e : Error)
 			{
@@ -62,18 +62,18 @@ package hy.game.resources
 
 		override protected function onDownLoadComplete(evt : Event) : void
 		{
-			if (loader && loader.contentLoaderInfo)
-				appDomain = loader.contentLoaderInfo.applicationDomain;
+			if (mLoader && mLoader.contentLoaderInfo)
+				mAppDomain = mLoader.contentLoaderInfo.applicationDomain;
 			super.onDownLoadComplete(evt);
 		}
 
 		public function getAssetClass(name : String) : Class
 		{
-			if (appDomain == null)
+			if (mAppDomain == null)
 				throw new Error("not initialized");
 
-			if (appDomain.hasDefinition(name))
-				return appDomain.getDefinition(name) as Class;
+			if (mAppDomain.hasDefinition(name))
+				return mAppDomain.getDefinition(name) as Class;
 			else
 				return null;
 		}
@@ -82,10 +82,10 @@ package hy.game.resources
 		{
 			try
 			{
-				if (loader)
+				if (mLoader)
 				{
-					loader.close();
-					loader.unloadAndStop();
+					mLoader.close();
+					mLoader.unloadAndStop();
 				}
 			}
 			catch (e : Error)
@@ -101,14 +101,14 @@ package hy.game.resources
 		 */
 		override public function cleanListeners() : void
 		{
-			if (loader)
+			if (mLoader)
 			{
-				if (loader.contentLoaderInfo)
+				if (mLoader.contentLoaderInfo)
 				{
-					loader.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-					loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onDownLoadComplete);
-					loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-					loader.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+					mLoader.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+					mLoader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onDownLoadComplete);
+					mLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+					mLoader.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 				}
 			}
 		}
@@ -116,13 +116,13 @@ package hy.game.resources
 		override protected function destroy() : void
 		{
 			super.destroy();
-			appDomain = null;
-			if (loader)
+			mAppDomain = null;
+			if (mLoader)
 			{
 				try
 				{
-					loader.unloadAndStop();
-					loader = null;
+					mLoader.unloadAndStop();
+					mLoader = null;
 				}
 				catch (e : Error)
 				{

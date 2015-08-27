@@ -3,33 +3,33 @@ package hy.game.data
 
 	public class SPoint
 	{
-		private var m_x : int;
-		private var m_y : int;
+		private var mX : int;
+		private var mY : int;
 
 		public function SPoint(x : int = 0, y : int = 0)
 		{
-			m_x = x;
-			m_y = y;
+			mX = x;
+			mY = y;
 		}
 
 		public function get x() : int
 		{
-			return m_x;
+			return mX;
 		}
 
 		public function set x(value : int) : void
 		{
-			m_x = value;
+			mX = value;
 		}
 
 		public function get y() : int
 		{
-			return m_y;
+			return mY;
 		}
 
 		public function set y(value : int) : void
 		{
-			m_y = value;
+			mY = value;
 		}
 
 

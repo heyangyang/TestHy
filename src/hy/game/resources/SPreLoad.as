@@ -13,30 +13,29 @@ package hy.game.resources
 	public class SPreLoad extends SBaseManager
 	{
 		private static var instance : SPreLoad;
-//		private var file_dic : Dictionary;
-		/**
-		 * 批量加载地址
-		 */
-		private var batchData : Dictionary;
-		private var onComplete : Function;
-		private var onProgress : Function;
-		private var m_isLoading : Boolean;
-		private var m_loadCount : int;
-		private var m_loadIndex : int;
-		private var resourceMgr : SResourceMagnger;
-
-		public function SPreLoad()
-		{
-			if (instance)
-				error("instance != null");
-			resourceMgr = SResourceMagnger.getInstance();
-		}
 
 		public static function getInstance() : SPreLoad
 		{
 			if (instance == null)
 				instance = new SPreLoad();
 			return instance;
+		}
+		/**
+		 * 批量加载地址
+		 */
+		private var mBatchData : Dictionary;
+		private var mOnComplete : Function;
+		private var mOnProgress : Function;
+		private var mIsLoading : Boolean;
+		private var mLoadCount : int;
+		private var mLoadIndex : int;
+		private var mResourceMgr : SResourceMagnger;
+
+		public function SPreLoad()
+		{
+			if (instance)
+				error("instance != null");
+			mResourceMgr = SResourceMagnger.getInstance();
 		}
 
 		/**
@@ -46,19 +45,7 @@ package hy.game.resources
 		 */
 		public function onConfigComplete(xml : XML) : void
 		{
-//			file_dic = new Dictionary();
-//			var xmlList : XMLList = xml.file;
-//			var len : int = xmlList.length();
-//			var fileData : Object;
-//			var child : XML;
-//			for (var i : int = 0; i < len; i++)
-//			{
-//				child = xmlList[i];
-//				fileData = {id: child.@id, v: child.@version, url: child.@url};
-//				file_dic[fileData.id] = fileData;
-//			}
-
-			batchData = new Dictionary();
+			mBatchData = new Dictionary();
 			var batchArray : Array;
 			var xmlList : XMLList = xml.batch;
 			var len : int = xmlList.length();
@@ -76,7 +63,7 @@ package hy.game.resources
 				{
 					batchArray.push(child.file[j].@id.toString());
 				}
-				batchData[String(child.@id)] = batchArray;
+				mBatchData[String(child.@id)] = batchArray;
 			}
 		}
 
@@ -89,14 +76,14 @@ package hy.game.resources
 		 */
 		public function bathLoad(id : String, onComplete : Function = null, onProgress : Function = null) : void
 		{
-			if (m_isLoading)
+			if (mIsLoading)
 			{
 				warning("preLoad is loading");
 				return;
 			}
 			var loads : Array = id.split(",");
-			this.onComplete = onComplete;
-			this.onProgress = onProgress;
+			this.mOnComplete = onComplete;
+			this.mOnProgress = onProgress;
 			startLoadByArray(loads)
 
 		}
@@ -109,19 +96,19 @@ package hy.game.resources
 		 */
 		public function preLoad(id : String, onComplete : Function = null, onProgress : Function = null) : void
 		{
-			if (m_isLoading)
+			if (mIsLoading)
 			{
 				warning("preLoad is loading");
 				return;
 			}
-			if (batchData[id] == null)
+			if (mBatchData[id] == null)
 			{
 				error("preLoad id :" + id + " = null");
 				return;
 			}
-			this.onComplete = onComplete;
-			this.onProgress = onProgress;
-			startLoadByArray(batchData[id])
+			this.mOnComplete = onComplete;
+			this.mOnProgress = onProgress;
+			startLoadByArray(mBatchData[id])
 		}
 
 		private function startLoadByArray(load_list : Array) : void
@@ -131,11 +118,11 @@ package hy.game.resources
 				warning(this, "load_list=null");
 				return;
 			}
-			m_loadCount = load_list.length;
-			m_loadIndex = 0;
+			mLoadCount = load_list.length;
+			mLoadIndex = 0;
 			var referenceMgr : SReferenceManager = SReferenceManager.getInstance();
 			var id : String;
-			for (var i : int = 0; i < m_loadCount; i++)
+			for (var i : int = 0; i < mLoadCount; i++)
 			{
 				referenceMgr.createResource(load_list[i]).addNotifyCompleted(onCompleteHandler).addNotifyProgress(onProgressHandler).load();
 			}
@@ -143,19 +130,19 @@ package hy.game.resources
 
 		private function onCompleteHandler(res : SResource) : void
 		{
-			if (++m_loadIndex < m_loadCount)
+			if (++mLoadIndex < mLoadCount)
 				return;
-			onComplete != null && onComplete(this);
+			mOnComplete != null && mOnComplete(this);
 		}
 
 		private function onProgressHandler(res : SResource) : void
 		{
-			onProgress != null && onProgress(this);
+			mOnProgress != null && mOnProgress(this);
 		}
 
 		public function get isLoading() : Boolean
 		{
-			return m_isLoading;
+			return mIsLoading;
 		}
 
 		/**
@@ -163,7 +150,7 @@ package hy.game.resources
 		 */
 		public function get bytesTotal() : Number
 		{
-			return resourceMgr.bytesTotal;
+			return mResourceMgr.bytesTotal;
 		}
 
 		/**
@@ -171,14 +158,14 @@ package hy.game.resources
 		 */
 		public function get bytesLoaded() : Number
 		{
-			return resourceMgr.bytesLoaded;
+			return mResourceMgr.bytesLoaded;
 		}
 
 		private function clear() : void
 		{
-			m_isLoading = false;
-			onComplete = null;
-			onProgress = null;
+			mIsLoading = false;
+			mOnComplete = null;
+			mOnProgress = null;
 		}
 	}
 }

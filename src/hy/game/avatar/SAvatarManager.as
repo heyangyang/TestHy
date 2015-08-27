@@ -27,15 +27,15 @@ package hy.game.avatar
 				error("instance != null");
 		}
 
-		private var m_avatarDescByAvatarId : Dictionary = new Dictionary();
+		private var mAvatarDescByAvatarId : Dictionary = new Dictionary();
 
 		public function addAvatarDescription(id : String, xml : XML, version : String = "0", isReplace : Boolean = false) : SAvatarDescription
 		{
-			if (m_avatarDescByAvatarId[id] == null || isReplace)
+			if (mAvatarDescByAvatarId[id] == null || isReplace)
 			{
 				var avatarDesc : SAvatarDescription = parseAvatarDescription(xml, version);
 				if (avatarDesc)
-					m_avatarDescByAvatarId[id] = avatarDesc;
+					mAvatarDescByAvatarId[id] = avatarDesc;
 				return avatarDesc;
 			}
 			return getAvatarDescription(id);
@@ -90,7 +90,7 @@ package hy.game.avatar
 
 		public function getAvatarDescription(id : String) : SAvatarDescription
 		{
-			return m_avatarDescByAvatarId[id];
+			return mAvatarDescByAvatarId[id];
 		}
 
 	}

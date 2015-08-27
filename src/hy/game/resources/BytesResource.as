@@ -22,8 +22,8 @@ package hy.game.resources
 	 */
 	public class BytesResource extends SResource
 	{
-		private var loader : URLLoader;
-		private var m_data : *;
+		private var mLoader : URLLoader;
+		private var mData : *;
 
 		public function BytesResource(res_url : String, version : String)
 		{
@@ -45,16 +45,16 @@ package hy.game.resources
 				context.applicationDomain = ApplicationDomain.currentDomain;
 			}
 
-			loader = new URLLoader();
-			loader.dataFormat = URLLoaderDataFormat.BINARY;
-			loader.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			loader.addEventListener(Event.COMPLETE, onDownLoadComplete);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mLoader = new URLLoader();
+			mLoader.dataFormat = URLLoaderDataFormat.BINARY;
+			mLoader.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mLoader.addEventListener(Event.COMPLETE, onDownLoadComplete);
+			mLoader.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 
 			try
 			{
-				loader.load(request);
+				mLoader.load(mRequest);
 			}
 			catch (e : Error)
 			{
@@ -64,12 +64,12 @@ package hy.game.resources
 
 		override public function get data() : *
 		{
-			return m_data;
+			return mData;
 		}
 
 		override protected function onDownLoadComplete(evt : Event) : void
 		{
-			m_data = ((evt.target) as URLLoader).data
+			mData = ((evt.target) as URLLoader).data
 			super.onDownLoadComplete(evt);
 		}
 
@@ -79,19 +79,19 @@ package hy.game.resources
 		 */
 		override public function cleanListeners() : void
 		{
-			if (!loader)
+			if (!mLoader)
 				return;
-			loader.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			loader.removeEventListener(Event.COMPLETE, onDownLoadComplete);
-			loader.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mLoader.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mLoader.removeEventListener(Event.COMPLETE, onDownLoadComplete);
+			mLoader.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mLoader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 		}
 
 		override public function stop() : void
 		{
 			try
 			{
-				loader && loader.close();
+				mLoader && mLoader.close();
 			}
 			catch (e : Error)
 			{
@@ -102,8 +102,8 @@ package hy.game.resources
 		override protected function destroy() : void
 		{
 			super.destroy();
-			loader = null;
-			m_data = null;
+			mLoader = null;
+			mData = null;
 		}
 	}
 }

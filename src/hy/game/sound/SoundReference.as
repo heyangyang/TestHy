@@ -14,54 +14,54 @@ package hy.game.sound
 	 */
 	public class SoundReference extends SReference
 	{
-		private var loops : int = 0;
-		private var sound : Sound;
-		private var soundChannel : SoundChannel;
-		private var soundTransform : SoundTransform;
+		private var mLoops : int = 0;
+		private var mSound : Sound;
+		private var mSoundChannel : SoundChannel;
+		private var mSoundTransform : SoundTransform;
 		public var name : String;
 
 		public function SoundReference(param : Object)
 		{
 			if (param is Sound)
 			{
-				sound = param as Sound;
+				mSound = param as Sound;
 			}
 			else if (param is Class)
 			{
-				sound = new param();
+				mSound = new param();
 			}
 		}
 
 		public function setSoundTransform(value : SoundTransform) : void
 		{
-			if (soundChannel)
+			if (mSoundChannel)
 			{
-				soundTransform = value;
-				soundChannel.soundTransform = value;
+				mSoundTransform = value;
+				mSoundChannel.soundTransform = value;
 			}
 		}
 
 		public function play(startTime : Number = 0, loops : int = 0, soundTransform : SoundTransform = null) : SoundChannel
 		{
-			if (soundChannel)
+			if (mSoundChannel)
 			{
-				soundChannel.stop();
-				soundChannel = null;
+				mSoundChannel.stop();
+				mSoundChannel = null;
 			}
 
-			this.loops = loops;
-			this.soundTransform = soundTransform;
+			this.mLoops = loops;
+			this.mSoundTransform = soundTransform;
 
-			soundChannel = sound.play(startTime, loops, soundTransform);
-			if (soundChannel == null)
+			mSoundChannel = mSound.play(startTime, loops, soundTransform);
+			if (mSoundChannel == null)
 			{
 				trace('无法播放该声音文件，原因：没有声卡或已经用完了可用的声道');
 			}
 			else
 			{
-				soundChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
+				mSoundChannel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete, false, 0, true);
 			}
-			return soundChannel;
+			return mSoundChannel;
 		}
 
 		/**
@@ -70,7 +70,7 @@ package hy.game.sound
 		 */
 		public function pause() : void
 		{
-			soundChannel && soundChannel.stop();
+			mSoundChannel && mSoundChannel.stop();
 		}
 
 		/**
@@ -79,8 +79,8 @@ package hy.game.sound
 		 */
 		public function resume() : void
 		{
-			var startTime : int = soundChannel == null ? soundChannel.position : 0;
-			play(startTime, loops, soundTransform);
+			var startTime : int = mSoundChannel == null ? mSoundChannel.position : 0;
+			play(startTime, mLoops, mSoundTransform);
 		}
 
 		/**
@@ -89,7 +89,7 @@ package hy.game.sound
 		 */
 		public function restart() : void
 		{
-			play(0, loops, soundTransform);
+			play(0, mLoops, mSoundTransform);
 		}
 
 		public function close() : void
@@ -104,22 +104,22 @@ package hy.game.sound
 		override protected function destroy() : void
 		{
 			super.destroy();
-			if (sound)
+			if (mSound)
 			{
 				try
 				{
-					sound.close();
+					mSound.close();
 				}
 				catch (e : Error)
 				{
 
 				}
-				sound = null;
+				mSound = null;
 			}
 
 			pause();
-			soundChannel = null;
-			soundTransform = null;
+			mSoundChannel = null;
+			mSoundTransform = null;
 		}
 
 		private function onSoundComplete(evt : Event) : void

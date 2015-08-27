@@ -20,32 +20,32 @@ package hy.game.components
 		 */
 		public static var default_avatar : SAvatar;
 
-		protected var m_lazyAvatar : SAvatarResource;
-		protected var m_avatar : SAvatar;
-		protected var m_frame : SAnimationFrame;
+		protected var mLazyAvatar : SAvatarResource;
+		protected var mAvatar : SAvatar;
+		protected var mFrame : SAnimationFrame;
 		protected var tmp_frame : SAnimationFrame;
-		protected var m_data : DataComponent;
-		protected var m_dir : int;
-		protected var m_action : int;
-		protected var m_height : int;
-		protected var m_isRide : Boolean;
+		protected var mData : DataComponent;
+		protected var mDir : int;
+		protected var mAction : int;
+		protected var mHeight : int;
+		protected var mIsRide : Boolean;
 		protected var needReversal : Boolean;
 		/**
 		 * 是否使用人物中心Y便宜点
 		 */
-		protected var m_useCenterOffsetY : Boolean;
+		protected var mUseCenterOffsetY : Boolean;
 		/**
 		 * 是否使用滤镜
 		 */
-		protected var m_isUseFilters : Boolean;
+		protected var mIsUseFilters : Boolean;
 		/**
 		 * 当前滤镜
 		 */
-		protected var m_filters : Array;
+		protected var mFilters : Array;
 		/**
 		 * 是否使用默认模型
 		 */
-		protected var m_useDefaultAvatar : Boolean;
+		protected var mUseDefaultAvatar : Boolean;
 
 		public function SAvatarComponent(type : * = null)
 		{
@@ -60,20 +60,20 @@ package hy.game.components
 		{
 			super.init();
 			mRender.dropShadow = true;
-			m_avatar = new SAvatar();
-			m_lazyAvatar = new SAvatarResource(m_avatar);
+			mAvatar = new SAvatar();
+			mLazyAvatar = new SAvatarResource(mAvatar);
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_lazyAvatar.priority = EnumLoadPriority.ROLE;
-			m_dir = m_action = -1;
-			m_useCenterOffsetY = true;
+			mLazyAvatar.priority = EnumLoadPriority.ROLE;
+			mDir = mAction = -1;
+			mUseCenterOffsetY = true;
 			needReversal = false;
-			m_isRide = false;
-			m_isUseFilters = true;
-			m_useDefaultAvatar = true;
+			mIsRide = false;
+			mIsUseFilters = true;
+			mUseDefaultAvatar = true;
 		}
 
 		/**
@@ -83,79 +83,79 @@ package hy.game.components
 		override protected function onStart() : void
 		{
 			super.onStart();
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-			if (m_useDefaultAvatar)
+			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
+			if (mUseDefaultAvatar)
 			{
-				m_avatar.dirMode = default_avatar.dirMode;
+				mAvatar.dirMode = default_avatar.dirMode;
 				//自增下，以免被垃圾回收
 				default_avatar.animationsByParts.retain();
-				m_avatar.animationsByParts = default_avatar.animationsByParts;
+				mAvatar.animationsByParts = default_avatar.animationsByParts;
 				onLoadAvatarComplete();
 			}
-			setAvatarId(m_data.avatarId);
+			setAvatarId(mData.avatarId);
 		}
 
 		override public function notifyRemoved() : void
 		{
 			super.notifyRemoved();
-			tmp_frame = m_frame = null;
-			m_avatar = null;
-			m_data = null;
+			tmp_frame = mFrame = null;
+			mAvatar = null;
+			mData = null;
 		}
 
 		override public function update() : void
 		{
-			if (m_lazyAvatar.isChange)
+			if (mLazyAvatar.isChange)
 			{
-				m_lazyAvatar.addNotifyCompleted(onLoadAvatarComplete);
-				m_lazyAvatar.loadResource();
+				mLazyAvatar.addNotifyCompleted(onLoadAvatarComplete);
+				mLazyAvatar.loadResource();
 			}
-			if (m_dir != mTransform.dir || m_action != m_data.action || m_isRide != m_data.isRide)
+			if (mDir != mTransform.dir || mAction != mData.action || mIsRide != mData.isRide)
 			{
-				m_dir = mTransform.dir;
-				m_action = m_data.action;
-				if (m_isRide != m_data.isRide)
+				mDir = mTransform.dir;
+				mAction = mData.action;
+				if (mIsRide != mData.isRide)
 				{
-					m_isRide = m_data.isRide;
-					if (m_height > 0)
-						mTransform.height = m_height - (m_isRide ? 30 : 0);
+					mIsRide = mData.isRide;
+					if (mHeight > 0)
+						mTransform.height = mHeight - (mIsRide ? 30 : 0);
 				}
 				changeAnimation();
 			}
 			else
-				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);
+				tmp_frame = mAvatar.gotoNextFrame(STime.deltaTime);
 
-			if (m_isUseFilters && m_filters != mTransform.filters)
+			if (mIsUseFilters && mFilters != mTransform.filters)
 			{
-				m_filters = mTransform.filters;
-				mRender.filters = m_filters;
+				mFilters = mTransform.filters;
+				mRender.filters = mFilters;
 			}
 
-			if (m_useDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))
+			if (mUseDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))
 			{
-				tmp_frame = default_avatar.gotoAnimation(m_action, m_dir, m_avatar.curFrameIndex, 0);
+				tmp_frame = default_avatar.gotoAnimation(mAction, mDir, mAvatar.curFrameIndex, 0);
 			}
 			if (!tmp_frame || !tmp_frame.frameData)
 			{
 				mRender.bitmapData = null;
 				return;
 			}
-			if (tmp_frame == m_frame)
+			if (tmp_frame == mFrame)
 				return;
-			m_frame = tmp_frame;
-			mTransform.rectangle.contains(m_frame.rect);
-			if (needReversal != m_frame.needReversal)
+			mFrame = tmp_frame;
+			mTransform.rectangle.contains(mFrame.rect);
+			if (needReversal != mFrame.needReversal)
 			{
-				needReversal = m_frame.needReversal;
+				needReversal = mFrame.needReversal;
 				mRender.scaleX = needReversal ? -1 : 1;
 			}
-			m_frame.needReversal && m_frame.reverseData();
-			mRender.bitmapData = m_frame.frameData;
-			mRender.x = m_frame.x;
-			if (m_useCenterOffsetY)
-				mRender.y = m_frame.y + mTransform.centerOffsetY;
+			mFrame.needReversal && mFrame.reverseData();
+			mRender.bitmapData = mFrame.frameData;
+			mRender.x = mFrame.x;
+			if (mUseCenterOffsetY)
+				mRender.y = mFrame.y + mTransform.centerOffsetY;
 			else
-				mRender.y = m_frame.y;
+				mRender.y = mFrame.y;
 		}
 
 		/**
@@ -164,35 +164,35 @@ package hy.game.components
 		 */
 		protected function changeAnimation() : void
 		{
-			if (m_isRide)
-				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, m_dir, 0, 0);
+			if (mIsRide)
+				tmp_frame = mAvatar.gotoAnimation(SActionType.SIT, mDir, 0, 0);
 			else
-				tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
+				tmp_frame = mAvatar.gotoAnimation(mAction, mDir, 0, 0);
 		}
 
 		public function setAvatarId(avatarId : String) : void
 		{
-			m_lazyAvatar.setAvatarId(avatarId);
+			mLazyAvatar.setAvatarId(avatarId);
 		}
 
 		protected function onLoadAvatarComplete() : void
 		{
-			m_owner.transform.width = m_avatar.width;
-			m_height = m_owner.transform.height = m_avatar.height;
-			m_dir = m_action = -1;
-			m_isRide = !m_data.isRide;
+			mOwner.transform.width = mAvatar.width;
+			mHeight = mOwner.transform.height = mAvatar.height;
+			mDir = mAction = -1;
+			mIsRide = !mData.isRide;
 		}
 
 		public function isRolePickable(mouseX : int, mouseY : int) : Boolean
 		{
-			if (m_frame && m_frame.frameData)
+			if (mFrame && mFrame.frameData)
 			{
-				mouseX -= m_frame.x;
-				mouseY -= m_frame.y;
+				mouseX -= mFrame.x;
+				mouseY -= mFrame.y;
 				//反转的时候，需要把坐标反转
-				if (m_frame.needReversal)
+				if (mFrame.needReversal)
 					mouseX = -mouseX;
-				if (m_frame.frameData.getPixel(mouseX, mouseY) != 0)
+				if (mFrame.frameData.getPixel(mouseX, mouseY) != 0)
 				{
 					return true;
 				}
@@ -203,8 +203,8 @@ package hy.game.components
 		override public function destroy() : void
 		{
 			super.destroy();
-			m_lazyAvatar && m_lazyAvatar.dispose();
-			m_lazyAvatar = null;
+			mLazyAvatar && mLazyAvatar.dispose();
+			mLazyAvatar = null;
 		}
 	}
 }

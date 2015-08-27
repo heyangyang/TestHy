@@ -21,15 +21,15 @@ package hy.game.sound
 
 		private var soundClassDatas : Dictionary = new Dictionary();
 
-		private var m_isOpenEffectSound : Boolean;
-		private var m_isOpenBgSound : Boolean;
+		private var mIsOpenEffectSound : Boolean;
+		private var mIsOpenBgSound : Boolean;
 		/**
 		 * 播放背景音乐
 		 * 如果是关闭背景音乐状态，则暂停播放。
 		 * @param soundID
 		 */
-		private var m_bgSoundId : String;
-		private var m_bgSound : SoundReference;
+		private var mBgSoundId : String;
+		private var mBgSound : SoundReference;
 
 		public static function getInstance() : SoundManager
 		{
@@ -151,20 +151,20 @@ package hy.game.sound
 			{
 				sound.close();
 			}
-			m_bgSound = null;
+			mBgSound = null;
 		}
 
 		public function playBgSound(soundID : String) : void
 		{
-			if (m_bgSoundId == soundID)
+			if (mBgSoundId == soundID)
 				return;
-			m_bgSoundId = soundID;
-			if (m_bgSound)
-				m_bgSound.pause();
-			m_bgSound = play(soundID, 0, bgSoundTransform);
+			mBgSoundId = soundID;
+			if (mBgSound)
+				mBgSound.pause();
+			mBgSound = play(soundID, 0, bgSoundTransform);
 
-			if (m_bgSound && isOpenEffectSound)
-				m_bgSound.pause();
+			if (mBgSound && isOpenEffectSound)
+				mBgSound.pause();
 		}
 
 		/**
@@ -187,7 +187,7 @@ package hy.game.sound
 		public function pauseEffectSound() : void
 		{
 			pauseAll();
-			isOpenBgSound = m_isOpenBgSound;
+			isOpenBgSound = mIsOpenBgSound;
 		}
 
 		/**
@@ -197,7 +197,7 @@ package hy.game.sound
 		public function resumeEffectSound() : void
 		{
 			resumeAll();
-			isOpenBgSound = m_isOpenBgSound;
+			isOpenBgSound = mIsOpenBgSound;
 		}
 
 		/**
@@ -219,8 +219,8 @@ package hy.game.sound
 			bgSoundTransform.rightToLeft = rightToLeft;
 			bgSoundTransform.rightToRight = rightToRight;
 
-			if (m_bgSound)
-				m_bgSound.setSoundTransform(bgSoundTransform);
+			if (mBgSound)
+				mBgSound.setSoundTransform(bgSoundTransform);
 		}
 
 		/**
@@ -245,14 +245,14 @@ package hy.game.sound
 
 		public function get isOpenEffectSound() : Boolean
 		{
-			return m_isOpenEffectSound;
+			return mIsOpenEffectSound;
 		}
 
 		public function set isOpenEffectSound(value : Boolean) : void
 		{
-			if (m_isOpenEffectSound == value)
+			if (mIsOpenEffectSound == value)
 				return;
-			m_isOpenEffectSound = value;
+			mIsOpenEffectSound = value;
 			if (value)
 				resumeEffectSound();
 			else
@@ -261,20 +261,20 @@ package hy.game.sound
 
 		public function get isOpenBgSound() : Boolean
 		{
-			return m_isOpenBgSound;
+			return mIsOpenBgSound;
 		}
 
 		public function set isOpenBgSound(value : Boolean) : void
 		{
-			if (m_isOpenBgSound == null)
+			if (mIsOpenBgSound == null)
 				return;
-			m_isOpenBgSound = value;
-			if (!m_bgSound)
+			mIsOpenBgSound = value;
+			if (!mBgSound)
 				return;
 			if (value)
-				m_bgSound.resume();
+				mBgSound.resume();
 			else
-				m_bgSound.pause();
+				mBgSound.pause();
 		}
 
 

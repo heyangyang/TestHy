@@ -13,7 +13,7 @@ package hy.game.manager
 	public class SObjectManager
 	{
 
-		private static var memory : Dictionary = new Dictionary();
+		private static var sMemory : Dictionary = new Dictionary();
 
 		public function SObjectManager()
 		{
@@ -35,11 +35,11 @@ package hy.game.manager
 		private static function recycleObjects(obj : *) : void
 		{
 			var resClass : Class = obj["constructor"];
-			var tmpArr : Array = memory[resClass];
+			var tmpArr : Array = sMemory[resClass];
 
 			if (tmpArr == null || tmpArr.length == 0)
 			{
-				memory[resClass] = [obj];
+				sMemory[resClass] = [obj];
 				return;
 			}
 			if (tmpArr.length <= Config.RECYCLE_MEMORY_MAX && tmpArr.indexOf(obj) == -1)
@@ -56,7 +56,7 @@ package hy.game.manager
 		 */
 		public static function getObject(resClass : Class, param : * = null) : *
 		{
-			var tmpArr : Array = memory[resClass];
+			var tmpArr : Array = sMemory[resClass];
 			if (tmpArr == null || tmpArr.length == 0)
 			{
 				if (param)

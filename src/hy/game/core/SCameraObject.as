@@ -18,15 +18,15 @@ package hy.game.core
 		private static var sVisualRect : SRectangle = new SRectangle();
 		private static var sPoint : SPoint = new SPoint();
 		private static var sIsMoving : Boolean;
-		private static var mSceneX : Number = NaN;
-		private static var mSceneY : Number = NaN;
+		private static var sSceneX : Number = NaN;
+		private static var sSceneY : Number = NaN;
 
 		/**
 		 * 物体在场景的位置X
 		 */
 		public static function get sceneX() : Number
 		{
-			return mSceneX;
+			return sSceneX;
 		}
 
 		/**
@@ -34,7 +34,7 @@ package hy.game.core
 		 */
 		public static function get sceneY() : Number
 		{
-			return mSceneY;
+			return sSceneY;
 		}
 
 		/**
@@ -150,8 +150,8 @@ package hy.game.core
 			this.mCurrent = gameObject;
 			this.mTransform = gameObject.transform;
 			this.mTransform.addPositionChange(updatePosition, 0);
-			mSceneX = mTransform.x - mScreenW * .5;
-			mSceneY = mTransform.y - mScreenH * .5;
+			sSceneX = mTransform.x - mScreenW * .5;
+			sSceneY = mTransform.y - mScreenH * .5;
 			mUpdatable = true;
 		}
 
@@ -214,8 +214,8 @@ package hy.game.core
 			if (!mUpdatable)
 				return;
 			mUpdatable = false;
-			mSceneX = mTransform.x - mScreenW * .5;
-			mSceneY = mTransform.y - mScreenH * .5;
+			sSceneX = mTransform.x - mScreenW * .5;
+			sSceneY = mTransform.y - mScreenH * .5;
 			sIsMoving = true;
 			updatePosition();
 			//强制更新坐标
@@ -249,32 +249,32 @@ package hy.game.core
 //			mTransform.mAddY = mTransform.mAddX = 0.0;
 
 			//绑定人物在屏幕中间
-			mSceneX = mTransform.x - (mScreenW >> 1);
-			mSceneY = mTransform.y - (mScreenH >> 1);
+			sSceneX = mTransform.x - (mScreenW >> 1);
+			sSceneY = mTransform.y - (mScreenH >> 1);
 			mPositionType = 0;
 			//检测是否超出边界
-			if (mSceneX < 0)
+			if (sSceneX < 0)
 			{
-				mSceneX = 0;
+				sSceneX = 0;
 				mPositionType += LEFT;
 			}
-			else if (mSceneX + mScreenW > mSceneW)
+			else if (sSceneX + mScreenW > mSceneW)
 			{
-				mSceneX = mSceneW - mScreenW;
+				sSceneX = mSceneW - mScreenW;
 				mPositionType += RIGHT;
 			}
-			if (mSceneY < 0)
+			if (sSceneY < 0)
 			{
-				mSceneY = 0;
+				sSceneY = 0;
 				mPositionType += TOP;
 			}
-			else if (mSceneY + mScreenH > mSceneH)
+			else if (sSceneY + mScreenH > mSceneH)
 			{
-				mSceneY = mSceneH - mScreenH;
+				sSceneY = mSceneH - mScreenH;
 				mPositionType += BOTTOM;
 			}
 			//更新可视范围
-			sVisualRect.updateRectangle(mPositionType & LEFT ? 0 : mSceneX + mVisualRange.x, mPositionType & TOP ? 0 : mSceneY + mVisualRange.y, mPositionType & RIGHT ? mSceneW - mSceneX - mVisualRange.x : mVisualRange.width, mPositionType & BOTTOM ? mSceneH - mSceneY - mVisualRange.y : mVisualRange.height);
+			sVisualRect.updateRectangle(mPositionType & LEFT ? 0 : sSceneX + mVisualRange.x, mPositionType & TOP ? 0 : sSceneY + mVisualRange.y, mPositionType & RIGHT ? mSceneW - sSceneX - mVisualRange.x : mVisualRange.width, mPositionType & BOTTOM ? mSceneH - sSceneY - mVisualRange.y : mVisualRange.height);
 		}
 
 		/**

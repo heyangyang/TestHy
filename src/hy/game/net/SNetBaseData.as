@@ -13,8 +13,8 @@ package hy.game.net
 		public static const TYPE_STRING : int = 4;
 		public static const TYPE_OBJECT : int = 5;
 
-		protected var m_cmdId : int;
-		protected var m_data : ByteArray;
+		protected var mCmdId : int;
+		protected var mData : ByteArray;
 
 		public function SNetBaseData()
 		{
@@ -27,12 +27,12 @@ package hy.game.net
 
 		public function deSerialize(data : ByteArray) : void
 		{
-			this.m_data = data;
+			this.mData = data;
 		}
 
 		public function get cmdId() : int
 		{
-			return m_cmdId;
+			return mCmdId;
 		}
 
 		/**
@@ -93,9 +93,9 @@ package hy.game.net
 		{
 			var tmpArr : Array = [];
 
-			for (var i : int = m_data.readShort() - 1; i >= 0; i--)
+			for (var i : int = mData.readShort() - 1; i >= 0; i--)
 			{
-				tmpArr.push(m_data.readInt());
+				tmpArr.push(mData.readInt());
 			}
 			return tmpArr;
 		}
@@ -104,9 +104,9 @@ package hy.game.net
 		{
 			var tmpArr : Array = [];
 
-			for (var i : int = m_data.readShort() - 1; i >= 0; i--)
+			for (var i : int = mData.readShort() - 1; i >= 0; i--)
 			{
-				tmpArr.push(m_data.readUTF());
+				tmpArr.push(mData.readUTF());
 			}
 			return tmpArr;
 		}
@@ -116,7 +116,7 @@ package hy.game.net
 		{
 			var tmpArr : Array = [];
 			var obj : SNetBaseData;
-			for (var i : int = m_data.readShort() - 1; i >= 0; i--)
+			for (var i : int = mData.readShort() - 1; i >= 0; i--)
 			{
 				obj = readObject(type);
 				obj && tmpArr.push(obj);
@@ -128,9 +128,9 @@ package hy.game.net
 		{
 			var tmpArr : Array = [];
 
-			for (var i : int = m_data.readShort() - 1; i >= 0; i--)
+			for (var i : int = mData.readShort() - 1; i >= 0; i--)
 			{
-				tmpArr.push(m_data.readUnsignedByte());
+				tmpArr.push(mData.readUnsignedByte());
 			}
 			return tmpArr;
 		}
@@ -139,9 +139,9 @@ package hy.game.net
 		{
 			var tmpArr : Array = [];
 
-			for (var i : int = m_data.readShort() - 1; i >= 0; i--)
+			for (var i : int = mData.readShort() - 1; i >= 0; i--)
 			{
-				tmpArr.push(m_data.readUnsignedShort());
+				tmpArr.push(mData.readUnsignedShort());
 			}
 			return tmpArr;
 		}
@@ -151,7 +151,7 @@ package hy.game.net
 			var obj : SNetBaseData = new type() as SNetBaseData;
 			if (obj == null)
 				return null;
-			obj.deSerialize(m_data);
+			obj.deSerialize(mData);
 			return obj;
 		}
 
@@ -162,7 +162,7 @@ package hy.game.net
 
 		public function destroy() : void
 		{
-			m_data = null;
+			mData = null;
 		}
 
 	}

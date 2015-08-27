@@ -10,22 +10,22 @@ package hy.game.core
 
 	public class GameContainer implements IGameContainer
 	{
-		private var m_tag : String;
-		private var m_priority : int;
-		protected var m_depthSort : Boolean;
-		protected var m_prioritySort : Boolean;
-		protected var m_objects : Vector.<GameObject>;
-		protected var m_renders : Vector.<IRender>;
-		protected var m_numRender : int;
-		protected var m_container : IContainer;
+		private var mTag : String;
+		private var mPriority : int;
+		protected var mDepthSort : Boolean;
+		protected var mPrioritySort : Boolean;
+		protected var mObjects : Vector.<GameObject>;
+		protected var mRenders : Vector.<IRender>;
+		protected var mNumRender : int;
+		protected var mContainer : IContainer;
 
 		public function GameContainer(container : IContainer)
 		{
 			super();
-			m_objects = new Vector.<GameObject>();
-			m_renders = new Vector.<IRender>();
-			m_numRender = 0;
-			m_container = container;
+			mObjects = new Vector.<GameObject>();
+			mRenders = new Vector.<IRender>();
+			mNumRender = 0;
+			mContainer = container;
 		}
 
 		/**
@@ -36,9 +36,9 @@ package hy.game.core
 		 */
 		public function addChildRender(render : IRender, index : int) : void
 		{
-			if (index > m_container.numChildren)
-				index = m_container.numChildren;
-			m_container.addGameChildAt(render.render, index);
+			if (index > mContainer.numChildren)
+				index = mContainer.numChildren;
+			mContainer.addGameChildAt(render.render, index);
 		}
 
 		/**
@@ -49,14 +49,14 @@ package hy.game.core
 		 */
 		public function getRenderIndex(render : IRender) : int
 		{
-			return m_container.getGameChildIndex(render.render);
+			return mContainer.getGameChildIndex(render.render);
 		}
 
 		public function setChildRenderIndex(render : IRender, index : int) : void
 		{
 			if (getRenderIndex(render) == index)
 				return;
-			m_container.setGameChildIndex(render.render, index);
+			mContainer.setGameChildIndex(render.render, index);
 		}
 
 		/**
@@ -66,13 +66,13 @@ package hy.game.core
 		 */
 		public function addRender(render : IRender) : void
 		{
-			if (m_renders.indexOf(render) != -1)
+			if (mRenders.indexOf(render) != -1)
 				return;
-			m_renders.push(render);
-			m_container.addGameChild(render.render);
-			render.index = m_numRender++;
+			mRenders.push(render);
+			mContainer.addGameChild(render.render);
+			render.index = mNumRender++;
 			render.container = this;
-			m_depthSort = true;
+			mDepthSort = true;
 		}
 
 		/**
@@ -82,12 +82,12 @@ package hy.game.core
 		 */
 		public function removeRender(render : IRender) : void
 		{
-			var index : int = m_renders.indexOf(render);
+			var index : int = mRenders.indexOf(render);
 			if (index == -1)
 				return;
-			m_renders.splice(index, 1);
-			m_container.removeGameChild(render.render);
-			m_numRender--;
+			mRenders.splice(index, 1);
+			mContainer.removeGameChild(render.render);
+			mNumRender--;
 			render.container = null;
 		}
 
@@ -98,11 +98,11 @@ package hy.game.core
 		 */
 		public function addObject(object : GameObject) : void
 		{
-			if (m_objects.indexOf(object) != -1)
+			if (mObjects.indexOf(object) != -1)
 				return;
 			object.owner = this;
-			m_objects.push(object);
-			m_prioritySort = true;
+			mObjects.push(object);
+			mPrioritySort = true;
 		}
 
 		/**
@@ -112,11 +112,11 @@ package hy.game.core
 		 */
 		public function removeObject(object : GameObject) : void
 		{
-			var index : int = m_objects.indexOf(object);
+			var index : int = mObjects.indexOf(object);
 			if (index == -1)
 				return;
 			object.owner = null;
-			m_objects.splice(index, 1);
+			mObjects.splice(index, 1);
 		}
 
 		/**
@@ -125,7 +125,7 @@ package hy.game.core
 		 */
 		public function changePrioritySort() : void
 		{
-			m_prioritySort = true;
+			mPrioritySort = true;
 		}
 
 		/**
@@ -134,8 +134,8 @@ package hy.game.core
 		 */
 		protected function onUpdateSort() : void
 		{
-			m_objects.sort(onPrioritySortFun);
-			m_prioritySort = false;
+			mObjects.sort(onPrioritySortFun);
+			mPrioritySort = false;
 		}
 
 		private function onPrioritySortFun(a : GameObject, b : GameObject) : int
@@ -153,39 +153,39 @@ package hy.game.core
 		 */
 		public function changeDepthSort() : void
 		{
-			m_depthSort = true;
+			mDepthSort = true;
 		}
 
 		public function set tag(value : String) : void
 		{
-			m_tag = value;
+			mTag = value;
 		}
 
 		public function set priority(value : int) : void
 		{
-			m_priority = value;
+			mPriority = value;
 		}
 
 		public function get priority() : int
 		{
-			return m_priority;
+			return mPriority;
 		}
 		/**
 		 * 深度排序
 		 *
 		 */
 		private var render_index : int;
-		private var m_child : IRender;
+		private var mChild : IRender;
 
 		protected function updateDepthSort() : void
 		{
-			m_depthSort = false;
-			m_renders.sort(sortDepthHandler);
+			mDepthSort = false;
+			mRenders.sort(sortDepthHandler);
 			render_index = 0;
-			for (var i : int = 0; i < m_numRender; i++)
+			for (var i : int = 0; i < mNumRender; i++)
 			{
-				m_child = m_renders[i];
-				updateChildIndex(m_child);
+				mChild = mRenders[i];
+				updateChildIndex(mChild);
 			}
 		}
 
@@ -198,14 +198,14 @@ package hy.game.core
 		protected function updateChildIndex(render : IRender) : void
 		{
 			render.index = render_index;
-			if (m_container.getGameChildIndex(render.render) != render_index)
-				m_container.setGameChildIndex(render.render, render_index++);
+			if (mContainer.getGameChildIndex(render.render) != render_index)
+				mContainer.setGameChildIndex(render.render, render_index++);
 			else
 				render_index += 1;
 			for (var i : int = 0; i < render.numChildren; i++)
 			{
-				m_child = render.getChildAt(i);
-				updateChildIndex(m_child);
+				mChild = render.getChildAt(i);
+				updateChildIndex(mChild);
 			}
 		}
 
@@ -229,21 +229,21 @@ package hy.game.core
 
 		public function update() : void
 		{
-			m_prioritySort && onUpdateSort();
+			mPrioritySort && onUpdateSort();
 			var object : GameObject;
-			for (var i : int = m_objects.length - 1; i >= 0; i--)
+			for (var i : int = mObjects.length - 1; i >= 0; i--)
 			{
-				object = m_objects[i];
+				object = mObjects[i];
 				if (object.isDestroy || !object.activeStatus || !object.checkUpdatable())
 					continue;
 				object.update();
 			}
-			m_depthSort && updateDepthSort();
+			mDepthSort && updateDepthSort();
 		}
 
 		public function get container() : IContainer
 		{
-			return m_container;
+			return mContainer;
 		}
 	}
 }

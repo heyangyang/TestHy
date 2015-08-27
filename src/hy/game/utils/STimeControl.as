@@ -24,21 +24,21 @@ package hy.game.utils
 		/**
 		 *计时器
 		 */
-		private var m_timer : Timer;
+		private var mTimer : Timer;
 		/**
 		 *需要更新列表
 		 */
-		private var m_list : Dictionary;
+		private var mList : Dictionary;
 		/**
 		 *每个元素都有一个id
 		 */
-		private var m_id : uint = 1;
+		private var mId : uint = 1;
 
-		private var m_frameTime : int;
+		private var mFrameTime : int;
 		/**
 		 * 当前计时器数量
 		 */
-		private var m_count : int = 0;
+		private var mCount : int = 0;
 
 		private static var instance : STimeControl;
 
@@ -60,9 +60,9 @@ package hy.game.utils
 
 		private function init() : void
 		{
-			m_list = new Dictionary();
-			m_timer = new Timer(DELAY);
-			m_timer.addEventListener(TimerEvent.TIMER, onTimerEvent);
+			mList = new Dictionary();
+			mTimer = new Timer(DELAY);
+			mTimer.addEventListener(TimerEvent.TIMER, onTimerEvent);
 		}
 
 		/**
@@ -72,12 +72,12 @@ package hy.game.utils
 		 */
 		private function onTimerEvent(evt : TimerEvent) : void
 		{
-			deltaTime = getTimer() - m_frameTime;
-			m_frameTime = getTimer();
+			deltaTime = getTimer() - mFrameTime;
+			mFrameTime = getTimer();
 			var timeData : TimeData;
-			for (var key : * in m_list)
+			for (var key : * in mList)
 			{
-				timeData = m_list[key];
+				timeData = mList[key];
 				if (timeData.isActive)
 				{
 					removeRegisterById(key);
@@ -97,11 +97,11 @@ package hy.game.utils
 		 */
 		public function register(handler : Function, delay : int, count : int, array : Array) : int
 		{
-			if (m_count == 0)
+			if (mCount == 0)
 				start();
-			var timeId : int = ++m_id;
-			m_list[timeId] = new TimeData(handler, delay, count, array);
-			m_count++;
+			var timeId : int = ++mId;
+			mList[timeId] = new TimeData(handler, delay, count, array);
+			mCount++;
 			return timeId;
 		}
 
@@ -172,14 +172,14 @@ package hy.game.utils
 		 */
 		private function removeRegisterById(_id : uint) : void
 		{
-			if (m_list.hasOwnProperty(_id))
+			if (mList.hasOwnProperty(_id))
 			{
-				m_list[_id].destroy();
-				m_list[_id] = null;
-				delete m_list[_id];
-				m_count--;
+				mList[_id].destroy();
+				mList[_id] = null;
+				delete mList[_id];
+				mCount--;
 			}
-			if (m_count == 0)
+			if (mCount == 0)
 				stop();
 		}
 
@@ -189,10 +189,10 @@ package hy.game.utils
 		 */
 		public function start() : void
 		{
-			if (m_timer.running)
+			if (mTimer.running)
 				return;
-			m_timer.start();
-			m_frameTime = getTimer();
+			mTimer.start();
+			mFrameTime = getTimer();
 		}
 
 		/**
@@ -201,7 +201,7 @@ package hy.game.utils
 		 */
 		private function stop() : void
 		{
-			m_timer.stop();
+			mTimer.stop();
 		}
 	}
 }

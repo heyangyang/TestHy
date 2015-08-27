@@ -34,54 +34,54 @@ package hy.game.update
 		/**
 		 * 相对于舞台鼠标的位置
 		 */
-		private static var m_stageX : int;
-		private static var m_stageY : int;
+		private static var mStageX : int;
+		private static var mStageY : int;
 
 		public static function get mouseX() : int
 		{
-			return m_stageX;
+			return mStageX;
 		}
 
 		public static function get mouseY() : int
 		{
-			return m_stageY;
+			return mStageY;
 		}
 
-		private static var m_mouseComponents : Vector.<SCollisionComponent> = new Vector.<SCollisionComponent>();
-		private static var m_numComponent : int = 0;
+		private static var mMouseComponents : Vector.<SCollisionComponent> = new Vector.<SCollisionComponent>();
+		private static var mNumComponent : int = 0;
 
 		public static function addComponent(com : SCollisionComponent) : void
 		{
-			if (m_mouseComponents.indexOf(com) == -1)
+			if (mMouseComponents.indexOf(com) == -1)
 			{
-				m_numComponent++;
-				m_mouseComponents.push(com);
+				mNumComponent++;
+				mMouseComponents.push(com);
 			}
 		}
 
 		public static function removeComponent(com : SCollisionComponent) : void
 		{
-			var index : int = m_mouseComponents.indexOf(com);
+			var index : int = mMouseComponents.indexOf(com);
 			if (index != -1)
 			{
-				m_numComponent--;
-				m_mouseComponents.splice(index, 1);
+				mNumComponent--;
+				mMouseComponents.splice(index, 1);
 			}
 		}
 
 		private var mouse_dic : Dictionary = new Dictionary();
-		private var m_updateComponent : SCollisionComponent;
-		private var m_currComponent : SCollisionComponent;
+		private var mUpdateComponent : SCollisionComponent;
+		private var mCurrComponent : SCollisionComponent;
 		/**
 		 * 鼠标位置相对于屏幕
 		 */
-		private var m_lastScreenMouseX : int = -1;
-		private var m_lastScreenMouseY : int = -1;
+		private var mLastScreenMouseX : int = -1;
+		private var mLastScreenMouseY : int = -1;
 		/**
 		 * 鼠标位置相对于场景
 		 */
-		private var m_lastSceneMouseX : int = -1;
-		private var m_lastSceneMouseY : int = -1;
+		private var mLastSceneMouseX : int = -1;
+		private var mLastSceneMouseY : int = -1;
 
 		public function SMouseUpdateMangaer()
 		{
@@ -97,39 +97,39 @@ package hy.game.update
 
 		override public function update() : void
 		{
-			if (m_lastScreenMouseX == mouseX && m_lastScreenMouseY == mouseY)
+			if (mLastScreenMouseX == mouseX && mLastScreenMouseY == mouseY)
 				return;
-			m_lastScreenMouseX = SMouseUpdateMangaer.mouseX;
-			m_lastScreenMouseY = SMouseUpdateMangaer.mouseY;
-			m_lastSceneMouseX = SCameraObject.sceneX + m_lastScreenMouseX;
-			m_lastSceneMouseY = SCameraObject.sceneY + m_lastScreenMouseY;
-			m_currComponent = null;
-			for (var i : int = 0; i < m_numComponent; i++)
+			mLastScreenMouseX = SMouseUpdateMangaer.mouseX;
+			mLastScreenMouseY = SMouseUpdateMangaer.mouseY;
+			mLastSceneMouseX = SCameraObject.sceneX + mLastScreenMouseX;
+			mLastSceneMouseY = SCameraObject.sceneY + mLastScreenMouseY;
+			mCurrComponent = null;
+			for (var i : int = 0; i < mNumComponent; i++)
 			{
-				m_updateComponent = m_mouseComponents[i];
-				m_updateComponent.isMouseOver = false;
-				if (!m_updateComponent.checkIsMouseIn(m_lastSceneMouseX, m_lastSceneMouseY))
+				mUpdateComponent = mMouseComponents[i];
+				mUpdateComponent.isMouseOver = false;
+				if (!mUpdateComponent.checkIsMouseIn(mLastSceneMouseX, mLastSceneMouseY))
 					continue;
-				if (!m_updateComponent.checkPixelIn(m_lastSceneMouseX, m_lastSceneMouseY))
+				if (!mUpdateComponent.checkPixelIn(mLastSceneMouseX, mLastSceneMouseY))
 					continue;
-				if (m_currComponent == null || m_updateComponent.index > m_currComponent.index)
-					m_currComponent = m_updateComponent;
+				if (mCurrComponent == null || mUpdateComponent.index > mCurrComponent.index)
+					mCurrComponent = mUpdateComponent;
 			}
-			if (m_currComponent)
-				m_currComponent.isMouseOver = true;
+			if (mCurrComponent)
+				mCurrComponent.isMouseOver = true;
 		}
 
 		public function get target():GameObject
 		{
-			if(m_currComponent==null)
+			if(mCurrComponent==null)
 				return null;
-			return m_currComponent.gameObject;
+			return mCurrComponent.gameObject;
 		}
 		
 		protected function onMouseMoveHandler(event : MouseEvent) : void
 		{
-			m_stageX = event.stageX;
-			m_stageY = event.stageY;
+			mStageX = event.stageX;
+			mStageY = event.stageY;
 		}
 
 		public function registerMouse(type : String, types : Vector.<BitmapData>, frameRate : int = -1) : void

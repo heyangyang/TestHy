@@ -17,11 +17,11 @@ package hy.game.resources
 	 * @author hyy
 	 *
 	 */
-	public class Mp3Resource extends SResource
+	public class Mpp3Resource extends SResource
 	{
-		private var sound : Sound;
+		private var mSound : Sound;
 
-		public function Mp3Resource(res_url : String, version : String)
+		public function Mpp3Resource(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
@@ -38,14 +38,14 @@ package hy.game.resources
 				context.applicationDomain = ApplicationDomain.currentDomain;
 			}
 
-			sound = new Sound();
-			sound.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			sound.addEventListener(Event.COMPLETE, onDownLoadComplete);
-			sound.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			sound.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mSound = new Sound();
+			mSound.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mSound.addEventListener(Event.COMPLETE, onDownLoadComplete);
+			mSound.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mSound.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 			try
 			{
-				sound.load(request);
+				mSound.load(mRequest);
 			}
 			catch (e : Error)
 			{
@@ -55,14 +55,14 @@ package hy.game.resources
 
 		override public function get data():*
 		{
-			return sound;
+			return mSound;
 		}
 		
 		override public function stop() : void
 		{
 			try
 			{
-				sound && sound.close();
+				mSound && mSound.close();
 			}
 			catch (e : Error)
 			{
@@ -76,18 +76,18 @@ package hy.game.resources
 		 */
 		override public function cleanListeners() : void
 		{
-			if (!sound)
+			if (!mSound)
 				return;
-			sound.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			sound.removeEventListener(Event.COMPLETE, onDownLoadComplete);
-			sound.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			sound.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mSound.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mSound.removeEventListener(Event.COMPLETE, onDownLoadComplete);
+			mSound.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mSound.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 		}
 
 		override protected function destroy() : void
 		{
 			super.destroy();
-			this.sound = null;
+			this.mSound = null;
 		}
 
 	}

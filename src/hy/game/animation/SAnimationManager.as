@@ -30,7 +30,7 @@ package hy.game.animation
 		/**
 		 * 根据动画id得到动画描述符的映射
 		 */
-		private var m_animationDescriptionById : Dictionary = new Dictionary(false);
+		private var mAnimationDescriptionById : Dictionary = new Dictionary(false);
 
 		/**
 		 * 获取动画描述
@@ -43,7 +43,7 @@ package hy.game.animation
 			if (!id)
 				return null;
 			id = id.toLowerCase();
-			return m_animationDescriptionById[id];
+			return mAnimationDescriptionById[id];
 		}
 
 		/**
@@ -51,7 +51,7 @@ package hy.game.animation
 		 */
 		public function addBatchAnimationDescription(xml : XML, width : int, height : int, version : String = null) : void
 		{
-			parseAnimations(xml, width, height, m_animationDescriptionById, version);
+			parseAnimations(xml, width, height, mAnimationDescriptionById, version);
 			System.disposeXML(xml);
 		}
 
@@ -145,7 +145,7 @@ package hy.game.animation
 		{
 			var animation : SAnimationResource;
 			animationId = animationId || resId;
-			var desc : SAnimationDescription = m_animationDescriptionById[animationId];
+			var desc : SAnimationDescription = mAnimationDescriptionById[animationId];
 
 			if (desc)
 			{

@@ -13,13 +13,13 @@ package hy.game.avatar
 		/**
 		 * 所有部件对应的各自动画
 		 */
-		private var m_animationsByPart : SAvatarAnimationLibrary;
+		private var mAnimationsByPart : SAvatarAnimationLibrary;
 		/**
 		 * 当前avatar的描述
 		 */
-		private var m_avatarDesc : SAvatarDescription;
+		private var mAvatarDesc : SAvatarDescription;
 		// 当前动作
-		private var m_curAction : uint;
+		private var mCurAction : uint;
 
 		public function SAvatar()
 		{
@@ -28,9 +28,9 @@ package hy.game.avatar
 
 		private function initAvatar(desc : SAvatarDescription) : void
 		{
-			m_avatarDesc = desc;
-			m_width = Math.abs(desc.rightBorder - desc.leftBorder);
-			m_height = Math.abs(desc.bottomBorder - desc.topBorder);
+			mAvatarDesc = desc;
+			mWidth = Math.abs(desc.rightBorder - desc.leftBorder);
+			mHeight = Math.abs(desc.bottomBorder - desc.topBorder);
 		}
 
 		/**
@@ -40,7 +40,7 @@ package hy.game.avatar
 		 */
 		public function gotoDirection(dir : int) : SAnimationFrame
 		{
-			return gotoAnimation(m_curAction, dir, m_curFrameIndex, 0);
+			return gotoAnimation(mCurAction, dir, mCurFrameIndex, 0);
 		}
 
 		/**
@@ -53,45 +53,45 @@ package hy.game.avatar
 		 */
 		public function gotoAnimation(action : uint, dir : int, frame : int, loops : int) : SAnimationFrame
 		{
-			if (!m_avatarDesc)
+			if (!mAvatarDesc)
 				return null;
 			if (action != 0)
 			{
 				if (hasAction(action, 0))
 				{
-					m_curAction = action;
+					mCurAction = action;
 				}
 				else
 				{
-					warning(m_avatarDesc.name, "not find action : ", action);
-					m_curAction = 0;
+					warning(mAvatarDesc.name, "not find action : ", action);
+					mCurAction = 0;
 					var avaliaAction : Array = getAvaliableAction(action);
 					if (avaliaAction)
 					{
-						m_curAction = avaliaAction[0];
+						mCurAction = avaliaAction[0];
 					}
 				}
 			}
 
-			if (!m_curAction)
+			if (!mCurAction)
 				return null;
 
-			m_curDir = dir;
+			mCurDir = dir;
 			//矫正方向
-			m_correctDir = EnumDirection.correctDirection(m_dirMode, m_correctDir, dir);
+			mCorrectDir = EnumDirection.correctDirection(mDirMode, mCorrectDir, dir);
 
-			if (m_correctDir != 0)
+			if (mCorrectDir != 0)
 			{
-				if (!hasDir(m_correctDir, m_curAction))
+				if (!hasDir(mCorrectDir, mCurAction))
 				{
-					m_correctDir = getAvaliableDir(0, 0);
-					warning(m_avatarDesc.name, "not find dir : ", dir);
+					mCorrectDir = getAvaliableDir(0, 0);
+					warning(mAvatarDesc.name, "not find dir : ", dir);
 				}
 			}
-			m_curAnimation = m_animationsByPart.gotoAnimation(m_curAction, m_correctDir);
-			m_loops = loops;
+			mCurAnimation = mAnimationsByPart.gotoAnimation(mCurAction, mCorrectDir);
+			mLoops = loops;
 			gotoFrame(frame);
-			return m_curAnimationFrame;
+			return mCurAnimationFrame;
 		}
 
 		/**
@@ -101,9 +101,9 @@ package hy.game.avatar
 		 */
 		public function hasDir(curDir : int, action : uint) : Boolean
 		{
-			if (m_avatarDesc == null || action == 0)
+			if (mAvatarDesc == null || action == 0)
 				return false;
-			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, 0);
+			var actionDesc : SAvatarActionDescription = mAvatarDesc.getActionDescByAction(action, 0);
 			if (actionDesc)
 			{
 				var dirs : Array = actionDesc.directions;
@@ -123,9 +123,9 @@ package hy.game.avatar
 		 */
 		public function hasAction(action : uint, kind : uint) : Boolean
 		{
-			if (m_avatarDesc == null)
+			if (mAvatarDesc == null)
 				return false;
-			if (m_avatarDesc.getActionDescByAction(action, kind))
+			if (mAvatarDesc.getActionDescByAction(action, kind))
 				return true;
 			return false;
 		}
@@ -136,12 +136,12 @@ package hy.game.avatar
 		 */
 		public function getAvaliableAction(action : int) : Array
 		{
-			if (m_avatarDesc && m_avatarDesc.getAvaliableActionByType(action))
-				return m_avatarDesc.getAvaliableActionByType(action);
+			if (mAvatarDesc && mAvatarDesc.getAvaliableActionByType(action))
+				return mAvatarDesc.getAvaliableActionByType(action);
 			else if (hasAction(SActionType.IDLE, 0))
 				return [SActionType.IDLE, 0];
 			else
-				return m_avatarDesc.getAvaliableAction();
+				return mAvatarDesc.getAvaliableAction();
 		}
 
 		/**
@@ -151,8 +151,8 @@ package hy.game.avatar
 		public function getAvaliableDir(action : uint, kind : uint) : int
 		{
 			if (!action)
-				action = m_curAction;
-			var actionDesc : SAvatarActionDescription = m_avatarDesc.getActionDescByAction(action, kind);
+				action = mCurAction;
+			var actionDesc : SAvatarActionDescription = mAvatarDesc.getActionDescByAction(action, kind);
 			if (actionDesc)
 			{
 				var dirs : Array = actionDesc.directions;
@@ -169,28 +169,28 @@ package hy.game.avatar
 		 */
 		public function set animationsByParts(value : SAvatarAnimationLibrary) : void
 		{
-			if (m_animationsByPart)
-				m_animationsByPart.release();
-			m_animationsByPart = value;
-			if (m_animationsByPart)
-				initAvatar(m_animationsByPart.avatarDes);
+			if (mAnimationsByPart)
+				mAnimationsByPart.release();
+			mAnimationsByPart = value;
+			if (mAnimationsByPart)
+				initAvatar(mAnimationsByPart.avatarDes);
 		}
 
 		public function get animationsByParts() : SAvatarAnimationLibrary
 		{
-			return m_animationsByPart;
+			return mAnimationsByPart;
 		}
 
 		public function get curAction() : uint
 		{
-			return m_curAction;
+			return mCurAction;
 		}
 
 		override public function dispose() : void
 		{
 			super.dispose();
 			animationsByParts = null;
-			m_avatarDesc = null;
+			mAvatarDesc = null;
 		}
 	}
 }

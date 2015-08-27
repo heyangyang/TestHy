@@ -40,12 +40,12 @@ package hy.game.manager
 		public function get status() : String
 		{
 			var str : String = "";
-			if (dic_count[NAME])
-				str += "name:" + dic_count[NAME];
-			if (dic_count[BITMAPDATA])
-				str += "bmd:" + dic_count[BITMAPDATA];
-			if (dic_count[PARSER])
-				str += "parser:" + dic_count[PARSER];
+			if (mCountDictionary[NAME])
+				str += "name:" + mCountDictionary[NAME];
+			if (mCountDictionary[BITMAPDATA])
+				str += "bmd:" + mCountDictionary[BITMAPDATA];
+			if (mCountDictionary[PARSER])
+				str += "parser:" + mCountDictionary[PARSER];
 			return str;
 		}
 
@@ -64,31 +64,31 @@ package hy.game.manager
 		public static const BITMAPDATA : String = "12";
 		public static const COOL_ANIMATION : String = "13";
 
-		private var check_dic : Dictionary = new Dictionary();
-		private var dic : Dictionary = new Dictionary();
-		private var dic_count : Dictionary = new Dictionary();
-		private var cur_dic : Dictionary;
-		private var versionMgr : SVersionManager;
-		private var _total_reference : int = 0;
+		private var mCheck_dic : Dictionary = new Dictionary();
+		private var mDic : Dictionary = new Dictionary();
+		private var mCountDictionary : Dictionary = new Dictionary();
+		private var mCurDictionary : Dictionary;
+		private var mVersionMgr : SVersionManager;
+		private var mTotalReference : int = 0;
 
 		public function SReferenceManager()
 		{
 			if (instance)
 				error("instance != null");
-			check_dic[LOADER] = 30;
-			check_dic[MAP] = 50;
-			check_dic[ANIMATION] = 50;
-			check_dic[ANIMATION_LOAD] = 30;
-			check_dic[SOUND] = 30;
-			check_dic[MOVIVE] = 30;
-			check_dic[ICON] = 30;
-			check_dic[IMAGE] = 30;
-			check_dic[FACE] = 50;
-			check_dic[PARTICLE] = 50;
-			check_dic[NAME] = 50;
-			check_dic[PARSER] = 50;
-			check_dic[BITMAPDATA] = 50;
-			versionMgr = SVersionManager.getInstance();
+			mCheck_dic[LOADER] = 30;
+			mCheck_dic[MAP] = 50;
+			mCheck_dic[ANIMATION] = 50;
+			mCheck_dic[ANIMATION_LOAD] = 30;
+			mCheck_dic[SOUND] = 30;
+			mCheck_dic[MOVIVE] = 30;
+			mCheck_dic[ICON] = 30;
+			mCheck_dic[IMAGE] = 30;
+			mCheck_dic[FACE] = 50;
+			mCheck_dic[PARTICLE] = 50;
+			mCheck_dic[NAME] = 50;
+			mCheck_dic[PARSER] = 50;
+			mCheck_dic[BITMAPDATA] = 50;
+			mVersionMgr = SVersionManager.getInstance();
 		}
 
 		/**
@@ -101,12 +101,12 @@ package hy.game.manager
 			var id : String;
 			var reference : SReference;
 
-			for (var key : String in dic)
+			for (var key : String in mDic)
 			{
-				cur_dic = dic[key];
-				for (id in cur_dic)
+				mCurDictionary = mDic[key];
+				for (id in mCurDictionary)
 				{
-					reference = cur_dic[id];
+					reference = mCurDictionary[id];
 //					if (reference.allowDestroy)
 //						memoryMgr.addClearFun(key, id);
 				}
@@ -121,7 +121,7 @@ package hy.game.manager
 		 */
 		private function onSingleClearMemory(type : String, id : String) : void
 		{
-			var clear_dic : Dictionary = dic[type];
+			var clear_dic : Dictionary = mDic[type];
 			if (clear_dic == null)
 				return;
 			var reference : SReference = clear_dic[id];
@@ -132,8 +132,8 @@ package hy.game.manager
 				{
 					clear_dic[id] = null;
 					delete clear_dic[id];
-					dic_count[type]--;
-					_total_reference--;
+					mCountDictionary[type]--;
+					mTotalReference--;
 				}
 			}
 		}
@@ -144,7 +144,7 @@ package hy.game.manager
 		 */
 		public function forceClear(type : String) : void
 		{
-			var clear_dic : Dictionary = dic[type];
+			var clear_dic : Dictionary = mDic[type];
 			var reference : SReference;
 			for (var id : String in clear_dic)
 			{
@@ -174,14 +174,14 @@ package hy.game.manager
 		 */
 		public function createReference(type : String, key : String, typeClass : Class, ... args) : SReference
 		{
-			cur_dic = dic[type];
-			if (cur_dic == null)
+			mCurDictionary = mDic[type];
+			if (mCurDictionary == null)
 			{
-				cur_dic = new Dictionary();
-				dic[type] = cur_dic;
-				dic_count[type] = 0;
+				mCurDictionary = new Dictionary();
+				mDic[type] = mCurDictionary;
+				mCountDictionary[type] = 0;
 			}
-			var reference : SReference = cur_dic[key];
+			var reference : SReference = mCurDictionary[key];
 			if (reference && reference.isDisposed)
 			{
 				error("createReference isDisposed:" + key);
@@ -224,9 +224,9 @@ package hy.game.manager
 						error("reference 类型不足");
 						break;
 				}
-				cur_dic[key] = reference;
-				_total_reference++;
-				dic_count[type]++;
+				mCurDictionary[key] = reference;
+				mTotalReference++;
+				mCountDictionary[type]++;
 			}
 			else
 			{
@@ -237,15 +237,15 @@ package hy.game.manager
 
 		public function getReferencesByType(type : String) : Dictionary
 		{
-			return dic[type];
+			return mDic[type];
 		}
 
 		public function getReference(type : String, key : String) : SReference
 		{
-			cur_dic = dic[type];
-			if (cur_dic == null)
+			mCurDictionary = mDic[type];
+			if (mCurDictionary == null)
 				return null;
-			return cur_dic[key];
+			return mCurDictionary[key];
 		}
 
 
@@ -275,7 +275,7 @@ package hy.game.manager
 					root = Config.webRoot + "/";
 				else
 					root = root + "/";
-				var version : SVersion = versionMgr.getVersionById(id);
+				var version : SVersion = mVersionMgr.getVersionById(id);
 				if (version)
 				{
 					switch (version.type)
@@ -321,7 +321,7 @@ package hy.game.manager
 
 		public function get total_reference() : int
 		{
-			return _total_reference;
+			return mTotalReference;
 		}
 
 		//*********************************加载器****************************

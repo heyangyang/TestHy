@@ -13,12 +13,12 @@ package hy.game.animation
 		/**
 		 * 当前帧的位图（共享）
 		 */
-		private var m_frameData : IBitmapData;
+		private var mFrameData : IBitmapData;
 
 		/**
 		 * 当前帧需要绘制的区域
 		 */
-		private var m_rect : SRectangle;
+		private var mRect : SRectangle;
 
 		/**
 		 * 当前帧X偏移值，此偏移为设置值
@@ -76,15 +76,15 @@ package hy.game.animation
 		public function SAnimationFrame()
 		{
 			super();
-			m_rect = new SRectangle();
+			mRect = new SRectangle();
 		}
 
 		public function clear() : void
 		{
-			if (!m_frameData)
+			if (!mFrameData)
 				return;
-			m_frameData = null;
-			m_rect.setEmpty();
+			mFrameData = null;
+			mRect.setEmpty();
 			if (needReversal)
 			{
 				offsetX = _originOffsetX;
@@ -112,28 +112,28 @@ package hy.game.animation
 
 		public function get frameData() : IBitmapData
 		{
-			return m_frameData;
+			return mFrameData;
 		}
 
 		public function set frameData(value : IBitmapData) : void
 		{
-			m_frameData = value;
+			mFrameData = value;
 			_isReversed = false;
-			if (m_frameData)
-				m_rect.updateRectangle(x, y, m_frameData.width, m_frameData.height);
+			if (mFrameData)
+				mRect.updateRectangle(x, y, mFrameData.width, mFrameData.height);
 		}
 
 
 		public function get rect() : SRectangle
 		{
-			return m_rect;
+			return mRect;
 		}
 
 		public function destroy() : void
 		{
 			clear();
-			m_frameData = null;
-			m_rect = null;
+			mFrameData = null;
+			mRect = null;
 			duration = 120;
 			offsetX = offsetY = frameX = frameY = 0;
 			_originOffsetX = _originOffsetY = _originFrameX = _originFrameY = 0;

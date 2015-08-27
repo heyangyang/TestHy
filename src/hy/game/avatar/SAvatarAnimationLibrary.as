@@ -19,9 +19,9 @@ package hy.game.avatar
 	 */
 	public class SAvatarAnimationLibrary extends SReference
 	{
-		private var m_animationByActionAndDir : Dictionary;
-		private var m_avatarDes : SAvatarDescription;
-		private var m_avatarId : String;
+		private var mAnimationByActionAndDir : Dictionary;
+		private var mAvatarDes : SAvatarDescription;
+		private var mAvatarId : String;
 		/**
 		 * 加载所有的动画
 		 */
@@ -31,20 +31,20 @@ package hy.game.avatar
 
 		public function SAvatarAnimationLibrary(priority : int, avatarId : String, avatarDesc : SAvatarDescription)
 		{
-			m_avatarId = avatarId;
-			m_avatarDes = avatarDesc;
-			m_animationByActionAndDir = new Dictionary();
+			mAvatarId = avatarId;
+			mAvatarDes = avatarDesc;
+			mAnimationByActionAndDir = new Dictionary();
 			createSinglePartAnimations(priority, avatarDesc);
 		}
 
 		private function setAnimationByActionAndDir(action : uint, animationByDir : Dictionary) : void
 		{
-			m_animationByActionAndDir[action] = animationByDir;
+			mAnimationByActionAndDir[action] = animationByDir;
 		}
 
 		private function getAnimationByActionAndDir(action : uint) : Dictionary
 		{
-			return m_animationByActionAndDir[action];
+			return mAnimationByActionAndDir[action];
 		}
 
 		/**
@@ -72,7 +72,7 @@ package hy.game.avatar
 			var animationByDir : Dictionary;
 			loader_count = loader_index = 0;
 			onReturnHanlder = complete;
-			for each (animationByDir in m_animationByActionAndDir)
+			for each (animationByDir in mAnimationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
@@ -107,7 +107,7 @@ package hy.game.avatar
 		{
 			var animation : SAnimation;
 			var animationByDir : Dictionary;
-			for each (animationByDir in m_animationByActionAndDir)
+			for each (animationByDir in mAnimationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
@@ -115,7 +115,7 @@ package hy.game.avatar
 				}
 			}
 			onReturnHanlder = null;
-			m_animationByActionAndDir = null;
+			mAnimationByActionAndDir = null;
 			super.destroy();
 		}
 
@@ -129,7 +129,7 @@ package hy.game.avatar
 		 */
 		private function createSinglePartAnimations(priority : int, avatarDesc : SAvatarDescription) : void
 		{
-			if (!m_avatarId || avatarDesc == null)
+			if (!mAvatarId || avatarDesc == null)
 				return;
 
 			var animationByDir : Dictionary;
@@ -146,7 +146,7 @@ package hy.game.avatar
 			{
 				animationByDir = new Dictionary();
 				setAnimationByActionAndDir(actionDesc.type, animationByDir);
-				partDesc = actionDesc.partDescByName[m_avatarId];
+				partDesc = actionDesc.partDescByName[mAvatarId];
 				if (!partDesc)
 					continue;
 				dirs = actionDesc.directions; //当前有的方向数据
@@ -186,7 +186,7 @@ package hy.game.avatar
 
 		public function get avatarDes() : SAvatarDescription
 		{
-			return m_avatarDes;
+			return mAvatarDes;
 		}
 	}
 }

@@ -46,10 +46,10 @@ package hy.game.manager
 			return instance;
 		}
 
-		private var m_list : Vector.<IGameContainer>;
-		private var m_dictionary : Dictionary;
-		private var m_stage : Stage;
-		private var m_needSort : Boolean;
+		private var mList : Vector.<IGameContainer>;
+		private var mDictionary : Dictionary;
+		private var mStage : Stage;
+		private var mNeedSort : Boolean;
 
 
 		public function SLayerManager()
@@ -62,9 +62,9 @@ package hy.game.manager
 		{
 			if (stage == null)
 				error("stage==null");
-			m_stage = stage;
-			m_list = new Vector.<IGameContainer>();
-			m_dictionary = new Dictionary();
+			mStage = stage;
+			mList = new Vector.<IGameContainer>();
+			mDictionary = new Dictionary();
 			//添加默认层级
 			addLayer(LAYER_MAP, EnumPriority.PRIORITY_9, createContainer());
 			addLayer(LAYER_EFFECT_BOTTOM, EnumPriority.PRIORITY_8, createContainer());
@@ -86,33 +86,33 @@ package hy.game.manager
 
 		private function addLayer(tag : String, priority : int, container : IContainer) : void
 		{
-			if (m_dictionary[tag])
+			if (mDictionary[tag])
 				error(this, tag, "is exists");
 			var gameContainer : IGameContainer = new GameContainer(container);
 			gameContainer.tag = tag;
 			gameContainer.priority = priority;
 			if (gameContainer.container is SRenderContainer)
-				m_stage.addChild(gameContainer.container as DisplayObject);
+				mStage.addChild(gameContainer.container as DisplayObject);
 			else
 				SStage3D.stage.addChild(gameContainer.container as SDirectContainer);
-			m_list.push(gameContainer);
-			m_dictionary[tag] = gameContainer;
-			m_needSort = true;
+			mList.push(gameContainer);
+			mDictionary[tag] = gameContainer;
+			mNeedSort = true;
 		}
 
 		public function update() : void
 		{
-			m_needSort && onSort();
-			for (var i : int = m_list.length - 1; i >= 0; i--)
+			mNeedSort && onSort();
+			for (var i : int = mList.length - 1; i >= 0; i--)
 			{
-				m_list[i].update();
+				mList[i].update();
 			}
 		}
 
 		private function onSort() : void
 		{
-			m_list.sort(onPrioritySortFun);
-			m_needSort = false;
+			mList.sort(onPrioritySortFun);
+			mNeedSort = false;
 		}
 
 		private function onPrioritySortFun(a : IGameContainer, b : IGameContainer) : int
@@ -126,7 +126,7 @@ package hy.game.manager
 
 		public function addObjectByType(type : String, object : GameObject) : void
 		{
-			var gameContainer : IGameContainer = m_dictionary[type];
+			var gameContainer : IGameContainer = mDictionary[type];
 			if (!gameContainer)
 			{
 				error("layer is not find :" + type);
@@ -137,7 +137,7 @@ package hy.game.manager
 
 		public function addRenderByType(type : String, render : SRender) : void
 		{
-			var gameContainer : IGameContainer = m_dictionary[type];
+			var gameContainer : IGameContainer = mDictionary[type];
 			if (!gameContainer)
 			{
 				error("layer is not find :" + type);
@@ -148,7 +148,7 @@ package hy.game.manager
 
 		public function removeRenderByType(type : String, render : SRender) : void
 		{
-			var gameContainer : IGameContainer = m_dictionary[type];
+			var gameContainer : IGameContainer = mDictionary[type];
 			if (!gameContainer)
 			{
 				error("layer is not find :" + type);

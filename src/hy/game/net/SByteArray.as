@@ -6,7 +6,7 @@ package hy.game.net
 
 	public class SByteArray extends ByteArray implements IDestroy
 	{
-		protected var m_isDisposed : Boolean;
+		protected var mIsDisposed : Boolean;
 
 		public function SByteArray()
 		{
@@ -15,13 +15,13 @@ package hy.game.net
 
 		public function destroy() : void
 		{
-			m_isDisposed = true;
+			mIsDisposed = true;
 			this.clear();
 		}
 
 		public function get isDestroy() : Boolean
 		{
-			return m_isDisposed;
+			return mIsDisposed;
 		}
 	}
 }

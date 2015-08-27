@@ -18,40 +18,40 @@ package hy.game.aEffect
 	 */
 	public class SEffectAnimationLibrary extends SReference
 	{
-		private var _animationByDir : Dictionary;
+		private var mAnimationByDir : Dictionary;
 		/**
 		 * 当前effect的描述
 		 */
-		private var effectDesc : SEffectDescription;
-		private var _width : int;
-		private var _height : int;
-		private var _dirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
+		private var mEffectDesc : SEffectDescription;
+		private var mWidth : int;
+		private var mHeight : int;
+		private var nDirMode : uint = EnumDirection.DIR_MODE_HOR_ONE;
 
 		public function SEffectAnimationLibrary(desc : SEffectDescription, needReversal : Boolean)
 		{
-			_animationByDir = new Dictionary();
+			mAnimationByDir = new Dictionary();
 			if (desc.version == "2")
-				_dirMode = EnumDirection.checkDirsDirMode(desc.directions);
-			this.effectDesc = desc;
-			_width = Math.abs(desc.rightBorder - desc.leftBorder);
-			_height = Math.abs(desc.bottomBorder - desc.topBorder);
+				nDirMode = EnumDirection.checkDirsDirMode(desc.directions);
+			this.mEffectDesc = desc;
+			mWidth = Math.abs(desc.rightBorder - desc.leftBorder);
+			mHeight = Math.abs(desc.bottomBorder - desc.topBorder);
 			createAnimations(desc, needReversal);
 		}
 
 		public function gotoAnimation(dir : int) : SAnimation
 		{
-			if (effectDesc == null)
+			if (mEffectDesc == null)
 				return null;
 
-			var cur_dir : int = EnumDirection.correctDirection(_dirMode, EnumDirection.EAST, dir); //对方向进行修正
+			var cur_dir : int = EnumDirection.correctDirection(nDirMode, EnumDirection.EAST, dir); //对方向进行修正
 
 			if (cur_dir != 0 && !hasDir(cur_dir))
 			{
 				cur_dir = getAvaliableDir();
-				SDebug.warning(this, effectDesc.id + "配置文件不存在方向" + dir + "的资源，将取有效方向：" + cur_dir);
+				SDebug.warning(this, mEffectDesc.id + "配置文件不存在方向" + dir + "的资源，将取有效方向：" + cur_dir);
 			}
 
-			return _animationByDir[cur_dir];
+			return mAnimationByDir[cur_dir];
 		}
 
 		/**
@@ -61,9 +61,9 @@ package hy.game.aEffect
 		 */
 		public function hasDir(curDir : int) : Boolean
 		{
-			if (effectDesc == null)
+			if (mEffectDesc == null)
 				return false;
-			var dirs : Array = effectDesc.animationDirections;
+			var dirs : Array = mEffectDesc.animationDirections;
 			for each (var dir : int in dirs)
 			{
 				if (dir == curDir)
@@ -78,9 +78,9 @@ package hy.game.aEffect
 		 */
 		public function getAvaliableDir() : int
 		{
-			if (effectDesc)
+			if (mEffectDesc)
 			{
-				var dirs : Array = effectDesc.animationDirections;
+				var dirs : Array = mEffectDesc.animationDirections;
 				if (dirs.length > 0)
 					return int(dirs[0]);
 			}
@@ -89,26 +89,26 @@ package hy.game.aEffect
 
 		public function get dirMode() : uint
 		{
-			return _dirMode;
+			return nDirMode;
 		}
 
 		public function get width() : int
 		{
-			return _width;
+			return mWidth;
 		}
 
 		public function get height() : int
 		{
-			return _height;
+			return mHeight;
 		}
 
 		override protected function destroy() : void
 		{
-			for each (var animation : SAnimation in _animationByDir)
+			for each (var animation : SAnimation in mAnimationByDir)
 			{
 				animation.destroy();
 			}
-			_animationByDir = null;
+			mAnimationByDir = null;
 			super.destroy();
 		}
 
@@ -145,7 +145,7 @@ package hy.game.aEffect
 					animationId = effectDesc.getAnimationIdByDir(revrsalDir);
 					id = animationId.substr(0, animationId.length - 1) + dir;
 				}
-				_animationByDir[dir] = SAnimationManager.getInstance().createAnimation(id, animationId, isReversal);
+				mAnimationByDir[dir] = SAnimationManager.getInstance().createAnimation(id, animationId, isReversal);
 			}
 			return this;
 		}

@@ -16,13 +16,13 @@ package hy.game.components
 	 */
 	public class SAnimationComponent extends SRenderComponent
 	{
-		private var lazyEffect : SEffectResource;
-		private var m_effect : SEffect;
-		private var m_currFrame : SAnimationFrame;
-		private var m_updateFrame : SAnimationFrame;
-		private var m_loops : int;
-		private var m_x : int;
-		private var m_y : int;
+		private var mResource : SEffectResource;
+		private var mEffect : SEffect;
+		private var mCurrFrame : SAnimationFrame;
+		private var mUpdateFrame : SAnimationFrame;
+		private var mLoops : int;
+		private var mX : int;
+		private var mY : int;
 
 		public function SAnimationComponent(type : * = null)
 		{
@@ -36,8 +36,8 @@ package hy.game.components
 		override protected function init() : void
 		{
 			super.init();
-			lazyEffect = new SEffectResource();
-			lazyEffect.priority = EnumLoadPriority.EFFECT;
+			mResource = new SEffectResource();
+			mResource.priority = EnumLoadPriority.EFFECT;
 		}
 
 		/**
@@ -56,9 +56,9 @@ package hy.game.components
 		override public function notifyRemoved() : void
 		{
 			super.notifyRemoved();
-			m_effect = null;
-			m_currFrame = null;
-			m_updateFrame = null;
+			mEffect = null;
+			mCurrFrame = null;
+			mUpdateFrame = null;
 		}
 
 		/**
@@ -68,13 +68,13 @@ package hy.game.components
 		 */
 		public function setLoops(value : int) : void
 		{
-			m_loops = value;
+			mLoops = value;
 		}
 
 		public function setPosition(x : int, y : int) : void
 		{
-			m_x = x;
-			m_y = y;
+			mX = x;
+			mY = y;
 		}
 
 		public function setLayer(value : int) : void
@@ -84,25 +84,25 @@ package hy.game.components
 
 		override public function update() : void
 		{
-			if (lazyEffect.isChange)
+			if (mResource.isChange)
 			{
-				lazyEffect.addNotifyCompleted(onLoadEffectComplete);
-				lazyEffect.loadResource();
+				mResource.addNotifyCompleted(onLoadEffectComplete);
+				mResource.loadResource();
 			}
-			if (!m_effect)
+			if (!mEffect)
 				return;
-			if (m_effect.isEnd)
+			if (mEffect.isEnd)
 			{
 				destroy();
 				return;
 			}
-			m_updateFrame = m_effect.gotoNextFrame(STime.deltaTime);
-			if (!m_updateFrame || m_updateFrame == m_currFrame)
+			mUpdateFrame = mEffect.gotoNextFrame(STime.deltaTime);
+			if (!mUpdateFrame || mUpdateFrame == mCurrFrame)
 				return;
-			m_currFrame = m_updateFrame;
-			mRender.bitmapData = m_currFrame.frameData;
-			mRender.x = m_x + m_currFrame.x + mOffsetX;
-			mRender.y = m_y + m_currFrame.y + mOffsetY;
+			mCurrFrame = mUpdateFrame;
+			mRender.bitmapData = mCurrFrame.frameData;
+			mRender.x = mX + mCurrFrame.x + mOffsetX;
+			mRender.y = mY + mCurrFrame.y + mOffsetY;
 		}
 
 		/**
@@ -112,7 +112,7 @@ package hy.game.components
 		 */
 		public function setEffectId(id : String) : void
 		{
-			lazyEffect.setEffectId(id);
+			mResource.setEffectId(id);
 		}
 
 		/**
@@ -122,16 +122,16 @@ package hy.game.components
 		 */
 		protected function onLoadEffectComplete(effect : SEffect) : void
 		{
-			m_effect = effect;
-			m_effect.gotoEffect(mTransform.dir, 0, m_loops);
+			mEffect = effect;
+			mEffect.gotoEffect(mTransform.dir, 0, mLoops);
 			mRender.depth = mRender.y;
 		}
 
 		override public function destroy() : void
 		{
 			super.destroy();
-			lazyEffect && lazyEffect.destroy();
-			lazyEffect = null;
+			mResource && mResource.destroy();
+			mResource = null;
 		}
 	}
 }

@@ -15,10 +15,10 @@ package hy.game.thread
 	 */
 	public class SMainThread
 	{
-		protected var mainToBackChannel : MessageChannel;
-		protected var backToMainChannel : MessageChannel;
-		protected var backWorker : Worker;
-		protected var share_bytes : ByteArray;
+		protected var mMainToBackChannel : MessageChannel;
+		protected var mBackToMainChannel : MessageChannel;
+		protected var mBackWorker : Worker;
+		protected var mShareBytes : ByteArray;
 
 		public function SMainThread()
 		{
@@ -27,34 +27,34 @@ package hy.game.thread
 
 		protected function initWorker(workerBytes : ByteArray) : void
 		{
-			share_bytes = new ByteArray();
-			share_bytes.shareable = true;
+			mShareBytes = new ByteArray();
+			mShareBytes.shareable = true;
 
-			backWorker = WorkerDomain.current.createWorker(workerBytes);
-			mainToBackChannel = Worker.current.createMessageChannel(backWorker);
-			backToMainChannel = backWorker.createMessageChannel(Worker.current);
-			backWorker.setSharedProperty(SThreadType.BACK_TO_MAIN_THREAD, backToMainChannel);
-			backWorker.setSharedProperty(SThreadType.MAIN_TO_BACK_THREAD, mainToBackChannel);
-			backWorker.setSharedProperty("supportDirectX", Config.supportDirectX);
-			backWorker.setSharedProperty("share_bytes", share_bytes);
+			mBackWorker = WorkerDomain.current.createWorker(workerBytes);
+			mMainToBackChannel = Worker.current.createMessageChannel(mBackWorker);
+			mBackToMainChannel = mBackWorker.createMessageChannel(Worker.current);
+			mBackWorker.setSharedProperty(SThreadType.BACK_TO_MAIN_THREAD, mBackToMainChannel);
+			mBackWorker.setSharedProperty(SThreadType.MAIN_TO_BACK_THREAD, mMainToBackChannel);
+			mBackWorker.setSharedProperty("supportDirectX", Config.supportDirectX);
+			mBackWorker.setSharedProperty("share_bytes", mShareBytes);
 
-			backToMainChannel.addEventListener(Event.CHANNEL_MESSAGE, onBackToMain, false, 0, true);
-			backWorker.addEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
-			backWorker.start();
+			mBackToMainChannel.addEventListener(Event.CHANNEL_MESSAGE, onBackToMain, false, 0, true);
+			mBackWorker.addEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
+			mBackWorker.start();
 		}
 
 		private function handleBGWorkerStateChange(evt : Event) : void
 		{
-			if (backWorker.state == WorkerState.TERMINATED)
+			if (mBackWorker.state == WorkerState.TERMINATED)
 			{
 			}
 		}
 
 		protected function onBackToMain(event : Event) : void
 		{
-			if (!backToMainChannel.messageAvailable)
+			if (!mBackToMainChannel.messageAvailable)
 				return;
-			var message : * = backToMainChannel.receive(true);
+			var message : * = mBackToMainChannel.receive(true);
 		}
 	}
 }

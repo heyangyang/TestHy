@@ -19,13 +19,13 @@ package hy.game.manager
 				instance = new SVersionManager();
 			return instance;
 		}
-		private var m_globalData : Dictionary;
+		private var mGlobalData : Dictionary;
 
 		public function SVersionManager()
 		{
 			if (instance)
 				error("instance != null");
-			m_globalData = new Dictionary();
+			mGlobalData = new Dictionary();
 		}
 
 		public function parseVersionData(data : String) : void
@@ -42,13 +42,13 @@ package hy.game.manager
 				version.url = tmpArr[1];
 				version.version = tmpArr[3];
 				version.type = tmpArr[4];
-				m_globalData[version.id] = version;
+				mGlobalData[version.id] = version;
 			}
 		}
 
 		public function getVersionById(id : String) : SVersion
 		{
-			return m_globalData[id];
+			return mGlobalData[id];
 		}
 
 	}

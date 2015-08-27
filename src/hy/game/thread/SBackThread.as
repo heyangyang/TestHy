@@ -15,9 +15,9 @@ package hy.game.thread
 	public class SBackThread
 	{
 		public static const BACK_TO_MAIN_THREAD : String = "backToMainThread";
-		protected var worker : Worker;
-		protected var mainToBackChannel : MessageChannel;
-		protected var backToMainChannel : MessageChannel;
+		protected var mWorker : Worker;
+		protected var mMainToBackChannel : MessageChannel;
+		protected var mBackToMainChannel : MessageChannel;
 
 		public function SBackThread()
 		{
@@ -26,20 +26,20 @@ package hy.game.thread
 
 		protected function initWorker() : void
 		{
-			worker = Worker.current;
-			worker.addEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
-			mainToBackChannel = worker.getSharedProperty(SThreadType.MAIN_TO_BACK_THREAD);
-			backToMainChannel = worker.getSharedProperty(SThreadType.BACK_TO_MAIN_THREAD);
-			Config.supportDirectX = worker.getSharedProperty("supportDirectX");
-			if (mainToBackChannel)
+			mWorker = Worker.current;
+			mWorker.addEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
+			mMainToBackChannel = mWorker.getSharedProperty(SThreadType.MAIN_TO_BACK_THREAD);
+			mBackToMainChannel = mWorker.getSharedProperty(SThreadType.BACK_TO_MAIN_THREAD);
+			Config.supportDirectX = mWorker.getSharedProperty("supportDirectX");
+			if (mMainToBackChannel)
 			{
-				mainToBackChannel.addEventListener(Event.CHANNEL_MESSAGE, onMainToBack);
+				mMainToBackChannel.addEventListener(Event.CHANNEL_MESSAGE, onMainToBack);
 			}
 		}
 
 		private function handleBGWorkerStateChange(evt : Event) : void
 		{
-			if (worker.state == WorkerState.TERMINATED)
+			if (mWorker.state == WorkerState.TERMINATED)
 			{
 				throw new Error("主线程挂掉!");
 			}
@@ -47,9 +47,9 @@ package hy.game.thread
 
 		protected function onMainToBack(event : Event) : void
 		{
-			if (!mainToBackChannel.messageAvailable)
+			if (!mMainToBackChannel.messageAvailable)
 				return;
-			var data : * = mainToBackChannel.receive(true);
+			var data : * = mMainToBackChannel.receive(true);
 		}
 	}
 }

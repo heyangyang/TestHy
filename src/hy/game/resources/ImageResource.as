@@ -19,8 +19,8 @@ package hy.game.resources
 	 */
 	public class ImageResource extends SResource
 	{
-		private var loader : Loader;
-		private var bitmapData : BitmapData = null;
+		private var mLoader : Loader;
+		private var mBitmapData : BitmapData = null;
 
 		public function ImageResource(res_url : String, version : String)
 		{
@@ -29,8 +29,8 @@ package hy.game.resources
 
 		override public function get data():*
 		{
-			if (bitmapData != null)
-				return new Bitmap(bitmapData);
+			if (mBitmapData != null)
+				return new Bitmap(mBitmapData);
 			warning("加载器没有图片: " + url);
 			return null;
 		}
@@ -47,15 +47,15 @@ package hy.game.resources
 				context.applicationDomain = ApplicationDomain.currentDomain;
 			}
 
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onDownLoadComplete);
-			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+			mLoader = new Loader();
+			mLoader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+			mLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onDownLoadComplete);
+			mLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+			mLoader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 
 			try
 			{
-				loader.load(request, context);
+				mLoader.load(mRequest, context);
 			}
 			catch (e : Error)
 			{
@@ -66,23 +66,23 @@ package hy.game.resources
 		{
 			if (evt.target.content is BitmapData)
 			{
-				bitmapData = evt.target.content as BitmapData;
+				mBitmapData = evt.target.content as BitmapData;
 			}
 			else if (evt.target.content is Bitmap)
 			{
-				bitmapData = Bitmap(evt.target.content).bitmapData;
+				mBitmapData = Bitmap(evt.target.content).bitmapData;
 			}
 			super.onDownLoadComplete(evt);
 		}
 
 		override public function cleanListeners() : void
 		{
-			if (loader)
+			if (mLoader)
 			{
-				loader.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
-				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onDownLoadComplete);
-				loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
-				loader.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
+				mLoader.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, onProgressEvent);
+				mLoader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onDownLoadComplete);
+				mLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+				mLoader.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 			}
 		}
 
@@ -90,9 +90,9 @@ package hy.game.resources
 		{
 			try
 			{
-				if (loader)
+				if (mLoader)
 				{
-					loader.close();
+					mLoader.close();
 				}
 			}
 			catch (e : Error)
@@ -103,14 +103,14 @@ package hy.game.resources
 
 		override protected function destroy() : void
 		{
-			if (loader)
+			if (mLoader)
 			{
-				loader.unloadAndStop();
+				mLoader.unloadAndStop();
 				stop();
-				loader = null;
+				mLoader = null;
 			}
-			bitmapData && bitmapData.dispose();
-			bitmapData = null;
+			mBitmapData && mBitmapData.dispose();
+			mBitmapData = null;
 			super.destroy();
 		}
 	}

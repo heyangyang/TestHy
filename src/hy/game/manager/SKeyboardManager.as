@@ -25,16 +25,16 @@ package hy.game.manager
 		private const KEY_CTRL : int = Math.pow(2, 0);
 		private const KEY_ALT : int = Math.pow(2, 1);
 		private const KEY_SHIFT : int = Math.pow(2, 2);
-		private var golbal_dic : Dictionary;
-		private var m_key : int;
-		private var m_curDic : Dictionary;
-		private var m_excuteFunction : Function;
+		private var mGolbal_dic : Dictionary;
+		private var mKey : int;
+		private var mCurDic : Dictionary;
+		private var mExcuteFunction : Function;
 
 		public function SKeyboardManager()
 		{
 			if (instance)
 				error("instance != null");
-			golbal_dic = new Dictionary();
+			mGolbal_dic = new Dictionary();
 		}
 
 		public function init(stage : Stage) : void
@@ -44,19 +44,19 @@ package hy.game.manager
 
 		private function onKeyDownHandler(evt : KeyboardEvent) : void
 		{
-			m_key = 0;
+			mKey = 0;
 			if (evt.ctrlKey)
-				m_key += KEY_CTRL;
+				mKey += KEY_CTRL;
 			if (evt.altKey)
-				m_key += KEY_ALT;
+				mKey += KEY_ALT;
 			if (evt.shiftKey)
-				m_key += KEY_SHIFT;
-			m_curDic = golbal_dic[m_key];
-			if (m_curDic == null)
+				mKey += KEY_SHIFT;
+			mCurDic = mGolbal_dic[mKey];
+			if (mCurDic == null)
 				return;
-			m_excuteFunction = m_curDic[evt.keyCode];
-			m_excuteFunction != null && m_excuteFunction();
-			m_excuteFunction = null;
+			mExcuteFunction = mCurDic[evt.keyCode];
+			mExcuteFunction != null && mExcuteFunction();
+			mExcuteFunction = null;
 		}
 
 		public function addKeyDownHandler(fun : Function, keyCode : int, ... args) : void
@@ -66,27 +66,27 @@ package hy.game.manager
 				error(this, "function is null!");
 				return;
 			}
-			m_key = getKeyCode(args);
+			mKey = getKeyCode(args);
 			if (keyCode == 0)
 				return;
-			m_curDic = golbal_dic[m_key];
-			if (m_curDic == null)
-				golbal_dic[m_key] = m_curDic = new Dictionary();
-			if (m_curDic[keyCode])
+			mCurDic = mGolbal_dic[mKey];
+			if (mCurDic == null)
+				mGolbal_dic[mKey] = mCurDic = new Dictionary();
+			if (mCurDic[keyCode])
 				warning("key is exist : " + keyCode);
-			m_curDic[keyCode] = fun;
+			mCurDic[keyCode] = fun;
 		}
 
 		public function removeKeyDownHandler(keyCode : uint, ... args) : void
 		{
 			if (keyCode == 0)
 				return;
-			m_key = getKeyCode(args);
-			m_curDic = golbal_dic[m_key];
-			if (!m_curDic)
+			mKey = getKeyCode(args);
+			mCurDic = mGolbal_dic[mKey];
+			if (!mCurDic)
 				return;
-			m_curDic[keyCode] = null;
-			delete m_curDic[keyCode];
+			mCurDic[keyCode] = null;
+			delete mCurDic[keyCode];
 		}
 
 		private function getKeyCode(args : Array) : int

@@ -13,19 +13,19 @@ package hy.game.state
 	 */
 	public class SBaseState extends SObject implements IBaseState
 	{
-		protected var m_action : uint;
-		protected var m_transform : STransform;
-		protected var m_owner : GameObject;
-		protected var m_stageMgr : StateComponent;
-		protected var m_data : DataComponent;
-		protected var m_id : int;
+		protected var mAction : uint;
+		protected var mTransform : STransform;
+		protected var mOwner : GameObject;
+		protected var mStageMgr : StateComponent;
+		protected var mData : DataComponent;
+		protected var mId : int;
 
 		public function SBaseState(gameObject : GameObject, stateMgr : StateComponent)
 		{
-			this.m_owner = gameObject;
-			this.m_stageMgr = stateMgr;
-			m_transform = gameObject.transform;
-			m_data = gameObject.getComponentByType(DataComponent) as DataComponent;
+			this.mOwner = gameObject;
+			this.mStageMgr = stateMgr;
+			mTransform = gameObject.transform;
+			mData = gameObject.getComponentByType(DataComponent) as DataComponent;
 		}
 
 		/**
@@ -63,15 +63,15 @@ package hy.game.state
 		 */
 		public function update() : void
 		{
-			if (m_action != m_data.action)
+			if (mAction != mData.action)
 			{
-				m_data.action = m_action;
+				mData.action = mAction;
 			}
 		}
 
 		public function changeStateId(id : int) : void
 		{
-			m_stageMgr.changeStateById(id);
+			mStageMgr.changeStateById(id);
 		}
 
 
@@ -81,8 +81,8 @@ package hy.game.state
 		 */
 		public function destory() : void
 		{
-			m_owner = null;
-			m_stageMgr = null;
+			mOwner = null;
+			mStageMgr = null;
 		}
 
 		/**
@@ -92,9 +92,9 @@ package hy.game.state
 		 */
 		public function get id() : int
 		{
-			if (m_id == 0)
+			if (mId == 0)
 				warning(this, "stateId is null");
-			return m_id;
+			return mId;
 		}
 
 	}

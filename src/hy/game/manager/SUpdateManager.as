@@ -14,10 +14,10 @@ package hy.game.manager
 			return instance;
 		}
 
-		private var m_updatables : Vector.<IUpdate> = new Vector.<IUpdate>();
-		private var m_prioritySort : Boolean;
-		private var m_number : int;
-		private var m_update : IUpdate;
+		private var mUpdatables : Vector.<IUpdate> = new Vector.<IUpdate>();
+		private var mPrioritySort : Boolean;
+		private var mNumber : int;
+		private var mUpdate : IUpdate;
 
 		public function SUpdateManager()
 		{
@@ -27,32 +27,32 @@ package hy.game.manager
 
 		public function update() : void
 		{
-			m_prioritySort && onSort();
-			for (var i : int = m_number - 1; i >= 0; i--)
+			mPrioritySort && onSort();
+			for (var i : int = mNumber - 1; i >= 0; i--)
 			{
-				m_update = m_updatables[i];
-				if (m_update.isDestroy || !m_update.checkUpdatable())
+				mUpdate = mUpdatables[i];
+				if (mUpdate.isDestroy || !mUpdate.checkUpdatable())
 					continue;
-				m_update.update();
+				mUpdate.update();
 			}
 		}
 
 		public function register(update : IUpdate) : void
 		{
-			if (m_updatables.indexOf(update) != -1)
+			if (mUpdatables.indexOf(update) != -1)
 				return;
-			m_updatables.push(update);
-			m_prioritySort = true;
-			m_number++;
+			mUpdatables.push(update);
+			mPrioritySort = true;
+			mNumber++;
 		}
 
 		public function unRegister(update : IUpdate) : void
 		{
-			var index : int = m_updatables.indexOf(update);
+			var index : int = mUpdatables.indexOf(update);
 			if (index == -1)
 				return;
-			m_updatables.splice(index, 1);
-			m_number--;
+			mUpdatables.splice(index, 1);
+			mNumber--;
 		}
 
 		/**
@@ -61,8 +61,8 @@ package hy.game.manager
 		 */
 		protected function onSort() : void
 		{
-			m_updatables.sort(onPrioritySortFun);
-			m_prioritySort = false;
+			mUpdatables.sort(onPrioritySortFun);
+			mPrioritySort = false;
 		}
 
 		private function onPrioritySortFun(a : IUpdate, b : IUpdate) : int

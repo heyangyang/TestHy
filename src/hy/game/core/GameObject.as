@@ -19,35 +19,35 @@ package hy.game.core
 	 */
 	public class GameObject extends SUpdate implements IGameObject
 	{
-		private static var dic_name : Dictionary = new Dictionary();
-		private static var dic_tag : Dictionary = new Dictionary();
+		private static var sDic_name : Dictionary = new Dictionary();
+		private static var sDic_tag : Dictionary = new Dictionary();
 
 		public static function findGameObject(name : String) : GameObject
 		{
-			if (dic_name[name] == null)
+			if (sDic_name[name] == null)
 				return null;
-			return dic_name[name][0];
+			return sDic_name[name][0];
 		}
 
 		public static function findGameObjects(name : String) : GameObject
 		{
-			if (dic_name[name] == null)
+			if (sDic_name[name] == null)
 				return null;
-			return dic_name[name];
+			return sDic_name[name];
 		}
 
 		public static function findWithTag(name : String) : GameObject
 		{
-			if (dic_tag[name] == null)
+			if (sDic_tag[name] == null)
 				return null;
-			return dic_tag[name][0];
+			return sDic_tag[name][0];
 		}
 
 		public static function findWithTags(name : String) : Array
 		{
-			if (dic_tag[name] == null)
+			if (sDic_tag[name] == null)
 				return null;
-			return dic_tag[name];
+			return sDic_tag[name];
 		}
 
 		private static function addGameObject(name : String, gameObject : GameObject, dic : Dictionary) : void
@@ -78,34 +78,34 @@ package hy.game.core
 		/**
 		 * 是否需要排序组件
 		 */
-		protected var m_prioritySort : Boolean;
-		protected var m_name : String;
-		protected var m_tag : String;
-		protected var m_id : int;
+		protected var mPrioritySort : Boolean;
+		protected var mName : String;
+		protected var mTag : String;
+		protected var mId : int;
 		/**
 		 * 更新列表
 		 */
-		protected var m_components : Vector.<FrameComponent>;
+		protected var mComponents : Vector.<FrameComponent>;
 		/**
 		 * 字典，根据类型储存
 		 */
-		protected var m_componentTypes : Dictionary;
+		protected var mComponentTypes : Dictionary;
 		/**
 		 * 容器
 		 */
-		private var m_owner : IGameContainer;
+		private var mOwner : IGameContainer;
 		/**
 		 * 是否激活
 		 */
-		protected var m_isActive : Boolean;
+		protected var mIsActive : Boolean;
 		/**
 		 * 显示状态的所有属性
 		 */
-		private var m_transform : STransform;
+		private var mTransform : STransform;
 		/**
 		 * 渲染容器
 		 */
-		protected var m_render : SRender;
+		protected var mRender : SRender;
 
 		public function GameObject()
 		{
@@ -115,9 +115,9 @@ package hy.game.core
 
 		private function init() : void
 		{
-			m_components = new Vector.<FrameComponent>();
-			m_componentTypes = new Dictionary(true);
-			m_render = new SRender();
+			mComponents = new Vector.<FrameComponent>();
+			mComponentTypes = new Dictionary(true);
+			mRender = new SRender();
 			start();
 		}
 
@@ -148,66 +148,66 @@ package hy.game.core
 
 		public function set name(value : String) : void
 		{
-			if (m_name == value)
+			if (mName == value)
 				return;
-			if (!m_name)
-				removeGameObject(m_name, this, dic_tag);
-			m_name = value;
-			addGameObject(m_name, this, dic_name);
+			if (!mName)
+				removeGameObject(mName, this, sDic_tag);
+			mName = value;
+			addGameObject(mName, this, sDic_name);
 		}
 
 		public function get name() : String
 		{
-			return m_name;
+			return mName;
 		}
 
 		public function set tag(value : String) : void
 		{
-			if (m_tag == value)
+			if (mTag == value)
 				return;
-			if (!m_tag)
-				removeGameObject(m_tag, this, dic_tag);
-			m_tag = value;
-			addGameObject(m_tag, this, dic_tag);
+			if (!mTag)
+				removeGameObject(mTag, this, sDic_tag);
+			mTag = value;
+			addGameObject(mTag, this, sDic_tag);
 		}
 
 		public function get tag() : String
 		{
-			return m_tag;
+			return mTag;
 		}
 
 		name_part function set owner(value : IGameContainer) : void
 		{
-			m_owner = value;
+			mOwner = value;
 		}
 
 		public function get depth() : int
 		{
-			return m_transform.y;
+			return mTransform.y;
 		}
 
 		public function get transform() : STransform
 		{
-			return m_transform;
+			return mTransform;
 		}
 
 		public function set transform(value : STransform) : void
 		{
-			m_transform = value;
-			if (!m_transform)
+			mTransform = value;
+			if (!mTransform)
 				return;
-			m_transform.clearCall();
-			m_transform.addPositionChange(positionChange);
+			mTransform.clearCall();
+			mTransform.addPositionChange(positionChange);
 		}
 
 		public function set activeStatus(value : Boolean) : void
 		{
-			m_isActive = value;
+			mIsActive = value;
 		}
 
 		public function get activeStatus() : Boolean
 		{
-			return m_isActive;
+			return mIsActive;
 		}
 
 		/**
@@ -217,39 +217,39 @@ package hy.game.core
 		 */
 		override public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
-			m_priority = priority;
-			m_registerd = true;
-			if (!m_owner)
-				error(this, "m_owner=null");
-			m_isActive = true;
-			m_owner.changePrioritySort();
-			m_owner.addObject(this);
-			m_owner.addRender(m_render);
+			mPriority = priority;
+			mRegisterd = true;
+			if (!mOwner)
+				error(this, "mOwner=null");
+			mIsActive = true;
+			mOwner.changePrioritySort();
+			mOwner.addObject(this);
+			mOwner.addRender(mRender);
 		}
 
 		override public function unRegisterd() : void
 		{
-			if (m_owner)
+			if (mOwner)
 			{
-				m_isActive = false;
-				m_owner.removeRender(m_render);
-				m_owner.removeObject(this);
+				mIsActive = false;
+				mOwner.removeRender(mRender);
+				mOwner.removeObject(this);
 			}
 		}
 
 		override public function update() : void
 		{
-			m_prioritySort && onSort();
+			mPrioritySort && onSort();
 			var component : FrameComponent;
-			for (var i : int = m_components.length - 1; i >= 0; i--)
+			for (var i : int = mComponents.length - 1; i >= 0; i--)
 			{
-				component = m_components[i];
+				component = mComponents[i];
 				if (component.isDestroy)
 					continue;
-				!component.isStart && component.onInit();
+				!component.mIsStart && component.onInit();
 				component.update();
 			}
-			m_render.needLayerSort && m_render.onLayerSort();
+			mRender.needLayerSort && mRender.onLayerSort();
 			updateTransform();
 		}
 
@@ -257,9 +257,9 @@ package hy.game.core
 		{
 			transform.x = transform.x;
 			transform.y = transform.y;
-			m_render.x = transform.screenX;
-			m_render.y = transform.screenY;
-			m_render.depth = transform.y;
+			mRender.x = transform.screenX;
+			mRender.y = transform.screenY;
+			mRender.depth = transform.y;
 		}
 
 		/**
@@ -283,8 +283,8 @@ package hy.game.core
 		 */
 		protected function onSort() : void
 		{
-			m_components.sort(onPrioritySortFun);
-			m_prioritySort = false;
+			mComponents.sort(onPrioritySortFun);
+			mPrioritySort = false;
 		}
 
 		private function onPrioritySortFun(a : FrameComponent, b : FrameComponent) : int
@@ -302,7 +302,7 @@ package hy.game.core
 		 */
 		public function updatePrioritySort() : void
 		{
-			m_prioritySort = true;
+			mPrioritySort = true;
 		}
 
 		public function addComponent(component : Component, priority : int = 0) : void
@@ -310,41 +310,41 @@ package hy.game.core
 			if (!component)
 				return;
 			var frameComponent : FrameComponent = component as FrameComponent;
-			if (frameComponent && m_components.indexOf(frameComponent) == -1)
+			if (frameComponent && mComponents.indexOf(frameComponent) == -1)
 			{
 				updatePrioritySort();
-				m_components.push(component);
+				mComponents.push(component);
 				frameComponent.registerd(priority);
 			}
 
 			if (component.type == null)
 				error(this, "type is null!");
-			if (m_componentTypes[component.type])
+			if (mComponentTypes[component.type])
 				error("type :" + component.type + "重复");
-			m_componentTypes[component.type] = component;
+			mComponentTypes[component.type] = component;
 			component.owner = this;
 			component.notifyAdded();
 		}
 
 		public function removeComponent(component : Component) : void
 		{
-			if (m_componentTypes.hasOwnProperty(component.type))
-				delete m_componentTypes[component.type];
+			if (mComponentTypes.hasOwnProperty(component.type))
+				delete mComponentTypes[component.type];
 			component.owner = null;
-			var index : int = m_components.indexOf(component as FrameComponent)
+			var index : int = mComponents.indexOf(component as FrameComponent)
 			if (index == -1)
 				return;
-			m_components.splice(index, 1);
+			mComponents.splice(index, 1);
 		}
 
 		public function addRender(render : SRender) : void
 		{
-			m_render.addChild(render);
+			mRender.addChild(render);
 		}
 
 		public function removeRender(render : SRender) : void
 		{
-			m_render && m_render.removeChild(render);
+			mRender && mRender.removeChild(render);
 		}
 
 		public function removeComponentByType(type : *) : void
@@ -354,34 +354,34 @@ package hy.game.core
 
 		public function getComponentByType(type : *) : Component
 		{
-			return m_componentTypes[type];
+			return mComponentTypes[type];
 		}
 
 		public function get render() : SRender
 		{
-			return m_render;
+			return mRender;
 		}
 
 		private function clearComponents() : void
 		{
 			var component : Component;
-			for (var key : * in m_componentTypes)
+			for (var key : * in mComponentTypes)
 			{
-				component = m_componentTypes[key];
+				component = mComponentTypes[key];
 				component && component.destroy();
-				delete m_componentTypes[key];
+				delete mComponentTypes[key];
 			}
-			m_components.length = 0;
+			mComponents.length = 0;
 		}
 
 		override public function destroy() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
 			unRegisterd();
-			m_render && m_render.dispose();
-			m_render = null;
-			m_owner = null;
+			mRender && mRender.dispose();
+			mRender = null;
+			mOwner = null;
 			clearComponents();
 			tag = null;
 			name = null;
@@ -390,12 +390,12 @@ package hy.game.core
 
 		public function get id() : int
 		{
-			return m_id;
+			return mId;
 		}
 
 		public function set id(value : int) : void
 		{
-			m_id = value;
+			mId = value;
 		}
 
 	}

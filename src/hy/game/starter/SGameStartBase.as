@@ -11,15 +11,15 @@ package hy.game.starter
 	 */
 	public class SGameStartBase
 	{
-		private var m_nodes : Vector.<SStartNode>;
-		private var m_nodeTypes : Dictionary;
-		private var m_excuteNode : SStartNode;
-		private var m_isRunning : Boolean;
+		private var mNodes : Vector.<SStartNode>;
+		private var mNodeTypes : Dictionary;
+		private var mExcuteNode : SStartNode;
+		private var mIsRunning : Boolean;
 
 		public function SGameStartBase()
 		{
-			m_nodes = new Vector.<SStartNode>();
-			m_nodeTypes = new Dictionary();
+			mNodes = new Vector.<SStartNode>();
+			mNodeTypes = new Dictionary();
 		}
 
 		public function onStart() : void
@@ -32,9 +32,9 @@ package hy.game.starter
 			var node : SStartNode = new node_class();
 			if (!node.id)
 				SDebug.error(this, "id==null");
-			if (m_nodeTypes[node.id])
+			if (mNodeTypes[node.id])
 				SDebug.error(this, "id  exist");
-			m_nodeTypes[node.id] = node;
+			mNodeTypes[node.id] = node;
 		}
 
 		/**
@@ -44,34 +44,34 @@ package hy.game.starter
 		 */
 		public function addNodeByType(type : String) : void
 		{
-			var node : SStartNode = m_nodeTypes[type];
+			var node : SStartNode = mNodeTypes[type];
 			if (node == null)
 				SDebug.error(this, "not find id:" + type);
-			m_nodes.push(node);
+			mNodes.push(node);
 		}
 
 		public function run() : void
 		{
-			if (m_isRunning)
+			if (mIsRunning)
 			{
 				SDebug.warning(this, "isRunning");
 				return;
 			}
-			m_isRunning = true;
+			mIsRunning = true;
 			nextNode();
 		}
 
 		private function nextNode() : void
 		{
-			if (m_nodes.length == 0)
+			if (mNodes.length == 0)
 			{
-				m_isRunning = false;
+				mIsRunning = false;
 				return;
 			}
-			m_excuteNode && m_excuteNode.onExit();
-			m_excuteNode = m_nodes.shift();
-			m_excuteNode.setHandler(nextNode);
-			m_excuteNode.onStart();
+			mExcuteNode && mExcuteNode.onExit();
+			mExcuteNode = mNodes.shift();
+			mExcuteNode.setHandler(nextNode);
+			mExcuteNode.onStart();
 		}
 
 		/**
@@ -81,7 +81,7 @@ package hy.game.starter
 		 */
 		public function get isRunnging() : Boolean
 		{
-			return m_isRunning;
+			return mIsRunning;
 		}
 	}
 }

@@ -16,20 +16,20 @@ package hy.game.animation
 	public class SAnimationResource extends SAnimation
 	{
 		private static var offset : Point;
-		private var m_curFrameIndex : int;
-		private var m_currFrameAnimation : SAnimationFrame;
+		private var mCurFrameIndex : int;
+		private var mCurrFrameAnimation : SAnimationFrame;
 		/**
 		 * 处理完一次，索引加1
 		 */
-		private var m_finishIndex : int;
+		private var mFinishIndex : int;
 		/**
 		 * 是否所有图片都处理完毕
 		 */
-		private var m_isFinish : Boolean;
+		private var mIsFinish : Boolean;
 		/**
 		 * 该动画用到的资源解析器
 		 */
-		private var m_parser : ParserAnimationResource;
+		private var mParser : ParserAnimationResource;
 
 		/**
 		 * 加完完成后处理,只实行一次
@@ -44,40 +44,40 @@ package hy.game.animation
 		{
 			super(id, desc, needReversal);
 			cur_dir = desc.id.substring(desc.id.length - 1);
-			m_finishIndex = 0;
-			m_isFinish = false;
+			mFinishIndex = 0;
+			mIsFinish = false;
 		}
 
 		override public function getFrame(frame : int) : SAnimationFrame
 		{
 			constructFrames(frame);
-			return m_currFrameAnimation;
+			return mCurrFrameAnimation;
 		}
 
 		override public function constructFrames(currAccessFrame : int) : void
 		{
-			m_curFrameIndex = currAccessFrame;
-			m_currFrameAnimation = m_animationFrames[m_curFrameIndex];
-			if (m_isFinish)
+			mCurFrameIndex = currAccessFrame;
+			mCurrFrameAnimation = mAnimationFrames[mCurFrameIndex];
+			if (mIsFinish)
 				return;
-			if (!m_parser)
+			if (!mParser)
 			{
-				parser = SReferenceManager.getInstance().createAnimationResourceParser(m_description, priority);
+				parser = SReferenceManager.getInstance().createAnimationResourceParser(mDescription, priority);
 			}
-			if (m_parser.isLoaded)
+			if (mParser.isLoaded)
 			{
 				constructFromParser();
 			}
-			else if (!m_parser.isLoading)
+			else if (!mParser.isLoading)
 			{
-				m_parser.onComplete(onCreateFrameData).load();
+				mParser.onComplete(onCreateFrameData).load();
 			}
 		}
 
 		private function onCreateFrameData(res : ParserResource) : void
 		{
-			m_width = m_parser.width;
-			m_height = m_parser.height;
+			mWidth = mParser.width;
+			mHeight = mParser.height;
 			constructFromParser();
 			if (onLoaderComplete != null)
 			{
@@ -93,24 +93,24 @@ package hy.game.animation
 		 */
 		private function constructFromParser() : void
 		{
-			if (!m_currFrameAnimation)
+			if (!mCurrFrameAnimation)
 				return;
-			if (m_parser && m_parser.isLoaded)
+			if (mParser && mParser.isLoaded)
 			{
-				if (m_currFrameAnimation.frameData)
+				if (mCurrFrameAnimation.frameData)
 					return;
-				m_currFrameAnimation.clear();
-				offset = m_parser.getOffset(m_curFrameIndex, cur_dir);
+				mCurrFrameAnimation.clear();
+				offset = mParser.getOffset(mCurFrameIndex, cur_dir);
 				if (offset)
 				{
-					m_currFrameAnimation.frameX = offset.x;
-					m_currFrameAnimation.frameY = offset.y;
+					mCurrFrameAnimation.frameX = offset.x;
+					mCurrFrameAnimation.frameY = offset.y;
 				}
-				if (++m_finishIndex > total_frames)
-					m_isFinish = true;
-				m_currFrameAnimation.frameData = getBitmapDataByIndex(m_curFrameIndex);
-				if (!m_currFrameAnimation.frameData)
-					warning(this, "帧数据为空！" + m_curFrameIndex + "   " + id);
+				if (++mFinishIndex > mTotal_frames)
+					mIsFinish = true;
+				mCurrFrameAnimation.frameData = getBitmapDataByIndex(mCurFrameIndex);
+				if (!mCurrFrameAnimation.frameData)
+					warning(this, "帧数据为空！" + mCurFrameIndex + "   " + id);
 			}
 		}
 
@@ -122,10 +122,10 @@ package hy.game.animation
 		 */
 		private function getBitmapDataByIndex(index : int) : IBitmapData
 		{
-			if (index >= 0 && index <= total_frames)
+			if (index >= 0 && index <= mTotal_frames)
 			{
-				var frameDesc : SFrameDescription = m_description.frameDescriptionByIndex[index + 1];
-				return m_parser.getBitmapDataByDir(frameDesc.frame, cur_dir);
+				var frameDesc : SFrameDescription = mDescription.frameDescriptionByIndex[index + 1];
+				return mParser.getBitmapDataByDir(frameDesc.frame, cur_dir);
 			}
 			else
 			{
@@ -141,7 +141,7 @@ package hy.game.animation
 		 */
 		override public function get isLoaded() : Boolean
 		{
-			return m_parser && m_parser.isLoaded;
+			return mParser && mParser.isLoaded;
 		}
 
 		/**
@@ -151,13 +151,13 @@ package hy.game.animation
 		 */
 		private function set parser(value : ParserAnimationResource) : void
 		{
-			m_parser && m_parser.release();
-			m_parser = value;
+			mParser && mParser.release();
+			mParser = value;
 		}
 
 		override public function destroy() : void
 		{
-			m_currFrameAnimation = null;
+			mCurrFrameAnimation = null;
 			onLoaderComplete = null;
 			parser = null;
 			super.destroy();

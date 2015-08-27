@@ -13,49 +13,49 @@ package hy.game.animation
 	 */
 	public class SAnimation extends SObject
 	{
-		protected var total_frames : int;
+		protected var mTotal_frames : int;
 		/**
 		 * 动画帧序列
 		 */
-		protected var m_animationFrames : Vector.<SAnimationFrame>;
+		protected var mAnimationFrames : Vector.<SAnimationFrame>;
 		/**
 		 * 描述
 		 */
-		protected var m_description : SAnimationDescription;
+		protected var mDescription : SAnimationDescription;
 		/**
 		 * 该动画的id
 		 */
-		private var m_id : String;
+		private var mId : String;
 		/**
 		 * 该动作的中心基准点
 		 */
-		private var m_centerX : int;
+		private var mCenterX : int;
 		/**
 		 * 该动作的中心基准点
 		 */
-		private var m_centerY : int;
+		private var mCenterY : int;
 		/**
 		 * 该动画的宽度
 		 */
-		protected var m_width : int;
+		protected var mWidth : int;
 		/**
 		 * 该动画的高度
 		 */
-		protected var m_height : int;
+		protected var mHeight : int;
 
 		/**
 		 * 混合模式
 		 */
-		private var m_blendMode : String = BlendMode.NORMAL;
+		private var mBlendMode : String = BlendMode.NORMAL;
 
 		public var filter : BitmapFilter;
 
-		protected var m_depth : int;
+		protected var mDepth : int;
 
 		public function SAnimation(id : String, desc : SAnimationDescription, needReversal : Boolean)
 		{
 			super();
-			m_id = id;
+			mId = id;
 			initFrames(desc, needReversal);
 		}
 
@@ -65,29 +65,29 @@ package hy.game.animation
 		 */
 		private function initFrames(desc : SAnimationDescription, needReversal : Boolean = false) : void
 		{
-			m_description = desc;
-			m_centerX = desc.centerX;
-			m_centerY = desc.centerY;
-			m_width = desc.width;
-			m_height = desc.height;
-			m_depth = desc.depth;
+			mDescription = desc;
+			mCenterX = desc.centerX;
+			mCenterY = desc.centerY;
+			mWidth = desc.width;
+			mHeight = desc.height;
+			mDepth = desc.depth;
 			filter = desc.filter;
-			m_blendMode = desc.blendMode;
+			mBlendMode = desc.blendMode;
 
-			m_animationFrames = new Vector.<SAnimationFrame>();
+			mAnimationFrames = new Vector.<SAnimationFrame>();
 			var animationFrame : SAnimationFrame;
 			for each (var frameDesc : SFrameDescription in desc.frameDescriptionByIndex)
 			{
 				animationFrame = new SAnimationFrame();
 				animationFrame.frameData = null;
-				animationFrame.offsetX = frameDesc.offsetX - m_centerX;
-				animationFrame.offsetY = frameDesc.offsetY - m_centerY;
+				animationFrame.offsetX = frameDesc.offsetX - mCenterX;
+				animationFrame.offsetY = frameDesc.offsetY - mCenterY;
 				animationFrame.needReversal = needReversal;
 				animationFrame.duration = frameDesc.duration;
-				m_animationFrames.push(animationFrame);
+				mAnimationFrames.push(animationFrame);
 			}
-			total_frames = m_animationFrames.length - 1;
-			if (total_frames <= 0)
+			mTotal_frames = mAnimationFrames.length - 1;
+			if (mTotal_frames <= 0)
 				error(desc.id + "is null frames ");
 		}
 
@@ -104,7 +104,7 @@ package hy.game.animation
 
 		public function get totalFrame() : int
 		{
-			return total_frames;
+			return mTotal_frames;
 		}
 
 		/**
@@ -132,12 +132,12 @@ package hy.game.animation
 
 		public function get offsetX() : int
 		{
-			return m_centerX - m_width * 0.5;
+			return mCenterX - mWidth * 0.5;
 		}
 
 		public function get offsetY() : int
 		{
-			return m_centerY - m_height * 0.5;
+			return mCenterY - mHeight * 0.5;
 		}
 
 		public function get isLoaded() : Boolean
@@ -147,23 +147,23 @@ package hy.game.animation
 
 		public function get id() : String
 		{
-			return m_id;
+			return mId;
 		}
 
 		public function get width() : int
 		{
-			return m_width;
+			return mWidth;
 		}
 
 		public function get height() : int
 		{
-			return m_height;
+			return mHeight;
 		}
 
 
 		public function get depth() : int
 		{
-			return m_depth;
+			return mDepth;
 		}
 
 
@@ -173,19 +173,19 @@ package hy.game.animation
 		 */
 		public function destroyFrames() : void
 		{
-			if (m_animationFrames == null)
+			if (mAnimationFrames == null)
 				return;
-			for each (var frame : SAnimationFrame in m_animationFrames)
+			for each (var frame : SAnimationFrame in mAnimationFrames)
 			{
 				frame.destroy();
 			}
-			m_animationFrames = null;
+			mAnimationFrames = null;
 		}
 
 
 		public function destroy() : void
 		{
-			m_description = null;
+			mDescription = null;
 			destroyFrames();
 			filter = null;
 		}

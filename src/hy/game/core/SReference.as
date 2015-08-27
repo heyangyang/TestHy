@@ -8,52 +8,52 @@ package hy.game.core
 	 */
 	public class SReference
 	{
-		private var m_allowDestroy : Boolean;
-		private var m_isDisposed : Boolean;
-		private var m_referenceCount : uint;
+		private var mAllowDestroy : Boolean;
+		private var mIsDisposed : Boolean;
+		private var mReferenceCount : uint;
 		public var lastUseTime : uint;
 
 		public function SReference()
 		{
 			super();
-			m_isDisposed = false;
-			m_allowDestroy = false;
-			m_referenceCount = 0;
+			mIsDisposed = false;
+			mAllowDestroy = false;
+			mReferenceCount = 0;
 			retain();
 		}
 
 		public function retain() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
-			++m_referenceCount;
-			m_allowDestroy = false;
+			++mReferenceCount;
+			mAllowDestroy = false;
 		}
 
 		public function release() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
 			lastUseTime = STime.getTimer;
-			--m_referenceCount;
-			if (m_referenceCount < 0)
+			--mReferenceCount;
+			if (mReferenceCount < 0)
 				error(this, "release error");
-			if (m_referenceCount == 0)
+			if (mReferenceCount == 0)
 			{
-				m_allowDestroy = true;
+				mAllowDestroy = true;
 			}
 		}
 
 		public function get isDisposed() : Boolean
 		{
-			return m_isDisposed;
+			return mIsDisposed;
 		}
 
 		public function tryDestroy() : Boolean
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return false;
-			if (m_allowDestroy)
+			if (mAllowDestroy)
 			{
 				destroy();
 				return true;
@@ -63,19 +63,19 @@ package hy.game.core
 
 		public function forceDestroy() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
 			destroy();
 		}
 
 		public function get allowDestroy() : Boolean
 		{
-			return m_allowDestroy;
+			return mAllowDestroy;
 		}
 
 		public function get isDestroy() : Boolean
 		{
-			return m_isDisposed;
+			return mIsDisposed;
 		}
 
 		/**
@@ -83,9 +83,9 @@ package hy.game.core
 		 */
 		protected function destroy() : void
 		{
-			m_isDisposed = true;
-			m_allowDestroy = false;
-			m_referenceCount = 0;
+			mIsDisposed = true;
+			mAllowDestroy = false;
+			mReferenceCount = 0;
 		}
 
 		protected function print(... args) : void

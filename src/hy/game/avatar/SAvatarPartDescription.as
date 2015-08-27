@@ -31,29 +31,29 @@ package hy.game.avatar
 		/**
 		 * 由方向记录的动画id，即可以根据一个方向得到一个动画的id
 		 */
-		private var m_animationIdByDir : Dictionary;
+		private var mAnimationIdByDir : Dictionary;
 
 
 		public function SAvatarPartDescription()
 		{
-			m_animationIdByDir = new Dictionary();
+			mAnimationIdByDir = new Dictionary();
 		}
 		
 		public function addAnimationIdByDir(dir : uint, id : String) : void
 		{
-			m_animationIdByDir[dir] = id;
+			mAnimationIdByDir[dir] = id;
 		}
 		
 		public function getAnimationIdByDir(dir : uint) : String
 		{
 			var mode : uint = EnumDirection.checkDirsDirMode(directions);
 			dir = EnumDirection.correctDirection(mode, dir, dir);
-			return m_animationIdByDir[dir];
+			return mAnimationIdByDir[dir];
 		}
 		
 		public function getAvaliableAnimation() : String
 		{
-			for each (var animationId : String in m_animationIdByDir)
+			for each (var animationId : String in mAnimationIdByDir)
 			{
 				if (animationId)
 					return animationId;

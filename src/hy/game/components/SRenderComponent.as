@@ -39,7 +39,7 @@ package hy.game.components
 		{
 			updateRenderVisible();
 			mRender.notifyAddedToRender();
-			mTransform = m_owner.transform;
+			mTransform = mOwner.transform;
 		}
 
 		override public function notifyAdded() : void
@@ -66,12 +66,12 @@ package hy.game.components
 
 		protected function addRender(render : SRender) : void
 		{
-			m_owner && m_owner.addRender(render);
+			mOwner && mOwner.addRender(render);
 		}
 
 		protected function removeRender(render : SRender) : void
 		{
-			m_owner && m_owner.removeRender(render);
+			mOwner && mOwner.removeRender(render);
 		}
 
 		override public function destroy() : void

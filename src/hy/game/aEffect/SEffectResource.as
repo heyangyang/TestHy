@@ -13,11 +13,11 @@ package hy.game.aEffect
 		/**
 		 * 加载成功后回调
 		 */
-		protected var m_notifyCompleteds : Vector.<Function>;
-		private var m_priority : int;
-		private var m_change : Boolean;
-		private var m_effectId : String;
-		private var m_effect : SEffect;
+		protected var mNotifyCompleteds : Vector.<Function>;
+		private var mPriority : int;
+		private var mChange : Boolean;
+		private var mEffectId : String;
+		private var mEffect : SEffect;
 
 		public function SEffectResource()
 		{
@@ -27,10 +27,10 @@ package hy.game.aEffect
 
 		public function setEffectId(id : String) : void
 		{
-			if (m_effectId == id)
+			if (mEffectId == id)
 				return;
-			m_effectId = id;
-			m_change = true;
+			mEffectId = id;
+			mChange = true;
 		}
 
 		/**
@@ -40,7 +40,7 @@ package hy.game.aEffect
 		 */
 		public function set priority(value : int) : void
 		{
-			m_priority = value;
+			mPriority = value;
 		}
 
 		/**
@@ -50,22 +50,22 @@ package hy.game.aEffect
 		 */
 		public function get isChange() : Boolean
 		{
-			return m_change;
+			return mChange;
 		}
 
 		public function loadResource() : void
 		{
-			if (!m_effectId || !m_change)
+			if (!mEffectId || !mChange)
 				return;
-			m_change = false;
-			var effectDescription : SEffectDescription = SEffectDescription.getEffectDescription(m_effectId);
+			mChange = false;
+			var effectDescription : SEffectDescription = SEffectDescription.getEffectDescription(mEffectId);
 			if (effectDescription)
 			{
 				onLoadComplete(null);
 				return;
 			}
 			
-			var resource : SResource = SReferenceManager.getInstance().createResource(m_effectId + (Config.supportDirectX ? "_atf" : ""));
+			var resource : SResource = SReferenceManager.getInstance().createResource(mEffectId + (Config.supportDirectX ? "_atf" : ""));
 			if (resource)
 			{
 				if (resource.isLoading)
@@ -73,7 +73,7 @@ package hy.game.aEffect
 				if (resource.isLoaded)
 					onLoadComplete(resource);
 				else
-					resource.setPriority(m_priority).addNotifyCompleted(onLoadComplete).load();
+					resource.setPriority(mPriority).addNotifyCompleted(onLoadComplete).load();
 			}
 		}
 
@@ -87,27 +87,27 @@ package hy.game.aEffect
 		{
 			if (notifyFunction == null)
 				return this;
-			if (!m_notifyCompleteds)
-				m_notifyCompleteds = new Vector.<Function>();
-			if (m_notifyCompleteds.indexOf(notifyFunction) == -1)
-				m_notifyCompleteds.push(notifyFunction);
+			if (!mNotifyCompleteds)
+				mNotifyCompleteds = new Vector.<Function>();
+			if (mNotifyCompleteds.indexOf(notifyFunction) == -1)
+				mNotifyCompleteds.push(notifyFunction);
 			return this;
 		}
 
 		private function invokeNotifyByArray() : void
 		{
-			if (!m_notifyCompleteds)
+			if (!mNotifyCompleteds)
 				return;
-			for each (var notify : Function in m_notifyCompleteds)
+			for each (var notify : Function in mNotifyCompleteds)
 			{
-				notify(m_effect);
+				notify(mEffect);
 			}
-			m_notifyCompleteds.length = 0;
+			mNotifyCompleteds.length = 0;
 		}
 
 		private function onLoadComplete(res : SResource) : void
 		{
-			var effectDescription : SEffectDescription = createEffectDescription(res, m_effectId);
+			var effectDescription : SEffectDescription = createEffectDescription(res, mEffectId);
 			if (effectDescription)
 			{
 				createEffect(effectDescription);
@@ -142,10 +142,10 @@ package hy.game.aEffect
 		{
 			//建立每个独立部件的动画数据
 			var animations : SEffectAnimationLibrary = SReferenceManager.getInstance().createEffectCollection(effectDescription, true);
-			m_effect && m_effect.dispose();
-			m_effect = new SEffect();
-			m_effect.initEffect(effectDescription);
-			m_effect.effectAnimationLibrary = animations;
+			mEffect && mEffect.dispose();
+			mEffect = new SEffect();
+			mEffect.initEffect(effectDescription);
+			mEffect.effectAnimationLibrary = animations;
 		}
 
 		/**
@@ -153,12 +153,12 @@ package hy.game.aEffect
 		 */
 		public function destroy() : void
 		{
-			if (m_effect)
+			if (mEffect)
 			{
-				m_effect.dispose();
-				m_effect = null;
+				mEffect.dispose();
+				mEffect = null;
 			}
-			m_notifyCompleteds = null;
+			mNotifyCompleteds = null;
 		}
 	}
 }

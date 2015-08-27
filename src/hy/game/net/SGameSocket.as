@@ -27,11 +27,11 @@ package hy.game.net
 		/**
 		 * 协议id所对应的解析类
 		 */
-		protected var m_protocolId_dic : Dictionary;
+		protected var mProtocolId_dic : Dictionary;
 
 		public function SGameSocket()
 		{
-			m_protocolId_dic = new Dictionary(true);
+			mProtocolId_dic = new Dictionary(true);
 		}
 
 		/**
@@ -42,11 +42,11 @@ package hy.game.net
 		 */
 		public function addHandler(protocolId : uint, handler : INotify) : void
 		{
-			if (m_protocolId_dic[protocolId])
+			if (mProtocolId_dic[protocolId])
 			{
 				SDebug.error("添加重复协议", protocolId)
 			}
-			m_protocolId_dic[protocolId] = handler;
+			mProtocolId_dic[protocolId] = handler;
 		}
 
 		/**
@@ -56,8 +56,8 @@ package hy.game.net
 		 */
 		public function removeHandler(protocolId : uint) : void
 		{
-			m_protocolId_dic[protocolId] = null;
-			delete m_protocolId_dic[protocolId];
+			mProtocolId_dic[protocolId] = null;
+			delete mProtocolId_dic[protocolId];
 		}
 
 		public function sendData(dataBase : SNetBaseData) : void
@@ -66,36 +66,36 @@ package hy.game.net
 			SObjectManager.recycleObject(dataBase);
 		}
 
-		private var m_dataClass : Class
-		private var m_dataBase : SNetBaseData;
-		private var m_notify : INotify;
+		private var mDataClass : Class
+		private var mDataBase : SNetBaseData;
+		private var mNotify : INotify;
 
 		override protected function parseBytes(module : int, pack : ByteArray) : void
 		{
-			m_dataClass = SCCommand.getClassByModule(module);
+			mDataClass = SCCommand.getClassByModule(module);
 
-			if (m_dataClass == null)
+			if (mDataClass == null)
 			{
 				SDebug.warning("module :", module, "not find data");
 				return;
 			}
 
 			//取对象
-			m_dataBase = SObjectManager.getObject(m_dataClass);
-			m_dataBase.deSerialize(pack);
-			m_notify = m_protocolId_dic[module];
+			mDataBase = SObjectManager.getObject(mDataClass);
+			mDataBase.deSerialize(pack);
+			mNotify = mProtocolId_dic[module];
 
-			if (m_notify)
+			if (mNotify)
 			{
-				m_notify.handleMessage(module, m_dataBase);
+				mNotify.handleMessage(module, mDataBase);
 			}
 			else
 			{
 				SDebug.warning("module :", module, "not find notify");
 			}
 			//用完立马回收
-			m_dataBase.destroy();
-			SObjectManager.recycleObject(m_dataBase);
+			mDataBase.destroy();
+			SObjectManager.recycleObject(mDataBase);
 		}
 	}
 }

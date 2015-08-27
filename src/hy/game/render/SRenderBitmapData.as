@@ -6,8 +6,6 @@ package hy.game.render
 
 	public class SRenderBitmapData extends BitmapData implements IBitmapData
 	{
-		public var name : String;
-
 		public function SRenderBitmapData(width : int, height : int, transparent : Boolean = true, fillColor : uint = 4.294967295E9)
 		{
 			super(width, height, transparent, fillColor);

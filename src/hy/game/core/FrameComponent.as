@@ -15,7 +15,7 @@ package hy.game.core
 		 */
 		private var mRegisterd : Boolean;
 
-		name_part var isStart : Boolean;
+		name_part var mIsStart : Boolean;
 
 		public function FrameComponent(type : * = null)
 		{
@@ -24,7 +24,7 @@ package hy.game.core
 
 		name_part function onInit() : void
 		{
-			isStart = true;
+			mIsStart = true;
 			onStart();
 		}
 
@@ -55,7 +55,7 @@ package hy.game.core
 		{
 			mPriority = priority;
 			mRegisterd = true;
-			m_owner && m_owner.updatePrioritySort();
+			mOwner && mOwner.updatePrioritySort();
 		}
 
 		public function unRegisterd() : void

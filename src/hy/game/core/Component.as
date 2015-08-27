@@ -13,22 +13,22 @@ package hy.game.core
 		/**
 		 * 类型
 		 */
-		protected var m_type : *;
+		protected var mType : *;
 		/**
 		 * 容器
 		 */
-		protected var m_owner : GameObject;
+		protected var mOwner : GameObject;
 
 		/**
 		 * 是否被销毁
 		 */
-		protected var m_isDisposed : Boolean;
+		protected var mIsDisposed : Boolean;
 
 		public function Component(type : * = null)
 		{
 			if (type == null)
 				type = this["constructor"];
-			m_type = type;
+			mType = type;
 			init();
 		}
 
@@ -43,7 +43,7 @@ package hy.game.core
 
 		name_part function set owner(value : GameObject) : void
 		{
-			m_owner = value;
+			mOwner = value;
 		}
 
 		/**
@@ -66,12 +66,12 @@ package hy.game.core
 
 		public function get type() : *
 		{
-			return m_type;
+			return mType;
 		}
 		
 		public function get gameObject():GameObject
 		{
-			return m_owner;
+			return mOwner;
 		}
 
 		/**
@@ -79,7 +79,7 @@ package hy.game.core
 		 */
 		public function get isDestroy() : Boolean
 		{
-			return m_isDisposed;
+			return mIsDisposed;
 		}
 
 		/**
@@ -108,16 +108,16 @@ package hy.game.core
 
 		public function destroy() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
 			notifyRemoved();
-			if (m_owner)
+			if (mOwner)
 			{
-				m_owner.removeComponent(this);
-				m_owner = null;
+				mOwner.removeComponent(this);
+				mOwner = null;
 			}
-			m_type = null;
-			m_isDisposed = true;
+			mType = null;
+			mIsDisposed = true;
 		}
 	}
 }

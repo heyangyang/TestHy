@@ -13,20 +13,20 @@ package hy.game.avatar
 
 	public class SAvatarResource extends SObject
 	{
-		private var m_avatar : SAvatar;
-		private var m_change : Boolean;
-		private var m_avatarId : String;
-		private var m_priority : int;
+		private var mAvatar : SAvatar;
+		private var mChange : Boolean;
+		private var mAvatarId : String;
+		private var mPriority : int;
 		/**
 		 * 加载成功后回调
 		 */
-		protected var m_notifyCompleteds : Vector.<Function>;
+		protected var mNotifyCompleteds : Vector.<Function>;
 
 		public function SAvatarResource(avatar : SAvatar)
 		{
 			super();
-			m_avatar = avatar;
-			if (m_avatar == null)
+			mAvatar = avatar;
+			if (mAvatar == null)
 				error(this, "avatar is null!");
 		}
 
@@ -37,7 +37,7 @@ package hy.game.avatar
 		 */
 		public function set priority(value : int) : void
 		{
-			m_priority = value;
+			mPriority = value;
 		}
 
 		/**
@@ -47,10 +47,10 @@ package hy.game.avatar
 		 */
 		public function setAvatarId(id : String) : void
 		{
-			if (m_avatarId == id)
+			if (mAvatarId == id)
 				return;
-			m_avatarId = id;
-			m_change = true;
+			mAvatarId = id;
+			mChange = true;
 		}
 
 		/**
@@ -60,16 +60,16 @@ package hy.game.avatar
 		 */
 		public function get isChange() : Boolean
 		{
-			return m_change;
+			return mChange;
 		}
 
 		public function loadResource() : void
 		{
-			if (!m_avatarId || !m_change)
+			if (!mAvatarId || !mChange)
 				return;
-			m_change = false;
+			mChange = false;
 
-			var avatarDescription : SAvatarDescription = SAvatarManager.getInstance().getAvatarDescription(m_avatarId);
+			var avatarDescription : SAvatarDescription = SAvatarManager.getInstance().getAvatarDescription(mAvatarId);
 			if (avatarDescription)
 			{
 				createAvatar(avatarDescription);
@@ -77,7 +77,7 @@ package hy.game.avatar
 				return;
 			}
 
-			var resource : SResource = SReferenceManager.getInstance().createResource(m_avatarId + (Config.supportDirectX ? "_atf" : ""));
+			var resource : SResource = SReferenceManager.getInstance().createResource(mAvatarId + (Config.supportDirectX ? "_atf" : ""));
 
 			if (resource)
 			{
@@ -86,13 +86,13 @@ package hy.game.avatar
 				if (resource.isLoaded)
 					notifyAvatarBuildCompleted(resource);
 				else
-					resource.setPriority(m_priority).addNotifyCompleted(notifyAvatarBuildCompleted).load();
+					resource.setPriority(mPriority).addNotifyCompleted(notifyAvatarBuildCompleted).load();
 			}
 		}
 
 		protected function notifyAvatarBuildCompleted(res : SResource) : void
 		{
-			var avatarDescription : SAvatarDescription = createAvatarDescription(res, m_avatarId);
+			var avatarDescription : SAvatarDescription = createAvatarDescription(res, mAvatarId);
 			if (avatarDescription)
 			{
 				createAvatar(avatarDescription);
@@ -127,23 +127,23 @@ package hy.game.avatar
 		{
 			if (notifyFunction == null)
 				return this;
-			if (!m_notifyCompleteds)
-				m_notifyCompleteds = new Vector.<Function>();
-			if (m_notifyCompleteds.indexOf(notifyFunction) == -1)
-				m_notifyCompleteds.push(notifyFunction);
+			if (!mNotifyCompleteds)
+				mNotifyCompleteds = new Vector.<Function>();
+			if (mNotifyCompleteds.indexOf(notifyFunction) == -1)
+				mNotifyCompleteds.push(notifyFunction);
 			return this;
 		}
 
 		private function invokeNotifyByArray() : void
 		{
-			if (!m_notifyCompleteds)
+			if (!mNotifyCompleteds)
 				return;
-			for each (var notify : Function in m_notifyCompleteds)
+			for each (var notify : Function in mNotifyCompleteds)
 			{
 				notify();
 			}
-			m_avatar = null;
-			m_notifyCompleteds.length = 0;
+			mAvatar = null;
+			mNotifyCompleteds.length = 0;
 		}
 
 		/**
@@ -154,22 +154,22 @@ package hy.game.avatar
 		private function createAvatar(avatarDesc : SAvatarDescription) : void
 		{
 			//已经销毁则不处理，直接返回
-			if (!m_notifyCompleteds)
+			if (!mNotifyCompleteds)
 				return;
-			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(m_priority, "whole1", avatarDesc);
-			m_avatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
-			m_avatar.animationsByParts = animations;
+			var animations : SAvatarAnimationLibrary = SReferenceManager.getInstance().createAvatarCollection(mPriority, "whole1", avatarDesc);
+			mAvatar.dirMode = EnumDirection.checkDirsDirMode(avatarDesc.directions);
+			mAvatar.animationsByParts = animations;
 		}
 
 		public function get avatarId() : String
 		{
-			return m_avatarId;
+			return mAvatarId;
 		}
 
 		public function dispose() : void
 		{
-			m_avatar = null;
-			m_notifyCompleteds = null;
+			mAvatar = null;
+			mNotifyCompleteds = null;
 		}
 	}
 }
