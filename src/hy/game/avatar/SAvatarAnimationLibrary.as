@@ -25,9 +25,9 @@ package hy.game.avatar
 		/**
 		 * 加载所有的动画
 		 */
-		private var loader_count : int = 0;
-		private var loader_index : int = 0;
-		private var onReturnHanlder : Function;
+		private var mLoaderCount : int = 0;
+		private var mLoaderIndex : int = 0;
+		private var mOnReturnHanlder : Function;
 
 		public function SAvatarAnimationLibrary(priority : int, avatarId : String, avatarDesc : SAvatarDescription)
 		{
@@ -70,13 +70,13 @@ package hy.game.avatar
 		{
 			var animation : SAnimationResource;
 			var animationByDir : Dictionary;
-			loader_count = loader_index = 0;
-			onReturnHanlder = complete;
+			mLoaderCount = mLoaderIndex = 0;
+			mOnReturnHanlder = complete;
 			for each (animationByDir in mAnimationByActionAndDir)
 			{
 				for each (animation in animationByDir)
 				{
-					loader_count++;
+					mLoaderCount++;
 					animation.constructFrames(1);
 					animation.onLoaderComplete = onLoaderComplete;
 					break;
@@ -86,10 +86,10 @@ package hy.game.avatar
 
 		private function onLoaderComplete() : void
 		{
-			if (++loader_index >= loader_count)
+			if (++mLoaderIndex >= mLoaderCount)
 			{
-				onReturnHanlder != null && onReturnHanlder();
-				onReturnHanlder = null;
+				mOnReturnHanlder != null && mOnReturnHanlder();
+				mOnReturnHanlder = null;
 			}
 		}
 
@@ -100,7 +100,7 @@ package hy.game.avatar
 		 */
 		public function get isLoaded() : Boolean
 		{
-			return loader_index >= loader_count;
+			return mLoaderIndex >= mLoaderCount;
 		}
 
 		override protected function destroy() : void
@@ -114,7 +114,7 @@ package hy.game.avatar
 					animation.destroy();
 				}
 			}
-			onReturnHanlder = null;
+			mOnReturnHanlder = null;
 			mAnimationByActionAndDir = null;
 			super.destroy();
 		}

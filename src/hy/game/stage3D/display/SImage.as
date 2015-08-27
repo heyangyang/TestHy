@@ -2,7 +2,7 @@ package hy.game.stage3D.display
 {
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
-	
+
 	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
@@ -12,12 +12,12 @@ package hy.game.stage3D.display
 	{
 		private var mTexture : STexture;
 		private var mSmoothing : String;
-		private var mDropShadow:Boolean;
+		private var mDropShadow : Boolean;
 		protected var mSupportVertexData : SVertexData;
 
 		public function SImage(value : STexture = null)
 		{
-			if(value)
+			if (value)
 				this.texture = value;
 			super(0, 0, 0xffffff, true);
 		}
@@ -26,7 +26,7 @@ package hy.game.stage3D.display
 		{
 			return mTexture;
 		}
-		
+
 		public function get base() : TextureBase
 		{
 			return mTexture.base;
@@ -36,7 +36,7 @@ package hy.game.stage3D.display
 		{
 			if (!value)
 			{
-				mTexture=null;
+				mTexture = null;
 				return;
 			}
 			mVertexData.setTexCoords(0, 0.0, 0.0);
@@ -76,15 +76,15 @@ package hy.game.stage3D.display
 				copyVertexDataTransformedTo(mSupportVertexData, super.transformationMatrix);
 			return super.transformationMatrix;
 		}
-		
-		public override function get width():Number
+
+		public override function get width() : Number
 		{
-			return mTexture?mTexture.width:0;
+			return mTexture ? mTexture.width : 0;
 		}
-		
-		public override function get height():Number
+
+		public override function get height() : Number
 		{
-			return mTexture?mTexture.height:0;
+			return mTexture ? mTexture.height : 0;
 		}
 
 
@@ -95,18 +95,18 @@ package hy.game.stage3D.display
 
 		public override function render() : void
 		{
-			if (mTexture == null)
+			if (mTexture == null || mTexture.base == null)
 				return;
 			transformationMatrix;
 			SRenderSupport.getInstance().supportImage(this);
 		}
 
-		public function get dropShadow():Boolean
+		public function get dropShadow() : Boolean
 		{
 			return mDropShadow;
 		}
 
-		public function set dropShadow(value:Boolean):void
+		public function set dropShadow(value : Boolean) : void
 		{
 			mDropShadow = value;
 		}

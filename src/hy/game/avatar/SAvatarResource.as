@@ -2,7 +2,7 @@ package hy.game.avatar
 {
 	import flash.system.System;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
@@ -68,7 +68,6 @@ package hy.game.avatar
 			if (!mAvatarId || !mChange)
 				return;
 			mChange = false;
-
 			var avatarDescription : SAvatarDescription = SAvatarManager.getInstance().getAvatarDescription(mAvatarId);
 			if (avatarDescription)
 			{

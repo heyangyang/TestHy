@@ -20,7 +20,7 @@ package hy.game.components
 		 */
 		public static var default_avatar : SAvatar;
 
-		protected var mLazyAvatar : SAvatarResource;
+		protected var mResource : SAvatarResource;
 		protected var mAvatar : SAvatar;
 		protected var mFrame : SAnimationFrame;
 		protected var tmp_frame : SAnimationFrame;
@@ -61,13 +61,13 @@ package hy.game.components
 			super.init();
 			mRender.dropShadow = true;
 			mAvatar = new SAvatar();
-			mLazyAvatar = new SAvatarResource(mAvatar);
+			mResource = new SAvatarResource(mAvatar);
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			mLazyAvatar.priority = EnumLoadPriority.ROLE;
+			mResource.priority = EnumLoadPriority.ROLE;
 			mDir = mAction = -1;
 			mUseCenterOffsetY = true;
 			needReversal = false;
@@ -102,13 +102,12 @@ package hy.game.components
 			mAvatar = null;
 			mData = null;
 		}
-
 		override public function update() : void
 		{
-			if (mLazyAvatar.isChange)
+			if (mResource.isChange)
 			{
-				mLazyAvatar.addNotifyCompleted(onLoadAvatarComplete);
-				mLazyAvatar.loadResource();
+				mResource.addNotifyCompleted(onLoadAvatarComplete);
+				mResource.loadResource();
 			}
 			if (mDir != mTransform.dir || mAction != mData.action || mIsRide != mData.isRide)
 			{
@@ -172,7 +171,7 @@ package hy.game.components
 
 		public function setAvatarId(avatarId : String) : void
 		{
-			mLazyAvatar.setAvatarId(avatarId);
+			mResource.setAvatarId(avatarId);
 		}
 
 		protected function onLoadAvatarComplete() : void
@@ -203,8 +202,8 @@ package hy.game.components
 		override public function destroy() : void
 		{
 			super.destroy();
-			mLazyAvatar && mLazyAvatar.dispose();
-			mLazyAvatar = null;
+			mResource && mResource.dispose();
+			mResource = null;
 		}
 	}
 }

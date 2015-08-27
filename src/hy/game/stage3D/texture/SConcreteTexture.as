@@ -3,6 +3,7 @@ package hy.game.stage3D.texture
 	import flash.display.BitmapData;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
@@ -43,8 +44,13 @@ package hy.game.stage3D.texture
 
 			if (potTexture == null)
 				throw new Error("This texture type does not support ATF data");
+			potTexture.addEventListener(Event.TEXTURE_READY, onTextureReady);
+			potTexture.uploadCompressedTextureFromByteArray(data, offset, true);
+		}
 
-			potTexture.uploadCompressedTextureFromByteArray(data, offset);
+		private function onTextureReady(evt : Event) : void
+		{
+			mBase.removeEventListener(Event.TEXTURE_READY, onTextureReady);
 			mDataUploaded = true;
 		}
 
@@ -83,7 +89,7 @@ package hy.game.stage3D.texture
 
 		public override function get base() : TextureBase
 		{
-			return mBase;
+			return mDataUploaded ? mBase : null;
 		}
 
 		public function get optimizedForRenderTexture() : Boolean

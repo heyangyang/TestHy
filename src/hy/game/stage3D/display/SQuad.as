@@ -28,10 +28,6 @@ package hy.game.stage3D.display
 			mVertexData.setPosition(3, width, height);
 		}
 
-		protected function onVertexDataChanged() : void
-		{
-		}
-
 		public function get color() : uint
 		{
 			return mColor;
@@ -40,7 +36,6 @@ package hy.game.stage3D.display
 		public function set color(value : uint) : void
 		{
 			mColor = value;
-			onVertexDataChanged();
 
 			if (value != 0xffffff || alpha != 1.0)
 				mTinted = true;
