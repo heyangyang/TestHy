@@ -102,14 +102,14 @@ package hy.game.aEffect
 			return mHeight;
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
 			for each (var animation : SAnimation in mAnimationByDir)
 			{
 				animation.destroy();
 			}
 			mAnimationByDir = null;
-			super.destroy();
+			super.dispose();
 		}
 
 		/**

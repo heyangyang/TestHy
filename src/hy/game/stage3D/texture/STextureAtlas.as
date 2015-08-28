@@ -2,7 +2,7 @@ package hy.game.stage3D.texture
 {
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.utils.cleanMasterString;
@@ -10,28 +10,24 @@ package hy.game.stage3D.texture
 
 	public class STextureAtlas
 	{
-		private static var sNames : Vector.<String> = new Vector.<String>();
-
 		protected var mAtlasTexture : STexture;
 		protected var mSubTextures : Dictionary;
 
-		public function STextureAtlas(texture : STexture, atlasXml : XML = null)
+		public function STextureAtlas(texture : STexture, atlasXml : XML)
 		{
 			mSubTextures = new Dictionary();
 			mAtlasTexture = texture;
-
-			if (atlasXml)
-				parseAtlasXml(atlasXml);
+			parseAtlasXml(atlasXml);
 		}
 
-		public function getAnimationFrame(name : String, dir : String, frame : int) : IBitmapData
+		public function getAnimationFrame(dir : String, frame : int) : IBitmapData
 		{
-			return getTexture(name + "," + dir + "," + frame) as IBitmapData;
+			return getTexture(dir + "," + frame) as IBitmapData;
 		}
 
-		public function getPoint(name : String, dir : String, frame : int) : Point
+		public function getPoint(dir : String, frame : int) : Point
 		{
-			return SSubTexture(getTexture(name + "," + dir + "," + frame)).offest;
+			return SSubTexture(getTexture(dir + "," + frame)).offest;
 		}
 
 		protected function parseAtlasXml(atlasXml : XML) : void

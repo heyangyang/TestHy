@@ -55,7 +55,7 @@ package hy.game.core
 				return false;
 			if (mAllowDestroy)
 			{
-				destroy();
+				dispose();
 				return true;
 			}
 			return false;
@@ -65,7 +65,7 @@ package hy.game.core
 		{
 			if (mIsDisposed)
 				return;
-			destroy();
+			dispose();
 		}
 
 		public function get allowDestroy() : Boolean
@@ -81,7 +81,7 @@ package hy.game.core
 		/**
 		 * 清除内存
 		 */
-		protected function destroy() : void
+		protected function dispose() : void
 		{
 			mIsDisposed = true;
 			mAllowDestroy = false;

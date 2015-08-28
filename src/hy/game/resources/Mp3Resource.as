@@ -17,11 +17,11 @@ package hy.game.resources
 	 * @author hyy
 	 *
 	 */
-	public class Mpp3Resource extends SResource
+	public class Mp3Resource extends SResource
 	{
 		private var mSound : Sound;
 
-		public function Mpp3Resource(res_url : String, version : String)
+		public function Mp3Resource(res_url : String, version : String)
 		{
 			super(res_url, version);
 		}
@@ -84,9 +84,9 @@ package hy.game.resources
 			mSound.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadSecurityError);
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			this.mSound = null;
 		}
 

@@ -10,9 +10,16 @@ package hy.game.core
 	{
 		private var mNotifyList : Vector.<Function>;
 		private var mIsUpdatable : Boolean;
+		private var mParams : Object;
 
-		public function SCall()
+		public function SCall(params : Object = null)
 		{
+			mParams = params;
+		}
+
+		public function set data(value : Object) : void
+		{
+			mParams = value;
 		}
 
 		/**
@@ -20,7 +27,7 @@ package hy.game.core
 		 * @param fun
 		 *
 		 */
-		public function addNotify(fun : Function, index : int = -1) : void
+		public function push(fun : Function, index : int = -1) : void
 		{
 			if (!fun || notifyList.indexOf(fun) != -1)
 				return;
@@ -37,7 +44,7 @@ package hy.game.core
 		 * @param fun
 		 *
 		 */
-		public function removeNotify(fun : Function) : void
+		public function remove(fun : Function) : void
 		{
 			if (!fun)
 				return;
@@ -47,22 +54,38 @@ package hy.game.core
 		}
 
 		/**
-		 * 实行处理通知
+		 * 检测是否处理通知
 		 * @param update 是否强制更新
 		 *
 		 */
-		public function excuteNotify(update : Boolean = false) : void
+		public function checkExcute(update : Boolean = false) : void
 		{
 			if (!mIsUpdatable && !update)
 				return;
 			mIsUpdatable = false;
+			excute();
+		}
+
+		/**
+		 * 处理通知,无需检测
+		 *
+		 */
+		public function excute() : void
+		{
 			for each (var fun : Function in mNotifyList)
 			{
-				fun();
+				if (mParams)
+					fun(mParams);
+				else
+					fun();
 			}
 		}
 
-		public function callUpdate() : void
+		/**
+		 * 标记更新状态
+		 *
+		 */
+		public function updateCallStatus() : void
 		{
 			mIsUpdatable = true;
 		}
@@ -71,7 +94,7 @@ package hy.game.core
 		 * 清理通知列表
 		 *
 		 */
-		public function clearNotify() : void
+		public function clear() : void
 		{
 			if (mNotifyList)
 				mNotifyList.length = 0;
@@ -79,7 +102,8 @@ package hy.game.core
 
 		public function dispose() : void
 		{
-			clearNotify();
+			clear();
+			mParams = null;
 			mNotifyList = null;
 		}
 

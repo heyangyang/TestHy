@@ -94,7 +94,7 @@ package hy.game.net
 				SDebug.warning("module :", module, "not find notify");
 			}
 			//用完立马回收
-			mDataBase.destroy();
+			mDataBase.dispose();
 			SObjectManager.recycleObject(mDataBase);
 		}
 	}

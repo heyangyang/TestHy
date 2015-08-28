@@ -302,6 +302,7 @@ package hy.game.manager
 					v = Math.random() + "";
 			}
 			var res : SResource = createReference(LOADER, id, resClass, root, v) as SResource;
+			//自动释放,资源
 			res.release();
 			return res;
 		}

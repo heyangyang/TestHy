@@ -369,11 +369,11 @@ package hy.game.monitor
 		}
 
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
 			if (container && container.parent)
 				container.parent.removeChild(container);
-			super.destroy();
+			super.dispose();
 		}
 	}
 }

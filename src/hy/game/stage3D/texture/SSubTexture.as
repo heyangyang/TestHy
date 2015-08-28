@@ -3,7 +3,7 @@ package hy.game.stage3D.texture
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-
+	
 	import hy.game.data.SRectangle;
 	import hy.game.render.SDirectBitmapData;
 	import hy.game.stage3D.utils.SMatrixUtil;
@@ -120,7 +120,9 @@ package hy.game.stage3D.texture
 			super.dispose();
 			mParent = null;
 			mRegion = null;
+			mOffest = null;
 			mTransformationMatrix = null;
+			mVertexData = null;
 		}
 	}
 }

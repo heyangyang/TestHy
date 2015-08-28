@@ -64,7 +64,7 @@ package hy.game.data
 			if (value < 0)
 				value = 0;
 			mX = value;
-			mPositionCall.callUpdate();
+			mPositionCall.updateCallStatus();
 		}
 
 		public function get y() : Number
@@ -80,7 +80,7 @@ package hy.game.data
 			if (value < 0)
 				value = 0;
 			mY = value;
-			mPositionCall.callUpdate();
+			mPositionCall.updateCallStatus();
 		}
 
 		public function get z() : Number
@@ -93,7 +93,7 @@ package hy.game.data
 			if (mZ == value)
 				return;
 			mZ = value;
-			mPositionCall.callUpdate();
+			mPositionCall.updateCallStatus();
 		}
 
 		/**
@@ -131,7 +131,7 @@ package hy.game.data
 			if (mCenterOffsetY == value)
 				return;
 			mCenterOffsetY = value;
-			mPositionCall.callUpdate();
+			mPositionCall.updateCallStatus();
 		}
 
 		/**
@@ -149,7 +149,7 @@ package hy.game.data
 			if (mScale == value)
 				return;
 			mScale = value;
-			mSizeCall.callUpdate();
+			mSizeCall.updateCallStatus();
 		}
 
 		/**
@@ -215,7 +215,7 @@ package hy.game.data
 			if (mWidth == value)
 				return;
 			mWidth = value;
-			mSizeCall.callUpdate();
+			mSizeCall.updateCallStatus();
 		}
 
 		public function get width() : int
@@ -228,7 +228,7 @@ package hy.game.data
 			if (mHeight == value)
 				return;
 			mHeight = value;
-			mSizeCall.callUpdate();
+			mSizeCall.updateCallStatus();
 		}
 
 		public function get height() : int
@@ -259,8 +259,8 @@ package hy.game.data
 
 		public function excuteNotify(update : Boolean = false) : void
 		{
-			mPositionCall.excuteNotify(update);
-			mSizeCall.excuteNotify(update);
+			mPositionCall.checkExcute(update);
+			mSizeCall.checkExcute(update);
 		}
 
 		/**
@@ -270,7 +270,7 @@ package hy.game.data
 		 */
 		public function addPositionChange(fun : Function, index : int = -1) : void
 		{
-			mPositionCall.addNotify(fun, index);
+			mPositionCall.push(fun, index);
 		}
 
 		/**
@@ -280,13 +280,13 @@ package hy.game.data
 		 */
 		public function addSizeChange(fun : Function) : void
 		{
-			mSizeCall.addNotify(fun);
+			mSizeCall.push(fun);
 		}
 
 		public function clearCall() : void
 		{
-			mPositionCall.clearNotify();
-			mSizeCall.clearNotify();
+			mPositionCall.clear();
+			mSizeCall.clear();
 		}
 	}
 }

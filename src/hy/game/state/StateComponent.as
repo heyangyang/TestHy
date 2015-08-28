@@ -99,9 +99,9 @@ package hy.game.state
 		 * 销毁
 		 *
 		 */
-		override public function destroy() : void
+		override public function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			var state : IBaseState;
 
 			for each (state in mStateDictionary)

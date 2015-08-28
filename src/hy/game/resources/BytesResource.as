@@ -99,9 +99,9 @@ package hy.game.resources
 			super.stop();
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			mLoader = null;
 			mData = null;
 		}

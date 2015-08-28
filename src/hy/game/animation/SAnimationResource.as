@@ -64,7 +64,7 @@ package hy.game.animation
 			{
 				parser = SReferenceManager.getInstance().createAnimationResourceParser(mDescription, priority);
 			}
-			if (mParser.isLoaded)
+			if (mParser.isComplete)
 			{
 				constructFromParser();
 			}
@@ -95,7 +95,7 @@ package hy.game.animation
 		{
 			if (!mCurrFrameAnimation)
 				return;
-			if (mParser && mParser.isLoaded)
+			if (mParser && mParser.isComplete)
 			{
 				if (mCurrFrameAnimation.frameData)
 					return;
@@ -141,7 +141,7 @@ package hy.game.animation
 		 */
 		override public function get isLoaded() : Boolean
 		{
-			return mParser && mParser.isLoaded;
+			return mParser && mParser.isComplete;
 		}
 
 		/**

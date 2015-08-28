@@ -6,7 +6,7 @@ package hy.game.core.interfaces
 	 * @author hyy
 	 *
 	 */
-	public interface IUpdate extends IDestroy
+	public interface IUpdate extends IDispose
 	{
 		function update() : void
 		/**

@@ -113,9 +113,9 @@ package hy.game.resources
 			}
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			mAppDomain = null;
 			if (mLoader)
 			{

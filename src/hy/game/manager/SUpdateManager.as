@@ -31,7 +31,7 @@ package hy.game.manager
 			for (var i : int = mNumber - 1; i >= 0; i--)
 			{
 				mUpdate = mUpdatables[i];
-				if (mUpdate.isDestroy || !mUpdate.checkUpdatable())
+				if (mUpdate.isDispose || !mUpdate.checkUpdatable())
 					continue;
 				mUpdate.update();
 			}

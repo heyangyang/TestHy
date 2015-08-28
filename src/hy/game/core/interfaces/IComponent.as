@@ -2,7 +2,7 @@ package hy.game.core.interfaces
 {
 
 
-	public interface IComponent extends IDestroy
+	public interface IComponent extends IDispose
 	{
 		function notifyAdded() : void;
 		function notifyRemoved() : void;

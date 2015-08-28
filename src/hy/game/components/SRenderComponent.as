@@ -74,9 +74,9 @@ package hy.game.components
 			mOwner && mOwner.removeRender(render);
 		}
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 		}
 
 		public function setOffsetXY(x : int, y : int) : void

@@ -103,7 +103,7 @@ package hy.game.avatar
 			return mLoaderIndex >= mLoaderCount;
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
 			var animation : SAnimation;
 			var animationByDir : Dictionary;
@@ -116,7 +116,7 @@ package hy.game.avatar
 			}
 			mOnReturnHanlder = null;
 			mAnimationByActionAndDir = null;
-			super.destroy();
+			super.dispose();
 		}
 
 		/**

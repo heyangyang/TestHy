@@ -101,9 +101,9 @@ package hy.game.sound
 		/**
 		 * 释放对象
 		 */
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			if (mSound)
 			{
 				try

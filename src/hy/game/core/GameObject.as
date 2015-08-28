@@ -244,7 +244,7 @@ package hy.game.core
 			for (var i : int = mComponents.length - 1; i >= 0; i--)
 			{
 				component = mComponents[i];
-				if (component.isDestroy)
+				if (component.isDispose)
 					continue;
 				!component.mIsStart && component.onInit();
 				component.update();
@@ -368,13 +368,13 @@ package hy.game.core
 			for (var key : * in mComponentTypes)
 			{
 				component = mComponentTypes[key];
-				component && component.destroy();
+				component && component.dispose();
 				delete mComponentTypes[key];
 			}
 			mComponents.length = 0;
 		}
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
 			if (mIsDisposed)
 				return;
@@ -385,7 +385,7 @@ package hy.game.core
 			clearComponents();
 			tag = null;
 			name = null;
-			super.destroy();
+			super.dispose();
 		}
 
 		public function get id() : int

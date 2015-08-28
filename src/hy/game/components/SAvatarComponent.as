@@ -199,9 +199,9 @@ package hy.game.components
 			return false;
 		}
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			mResource && mResource.dispose();
 			mResource = null;
 		}

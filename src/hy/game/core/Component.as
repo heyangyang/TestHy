@@ -2,13 +2,12 @@ package hy.game.core
 {
 
 	import hy.game.core.interfaces.IComponent;
-	import hy.game.core.interfaces.IDestroy;
 	import hy.game.core.interfaces.IRecycle;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.utils.SDebug;
 
-	public class Component implements IComponent, IDestroy, IRecycle
+	public class Component implements IComponent, IRecycle
 	{
 		/**
 		 * 类型
@@ -77,7 +76,7 @@ package hy.game.core
 		/**
 		 * 是否销毁
 		 */
-		public function get isDestroy() : Boolean
+		public function get isDispose() : Boolean
 		{
 			return mIsDisposed;
 		}
@@ -106,7 +105,7 @@ package hy.game.core
 			SDebug.error(args.join(","));
 		}
 
-		public function destroy() : void
+		public function dispose() : void
 		{
 			if (mIsDisposed)
 				return;

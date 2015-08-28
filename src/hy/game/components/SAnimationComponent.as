@@ -93,7 +93,7 @@ package hy.game.components
 				return;
 			if (mEffect.isEnd)
 			{
-				destroy();
+				dispose();
 				return;
 			}
 			mUpdateFrame = mEffect.gotoNextFrame(STime.deltaTime);
@@ -127,9 +127,9 @@ package hy.game.components
 			mRender.depth = mRender.y;
 		}
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			mResource && mResource.destroy();
 			mResource = null;
 		}

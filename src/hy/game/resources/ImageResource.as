@@ -101,7 +101,7 @@ package hy.game.resources
 			super.stop();
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
 			if (mLoader)
 			{
@@ -111,7 +111,7 @@ package hy.game.resources
 			}
 			mBitmapData && mBitmapData.dispose();
 			mBitmapData = null;
-			super.destroy();
+			super.dispose();
 		}
 	}
 }

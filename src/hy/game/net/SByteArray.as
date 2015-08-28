@@ -2,9 +2,9 @@ package hy.game.net
 {
 	import flash.utils.ByteArray;
 
-	import hy.game.core.interfaces.IDestroy;
+	import hy.game.core.interfaces.IDispose;
 
-	public class SByteArray extends ByteArray implements IDestroy
+	public class SByteArray extends ByteArray implements IDispose
 	{
 		protected var mIsDisposed : Boolean;
 
@@ -13,13 +13,13 @@ package hy.game.net
 			super();
 		}
 
-		public function destroy() : void
+		public function dispose() : void
 		{
 			mIsDisposed = true;
 			this.clear();
 		}
 
-		public function get isDestroy() : Boolean
+		public function get isDispose() : Boolean
 		{
 			return mIsDisposed;
 		}

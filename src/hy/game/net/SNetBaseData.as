@@ -2,10 +2,10 @@ package hy.game.net
 {
 	import flash.utils.ByteArray;
 
-	import hy.game.core.interfaces.IDestroy;
+	import hy.game.core.interfaces.IDispose;
 	import hy.game.net.interfaces.IData;
 
-	public class SNetBaseData implements IData, IDestroy
+	public class SNetBaseData implements IData, IDispose
 	{
 		public static const TYPE_INT : int = 1;
 		public static const TYPE_BYTE : int = 2;
@@ -155,12 +155,12 @@ package hy.game.net
 			return obj;
 		}
 
-		public function get isDestroy() : Boolean
+		public function get isDispose() : Boolean
 		{
 			return false;
 		}
 
-		public function destroy() : void
+		public function dispose() : void
 		{
 			mData = null;
 		}

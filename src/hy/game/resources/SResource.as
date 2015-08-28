@@ -352,7 +352,7 @@ package hy.game.resources
 		 * 销毁
 		 *
 		 */
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
 			if (isDisposed)
 				return;
@@ -360,7 +360,7 @@ package hy.game.resources
 			cleanListeners();
 			mRequest = null;
 			mContext = null;
-			super.destroy();
+			super.dispose();
 		}
 
 	}

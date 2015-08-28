@@ -3,7 +3,7 @@ package hy.game.stage3D.display
 	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
-	
+
 	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.texture.STexture;
@@ -120,6 +120,18 @@ package hy.game.stage3D.display
 		public function set dropShadow(value : Boolean) : void
 		{
 			mDropShadow = value;
+		}
+
+		public override function dispose() : void
+		{
+			super.dispose();
+			if (mVertexBuffer)
+			{
+				mVertexBuffer.dispose();
+				mVertexBuffer = null;
+			}
+			mSupportVertexData = null;
+			mTexture = null;
 		}
 
 	}

@@ -234,7 +234,7 @@ package hy.game.core
 			for (var i : int = mObjects.length - 1; i >= 0; i--)
 			{
 				object = mObjects[i];
-				if (object.isDestroy || !object.activeStatus || !object.checkUpdatable())
+				if (object.isDispose || !object.activeStatus || !object.checkUpdatable())
 					continue;
 				object.update();
 			}

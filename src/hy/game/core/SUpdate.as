@@ -148,7 +148,7 @@ package hy.game.core
 			mCheckUpdateable = true;
 		}
 
-		public function destroy() : void
+		public function dispose() : void
 		{
 			mIsDisposed = true;
 			mRegisterd = false;
@@ -157,7 +157,7 @@ package hy.game.core
 		/**
 		 * 是否销毁
 		 */
-		public function get isDestroy() : Boolean
+		public function get isDispose() : Boolean
 		{
 			return mIsDisposed;
 		}

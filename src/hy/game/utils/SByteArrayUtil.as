@@ -24,7 +24,7 @@ package hy.game.utils
 		 * @return
 		 *
 		 */
-		public static function encryptByteArray(bytes : ByteArray, isEncrypt : Boolean = false, isCompressed : Boolean = true) : ByteArray
+		public static function encryptByteArray(bytes : ByteArray, isCompressed : Boolean = true) : ByteArray
 		{
 			var orgBytes : ByteArray = new ByteArray();
 			stamp = (new Date()).getTime();
@@ -38,16 +38,10 @@ package hy.game.utils
 			orgBytes.position = 0;
 			if (isCompressed)
 				orgBytes.compress();
-			if (isEncrypt)
-			{
-				var tempBytes : ByteArray = orgBytes;
-				orgBytes = STeaEncrypt.teaEncrypt(orgBytes);
-				tempBytes.clear();
-			}
 			orgBytes.position = 0;
 			var newBytes : ByteArray = new ByteArray();
 			newBytes.writeBoolean(isCompressed);
-			newBytes.writeBoolean(isEncrypt);
+			newBytes.writeBoolean(false);
 			newBytes.writeBytes(orgBytes);
 			orgBytes.clear();
 			newBytes.position = 0;
@@ -67,35 +61,34 @@ package hy.game.utils
 		 */
 		public static function decryptByteArray(bytes : ByteArray) : ByteArray
 		{
-			var newBytes : ByteArray = new ByteArray();
-			newBytes.writeBytes(bytes, 0, bytes.length);
-			newBytes.position = 0;
-			var isCompressed : Boolean = newBytes.readBoolean();
-			var isEncrypt : Boolean = newBytes.readBoolean();
+			var isCompressed : Boolean = bytes.readBoolean();
+			var isEncrypt : Boolean = bytes.readBoolean();
 			var orgBytes : ByteArray = new ByteArray();
-			newBytes.readBytes(orgBytes);
-			newBytes.clear();
-			if (isEncrypt)
-				orgBytes = STeaEncrypt.teaDecrypt(orgBytes);
+			orgBytes.writeBytes(bytes, bytes.position, bytes.bytesAvailable);
 			if (isCompressed)
 				orgBytes.uncompress();
 			orgBytes.position = 0;
-			var headerL : uint = orgBytes.readByte();
-			var headerV : String = orgBytes.readMultiByte(headerL, "UTF-8");
-			var stampL : uint = orgBytes.readByte();
-			var stampV : Number = parseInt(orgBytes.readMultiByte(stampL, "UTF-8"), 16);
-			var validityL : uint = orgBytes.readByte();
-			var validityV : Number = parseInt(orgBytes.readMultiByte(validityL, "UTF-8"), 16);
+//			var headerL : uint = orgBytes.readByte();
+//			var headerV : String = orgBytes.readMultiByte(headerL, "UTF-8");
+//			var stampL : uint = orgBytes.readByte();
+//			var stampV : Number = parseInt(orgBytes.readMultiByte(stampL, "UTF-8"), 16);
+//			var validityL : uint = orgBytes.readByte();
+//			var validityV : Number = parseInt(orgBytes.readMultiByte(validityL, "UTF-8"), 16);
+//			var tempBytes : ByteArray = orgBytes;
+//			orgBytes = new ByteArray();
+//			orgBytes.writeBytes(tempBytes, tempBytes.position, tempBytes.bytesAvailable);
+//			tempBytes.clear();
+//			orgBytes.position = 0;
+//			if (stampV > validityV)
+//			{
+//				orgBytes = null;
+//				SDebug.error(bytes, "试图读取的文件已过期！");
+//			}
 			var tempBytes : ByteArray = orgBytes;
 			orgBytes = new ByteArray();
-			orgBytes.writeBytes(tempBytes, tempBytes.position, tempBytes.bytesAvailable);
+			orgBytes.writeBytes(tempBytes, 25, tempBytes.bytesAvailable - 25);
 			tempBytes.clear();
 			orgBytes.position = 0;
-			if (stampV > validityV)
-			{
-				orgBytes = null;
-				SDebug.error(bytes, "试图读取的文件已过期！");
-			}
 			return orgBytes;
 		}
 
