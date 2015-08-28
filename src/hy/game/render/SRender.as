@@ -28,30 +28,28 @@ package hy.game.render
 		 * 唯一id
 		 */
 		name_part var mId : uint;
-		protected var mRender : IBitmap;
-		protected var mBitmapData : IBitmapData;
-		protected var mName : String;
+		private var mRender : IBitmap;
+		private var mBitmapData : IBitmapData;
+		private var mName : String;
 		name_part var mParentX : int;
 		name_part var mParentY : int;
 		name_part var mParentAlpha : Number;
-		protected var mX : int = int.MIN_VALUE;
-		protected var mY : int = int.MIN_VALUE;
-		protected var mScaleX : Number;
-		protected var mScaleY : Number;
-		protected var mNumChildren : int;
-		protected var mAlpha : Number;
-		protected var mRotation : Number;
-		protected var mDepth : int;
-		protected var mIndex : int;
-		protected var mLayer : int;
-		protected var mIsSortLayer : Boolean;
-		protected var mVisible : Boolean;
-		protected var mBlendMode : String;
-		protected var mParent : IRender;
-		protected var mTransform : ColorTransform
-		protected var mFilters : Array;
-		protected var mChilds : Vector.<IRender>;
-		protected var mTmpIndex : int;
+		private var mX : int = int.MIN_VALUE;
+		private var mY : int = int.MIN_VALUE;
+		private var mScaleX : Number;
+		private var mScaleY : Number;
+		private var mNumChildren : int;
+		private var mAlpha : Number;
+		private var mRotation : Number;
+		private var mDepth : int;
+		private var mIndex : int;
+		private var mLayer : int;
+		private var mVisible : Boolean;
+		private var mBlendMode : String;
+		private var mParent : IRender;
+		private var mTransform : ColorTransform
+		private var mFilters : Array;
+		private var mChilds : Vector.<IRender>;
 		private var mContainer : IGameContainer;
 
 		public function SRender()
@@ -99,64 +97,39 @@ package hy.game.render
 				notifyRemovedFromRender();
 		}
 
-		/**
-		 * 更新所有子元素层级
-		 *
-		 */
-		private function updateIndex() : void
-		{
-			if (!mContainer)
-				return;
-			mTmpIndex = mContainer.getRenderIndex(this);
-			updateIndexByRender(this);
-		}
-
-		private function updateIndexByRender(render : SRender) : void
-		{
-			var child : SRender;
-			for (var i : int = 0; i < mNumChildren; i++)
-			{
-				child = mChilds[i] as SRender;
-				mContainer.setChildRenderIndex(child, ++mTmpIndex);
-				child.numChildren > 0 && updateIndexByRender(child);
-			}
-		}
-
 		public function addChild(child : IRender) : IRender
-		{
-			return addChildAt(child, mNumChildren);
-		}
-
-		public function addChildAt(child : IRender, index : int) : IRender
 		{
 			if (childs.indexOf(child) == -1)
 			{
-				mContainer && mContainer.addChildRender(child as SRender, getRenderIndex(child));
 				mNumChildren++;
-				childs.push(child);
-				mIsSortLayer = true;
 				child.parent = this;
+				mChilds.push(child);
+				updateChildIndex(child);
 				child.notifyAddedToRender();
 			}
 			return child;
 		}
 
-		/**
-		 * 根据layer获取添加到容器里面的索引
-		 * @param child
-		 * @return
-		 *
-		 */
-		private function getRenderIndex(child : IRender) : int
+		public function updateChildIndex(child : IRender) : void
 		{
-			//父类所在容器的索引
-			var index : int = mContainer.getRenderIndex(this) + 1;
-			for (var i : int = 0; i < mNumChildren; i++)
+			var index : int = childs.indexOf(child);
+			if (index == -1)
+				throw new Error("SRender indexOf == -1");
+			for (var i : int = 0; i < numChildren; i++)
 			{
-				if (child.layer >= mChilds[i].layer)
-					index++;
+				//跳过自己
+				if (i == index)
+					continue;
+				//大于对方，则进行下一次比较
+				if (child.layer > mChilds[i].layer)
+					continue;
+				break;
 			}
-			return index;
+			//插入前面一个
+			mChilds.splice(i, 0, child);
+			//移除以前的
+			mChilds.splice(i > index ? index : index + 1, 1);
+			mContainer.addChildRender(child as SRender, child.parent.index + 1 + i);
 		}
 
 		public function removeChild(child : IRender) : IRender
@@ -429,7 +402,7 @@ package hy.game.render
 		}
 
 		/**
-		 * 深度 （只读）
+		 * 容器中的深度 （只读）
 		 * @param value
 		 *
 		 */
@@ -449,6 +422,11 @@ package hy.game.render
 			mContainer && mContainer.changeDepthSort();
 		}
 
+		/**
+		 * 所在容器中的索引
+		 * @return
+		 *
+		 */
 		public function get index() : int
 		{
 			return mIndex;
@@ -460,7 +438,7 @@ package hy.game.render
 		}
 
 		/**
-		 * 层级
+		 * render中的层级
 		 * @return
 		 *
 		 */
@@ -471,37 +449,10 @@ package hy.game.render
 
 		public function set layer(value : int) : void
 		{
+			if (mLayer == value)
+				return;
 			mLayer = value;
-			if (mParent)
-			{
-				mParent.needLayerSort = true;
-			}
-		}
-
-		public function get needLayerSort() : Boolean
-		{
-			return mIsSortLayer;
-		}
-
-		public function set needLayerSort(value : Boolean) : void
-		{
-			mIsSortLayer = true;
-		}
-
-		public function onLayerSort() : void
-		{
-			mChilds.sort(onSortLayer);
-			updateIndex();
-			mIsSortLayer = false;
-		}
-
-		private function onSortLayer(a : SRender, b : SRender) : int
-		{
-			if (a.layer > b.layer)
-				return 1;
-			if (a.layer < b.layer)
-				return -1;
-			return 0;
+			mParent && mParent.updateChildIndex(this);
 		}
 
 		public function get name() : String

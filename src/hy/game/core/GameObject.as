@@ -249,7 +249,6 @@ package hy.game.core
 				!component.mIsStart && component.onInit();
 				component.update();
 			}
-			mRender.needLayerSort && mRender.onLayerSort();
 			updateTransform();
 		}
 

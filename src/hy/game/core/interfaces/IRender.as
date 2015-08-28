@@ -11,7 +11,6 @@ package hy.game.core.interfaces
 		function notifyRemovedFromRender() : void;
 
 		function addChild(child : IRender) : IRender;
-		function addChildAt(child : IRender, index : int) : IRender;
 		function removeChild(child : IRender) : IRender;
 		function removeChildAt(index : int) : IRender;
 		function getChildAt(index : int) : IRender;
@@ -32,9 +31,7 @@ package hy.game.core.interfaces
 		function get index() : int;
 		function set index(value : int) : void;
 
-		function get needLayerSort() : Boolean;
-		function set needLayerSort(value : Boolean) : void;
-		function onLayerSort() : void;
+		function updateChildIndex(child : IRender) : void;
 
 		function rotate(rotate : Number, pointX : int = 0, pointY : int = 0) : void;
 
