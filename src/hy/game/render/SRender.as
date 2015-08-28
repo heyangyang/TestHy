@@ -473,7 +473,9 @@ package hy.game.render
 		{
 			mLayer = value;
 			if (mParent)
+			{
 				mParent.needLayerSort = true;
+			}
 		}
 
 		public function get needLayerSort() : Boolean

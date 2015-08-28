@@ -25,7 +25,7 @@ package hy.game.stage3D.texture
 		private var mRepeat : Boolean;
 		private var mDataUploaded : Boolean;
 		private var mVertexData : SVertexData;
-		
+
 		public function SConcreteTexture(base : TextureBase, format : String, width : int, height : int, mipMapping : Boolean, premultipliedAlpha : Boolean, optimizedForRenderTexture : Boolean = false, scale : Number = 1, repeat : Boolean = false)
 		{
 			mScale = scale <= 0 ? 1.0 : scale;
@@ -53,7 +53,7 @@ package hy.game.stage3D.texture
 		{
 			return mVertexData;
 		}
-		
+
 		public function uploadAtfData(data : ByteArray, offset : int = 0) : void
 		{
 			var potTexture : Texture = mBase as Texture;
@@ -145,7 +145,9 @@ package hy.game.stage3D.texture
 
 		public override function dispose() : void
 		{
+			mVertexData = null;
 			mBase && mBase.dispose();
+			mBase = null;
 			super.dispose();
 		}
 	}

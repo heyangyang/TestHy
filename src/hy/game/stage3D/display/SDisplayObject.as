@@ -274,7 +274,9 @@ package hy.game.stage3D.display
 
 		public function dispose() : void
 		{
-
+			removeFromParent();
+			mTransformationMatrix = null;
+			mParent = null;
 		}
 	}
 }

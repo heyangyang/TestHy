@@ -20,7 +20,5 @@ package hy.game.core.interfaces
 		function addGameChildAt(child : IDisplay, index : int) : void;
 		function getGameChildIndex(child : IDisplay) : int;
 		function setGameChildIndex(child : IDisplay, index : int) : void;
-		
-		function get sparent() : IContainer;
 	}
 }

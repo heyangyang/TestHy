@@ -66,5 +66,11 @@ package hy.game.stage3D.display
 		{
 			return mTinted;
 		}
+
+		public override function dispose() : void
+		{
+			super.dispose();
+			mVertexData = null;
+		}
 	}
 }

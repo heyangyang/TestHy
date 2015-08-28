@@ -83,6 +83,9 @@ package hy.game.stage3D.texture
 
 		public function dispose() : void
 		{
+			for each (var subTexture : SSubTexture in mSubTextures)
+				subTexture.dispose();
+			mSubTextures = null;
 			mAtlasTexture.dispose();
 		}
 	}

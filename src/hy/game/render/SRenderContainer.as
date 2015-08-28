@@ -48,10 +48,5 @@ package hy.game.render
 		{
 			this.removeChild(child as DisplayObject);
 		}
-		
-		public function get sparent() : IContainer
-		{
-			return parent as IContainer;
-		}
 	}
 }
