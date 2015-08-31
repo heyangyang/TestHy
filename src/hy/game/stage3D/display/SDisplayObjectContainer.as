@@ -1,26 +1,28 @@
 package hy.game.stage3D.display
 {
 	import hy.game.core.event.SEvent;
+	import hy.game.stage3D.interfaces.IDisplayObject;
+	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
 
 
-	public class SDisplayObjectContainer extends SDisplayObject
+	public class SDisplayObjectContainer extends SDisplayObject implements IDisplayObjectContainer
 	{
-		protected var mChildren : Vector.<SDisplayObject>;
+		protected var mChildren : Vector.<IDisplayObject>;
 		protected var mNumChildren : int;
 
 		public function SDisplayObjectContainer()
 		{
 			super();
 			mNumChildren = 0;
-			mChildren = new Vector.<SDisplayObject>();
+			mChildren = new Vector.<IDisplayObject>();
 		}
 
-		public function addChild(child : SDisplayObject) : SDisplayObject
+		public function addChild(child : IDisplayObject) : IDisplayObject
 		{
 			return addChildAt(child, mChildren.length);
 		}
 
-		public function addChildAt(child : SDisplayObject, index : int) : SDisplayObject
+		public function addChildAt(child : IDisplayObject, index : int) : IDisplayObject
 		{
 			if (index >= 0 && index <= mNumChildren)
 			{
@@ -47,7 +49,7 @@ package hy.game.stage3D.display
 			}
 		}
 
-		public function removeChild(child : SDisplayObject, dispose : Boolean = false) : SDisplayObject
+		public function removeChild(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
 			var childIndex : int = getChildIndex(child);
 			if (childIndex != -1)
@@ -55,12 +57,12 @@ package hy.game.stage3D.display
 			return child;
 		}
 
-		public function removeChildAt(index : int, dispose : Boolean = false) : SDisplayObject
+		public function removeChildAt(index : int, dispose : Boolean = false) : IDisplayObject
 		{
 			if (index >= 0 && index < mChildren.length)
 			{
 				mNumChildren--;
-				var child : SDisplayObject = mChildren[index];
+				var child : IDisplayObject = mChildren[index];
 				child.dispatchEventWith(SEvent.REMOVED, true);
 				child.setParent(null);
 				index = mChildren.indexOf(child);
@@ -85,7 +87,7 @@ package hy.game.stage3D.display
 				removeChildAt(beginIndex, dispose);
 		}
 
-		public function getChildAt(index : int) : SDisplayObject
+		public function getChildAt(index : int) : IDisplayObject
 		{
 			var numChildren : int = mChildren.length;
 
@@ -98,7 +100,7 @@ package hy.game.stage3D.display
 				throw new RangeError("Invalid child index");
 		}
 
-		public function getChildByName(name : String) : SDisplayObject
+		public function getChildByName(name : String) : IDisplayObject
 		{
 			var numChildren : int = mChildren.length;
 			for (var i : int = 0; i < numChildren; ++i)
@@ -108,12 +110,12 @@ package hy.game.stage3D.display
 			return null;
 		}
 
-		public function getChildIndex(child : SDisplayObject) : int
+		public function getChildIndex(child : IDisplayObject) : int
 		{
 			return mChildren.indexOf(child);
 		}
 
-		public function setChildIndex(child : SDisplayObject, index : int) : void
+		public function setChildIndex(child : IDisplayObject, index : int) : void
 		{
 			var oldIndex : int = getChildIndex(child);
 			if (oldIndex == index)
@@ -124,7 +126,7 @@ package hy.game.stage3D.display
 			spliceChildren(index, 0, child);
 		}
 
-		public function swapChildren(child1 : SDisplayObject, child2 : SDisplayObject) : void
+		public function swapChildren(child1 : IDisplayObject, child2 : IDisplayObject) : void
 		{
 			var index1 : int = getChildIndex(child1);
 			var index2 : int = getChildIndex(child2);
@@ -135,13 +137,13 @@ package hy.game.stage3D.display
 
 		public function swapChildrenAt(index1 : int, index2 : int) : void
 		{
-			var child1 : SDisplayObject = getChildAt(index1);
-			var child2 : SDisplayObject = getChildAt(index2);
+			var child1 : IDisplayObject = getChildAt(index1);
+			var child2 : IDisplayObject = getChildAt(index2);
 			mChildren[index1] = child2;
 			mChildren[index2] = child1;
 		}
 
-		public function contains(child : SDisplayObject) : Boolean
+		public function contains(child : IDisplayObject) : Boolean
 		{
 			while (child)
 			{
@@ -153,9 +155,9 @@ package hy.game.stage3D.display
 			return false;
 		}
 
-		protected function spliceChildren(startIndex : int, deleteCount : uint = uint.MAX_VALUE, insertee : SDisplayObject = null) : void
+		protected function spliceChildren(startIndex : int, deleteCount : uint = uint.MAX_VALUE, insertee : IDisplayObject = null) : void
 		{
-			var vector : Vector.<SDisplayObject> = mChildren;
+			var vector : Vector.<IDisplayObject> = mChildren;
 			var oldLength : uint = vector.length;
 
 			if (startIndex < 0)

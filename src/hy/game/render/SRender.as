@@ -2,14 +2,17 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IRecycle;
+	import hy.game.core.interfaces.IRender;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
+	import hy.game.stage3D.interfaces.IDisplayObject;
+	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
 	import hy.rpg.utils.UtilsCommon;
 
 	use namespace name_part;
@@ -19,7 +22,7 @@ package hy.game.render
 	 * @author hyy
 	 *
 	 */
-	public class SRender implements IRecycle
+	public class SRender implements IRender, IRecycle
 	{
 		private static var sIds : uint = 0;
 		private static var sMatrix : Matrix = new Matrix();
@@ -33,8 +36,8 @@ package hy.game.render
 		name_part var mParentX : int;
 		name_part var mParentY : int;
 		name_part var mParentAlpha : Number;
-		private var mX : int = int.MIN_VALUE;
-		private var mY : int = int.MIN_VALUE;
+		private var mX : Number;
+		private var mY : Number;
 		private var mScaleX : Number;
 		private var mScaleY : Number;
 		private var mNumChildren : int;
@@ -45,10 +48,10 @@ package hy.game.render
 		private var mLayer : int;
 		private var mVisible : Boolean;
 		private var mBlendMode : String;
-		private var mParent : SRender;
+		private var mParent : IRender;
 		private var mTransform : ColorTransform
 		private var mFilters : Array;
-		private var mChilds : Vector.<SRender>;
+		private var mChilds : Vector.<IRender>;
 		private var mContainer : IGameContainer;
 
 		public function SRender()
@@ -100,7 +103,7 @@ package hy.game.render
 		{
 			if (childs.indexOf(child) == -1)
 			{
-				child.parent = this;
+				child.setParent(this);
 				sort2Push(child);
 				mNumChildren++;
 				child.notifyAddedToRender();
@@ -109,7 +112,7 @@ package hy.game.render
 		}
 
 
-		public function sort2Push(child : SRender) : void
+		public function sort2Push(child : IRender) : void
 		{
 			if (mNumChildren == 0)
 			{
@@ -168,23 +171,31 @@ package hy.game.render
 			mContainer.addChildRender(child as SRender, child.parent.index + 1 + i);
 		}
 
-		public function removeChild(child : SRender) : SRender
+		public function removeChild(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
-			return removeChildAt(childs.indexOf(child));
+			return removeChildAt(childs.indexOf(child as IRender));
 		}
 
-		public function removeChildAt(index : int) : SRender
+		public function removeChildAt(index : int) : IRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
 			mNumChildren--;
-			var child : SRender = childs.splice(index, 1)[0];
+			var child : IRender = childs.splice(index, 1)[0];
 			child.notifyRemovedFromRender();
-			child.parent = null;
+			child.setParent(null);
 			return child;
 		}
 
-		public function getChildAt(index : int) : SRender
+		public function removeFromParent(dispose : Boolean = false) : void
+		{
+			if (mParent)
+				mParent.removeChild(this, dispose);
+			else if (dispose)
+				this.dispose();
+		}
+
+		public function getChildAt(index : int) : IRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
@@ -196,9 +207,9 @@ package hy.game.render
 			return childs.indexOf(child);
 		}
 
-		public function getChildByName(name : String) : SRender
+		public function getChildByName(name : String) : IRender
 		{
-			var child : SRender;
+			var child : IRender;
 			for (var i : int = 0; i < mNumChildren; i++)
 			{
 				child = childs[i];
@@ -208,10 +219,10 @@ package hy.game.render
 			return null;
 		}
 
-		private function get childs() : Vector.<SRender>
+		private function get childs() : Vector.<IRender>
 		{
 			if (mChilds == null)
-				mChilds = new Vector.<SRender>();
+				mChilds = new Vector.<IRender>();
 			return mChilds;
 		}
 
@@ -228,16 +239,16 @@ package hy.game.render
 			return mNumChildren;
 		}
 
-		public function get parent() : SRender
+		public function get parent() : IDisplayObjectContainer
 		{
 			return mParent;
 		}
 
-		public function set parent(value : SRender) : void
+		public function setParent(value : IDisplayObjectContainer) : void
 		{
 			if (mParent == value)
 				return;
-			mParent = value;
+			mParent = value as IRender;
 		}
 
 		/**
@@ -501,9 +512,14 @@ package hy.game.render
 			mName = value;
 		}
 
-		public function get render() : IBitmap
+		public function get display() : IBitmap
 		{
 			return mRender;
+		}
+
+		public function render() : void
+		{
+
 		}
 
 		public function set bitmapData(value : IBitmapData) : void
@@ -511,12 +527,12 @@ package hy.game.render
 			if (mBitmapData == value)
 				return;
 			mBitmapData = value;
-			render.data = value;
+			display.data = value;
 		}
 
 		public function get bitmapData() : IBitmapData
 		{
-			return render.data;
+			return display.data;
 		}
 
 		private function updateChildByField(field : String, value : *) : void
@@ -543,12 +559,23 @@ package hy.game.render
 			SObjectManager.recycleObject(this);
 		}
 
+		/**
+		 * 暂时没用到
+		 * @param type
+		 * @param data
+		 *
+		 */
+		public function dispatchEventWith(type : String, data : Object = null) : void
+		{
+
+		}
+
 		public function dispose() : void
 		{
 			if (parent)
 			{
 				parent.removeChild(this);
-				parent = null;
+				setParent(null);
 			}
 			while (mNumChildren > 0)
 				removeChildAt(0);

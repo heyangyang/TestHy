@@ -1,16 +1,17 @@
 package hy.game.stage3D.display
 {
 	import flash.geom.Matrix;
-
+	
 	import hy.game.core.event.SEventDispatcher;
-	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.errors.AbstractMethodError;
+	import hy.game.stage3D.interfaces.IDisplayObject;
+	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
 	import hy.game.stage3D.texture.SBlendMode;
 	import hy.game.stage3D.utils.SMathUtil;
 
 
 
-	public class SDisplayObject extends SEventDispatcher
+	public class SDisplayObject extends SEventDispatcher implements IDisplayObject
 	{
 		private var mX : Number;
 		private var mY : Number;
@@ -24,13 +25,13 @@ package hy.game.stage3D.display
 		private var mTouchable : Boolean;
 		private var mBlendMode : String;
 		private var mName : String;
-		private var mParent : SDisplayObjectContainer;
+		private var mParent : IDisplayObjectContainer;
 		private var mTransformationMatrix : Matrix;
 		protected var mOrientationChanged : Boolean;
 		/**
 		 * 记录索引位置
 		 */
-		name_part var mIndex : int;
+		private var mIndex : int;
 
 		public function SDisplayObject()
 		{
@@ -61,12 +62,12 @@ package hy.game.stage3D.display
 				this.dispose();
 		}
 
-		public function setParent(value : SDisplayObjectContainer) : void
+		public function setParent(value : IDisplayObjectContainer) : void
 		{
 			mParent = value;
 		}
 
-		public function get parent() : SDisplayObjectContainer
+		public function get parent() : IDisplayObjectContainer
 		{
 			return mParent;
 		}
@@ -99,6 +100,11 @@ package hy.game.stage3D.display
 			}
 
 			return mTransformationMatrix;
+		}
+
+		public function get index() : int
+		{
+			return mIndex;
 		}
 
 		public function get x() : Number

@@ -37,7 +37,7 @@ package hy.game.core
 		{
 			if (index > mContainer.numChildren)
 				index = mContainer.numChildren;
-			mContainer.addGameChildAt(render.render, index);
+			mContainer.addGameChildAt(render.display, index);
 		}
 
 		/**
@@ -48,14 +48,14 @@ package hy.game.core
 		 */
 		public function getRenderIndex(render : SRender) : int
 		{
-			return mContainer.getGameChildIndex(render.render);
+			return mContainer.getGameChildIndex(render.display);
 		}
 
 		public function setChildRenderIndex(render : SRender, index : int) : void
 		{
 			if (getRenderIndex(render) == index)
 				return;
-			mContainer.setGameChildIndex(render.render, index);
+			mContainer.setGameChildIndex(render.display, index);
 		}
 
 		/**
@@ -68,7 +68,7 @@ package hy.game.core
 			if (mRenders.indexOf(render) != -1)
 				return;
 			mRenders.push(render);
-			mContainer.addGameChild(render.render);
+			mContainer.addGameChild(render.display);
 			render.index = mNumRender++;
 			render.container = this;
 			mDepthSort = true;
@@ -85,7 +85,7 @@ package hy.game.core
 			if (index == -1)
 				return;
 			mRenders.splice(index, 1);
-			mContainer.removeGameChild(render.render);
+			mContainer.removeGameChild(render.display);
 			mNumRender--;
 			render.container = null;
 		}
@@ -197,13 +197,13 @@ package hy.game.core
 		protected function updateChildIndex(render : SRender) : void
 		{
 			render.index = render_index;
-			if (mContainer.getGameChildIndex(render.render) != render_index)
-				mContainer.setGameChildIndex(render.render, render_index++);
+			if (mContainer.getGameChildIndex(render.display) != render_index)
+				mContainer.setGameChildIndex(render.display, render_index++);
 			else
 				render_index += 1;
 			for (var i : int = 0; i < render.numChildren; i++)
 			{
-				mChild = render.getChildAt(i);
+				mChild = render.getChildAt(i) as SRender;
 				updateChildIndex(mChild);
 			}
 		}
