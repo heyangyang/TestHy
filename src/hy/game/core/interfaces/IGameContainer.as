@@ -1,6 +1,7 @@
 package hy.game.core.interfaces
 {
 	import hy.game.core.GameObject;
+	import hy.game.render.SRender;
 
 	public interface IGameContainer
 	{
@@ -11,11 +12,11 @@ package hy.game.core.interfaces
 		function addObject(object : GameObject) : void;
 		function removeObject(object : GameObject) : void;
 
-		function setChildRenderIndex(render : IRender, index : int) : void;
-		function addChildRender(render : IRender, index : int) : void;
-		function addRender(render : IRender) : void;
-		function removeRender(render : IRender) : void;
-		function getRenderIndex(render : IRender) : int;
+		function setChildRenderIndex(render : SRender, index : int) : void;
+		function addChildRender(render : SRender, index : int) : void;
+		function addRender(render : SRender) : void;
+		function removeRender(render : SRender) : void;
+		function getRenderIndex(render : SRender) : int;
 
 		function changePrioritySort() : void;
 		function changeDepthSort() : void;

@@ -2,13 +2,12 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.core.interfaces.IRecycle;
-	import hy.game.core.interfaces.IRender;
 	import hy.game.manager.SObjectManager;
 	import hy.game.namespaces.name_part;
 	import hy.rpg.utils.UtilsCommon;
@@ -20,7 +19,7 @@ package hy.game.render
 	 * @author hyy
 	 *
 	 */
-	public class SRender implements IRender, IRecycle
+	public class SRender implements IRecycle
 	{
 		private static var sIds : uint = 0;
 		private static var sMatrix : Matrix = new Matrix();
@@ -46,10 +45,10 @@ package hy.game.render
 		private var mLayer : int;
 		private var mVisible : Boolean;
 		private var mBlendMode : String;
-		private var mParent : IRender;
+		private var mParent : SRender;
 		private var mTransform : ColorTransform
 		private var mFilters : Array;
-		private var mChilds : Vector.<IRender>;
+		private var mChilds : Vector.<SRender>;
 		private var mContainer : IGameContainer;
 
 		public function SRender()
@@ -97,72 +96,109 @@ package hy.game.render
 				notifyRemovedFromRender();
 		}
 
-		public function addChild(child : IRender) : IRender
+		public function addChild(child : SRender) : SRender
 		{
 			if (childs.indexOf(child) == -1)
 			{
-				mNumChildren++;
 				child.parent = this;
-				mChilds.push(child);
-				updateChildIndex(child);
+				sort2Push(child);
+				mNumChildren++;
 				child.notifyAddedToRender();
 			}
 			return child;
 		}
 
-		public function updateChildIndex(child : IRender) : void
+
+		public function sort2Push(child : SRender) : void
 		{
-			var index : int = childs.indexOf(child);
-			if (index == -1)
-				throw new Error("SRender indexOf == -1");
-			for (var i : int = 0; i < numChildren; i++)
+			if (mNumChildren == 0)
 			{
-				//跳过自己
-				if (i == index)
-					continue;
-				//大于对方，则进行下一次比较
-				if (child.layer > mChilds[i].layer)
-					continue;
-				break;
+				mChilds.push(child);
+				mContainer.addChildRender(child as SRender, child.parent.index + 1);
+				return;
 			}
-			//插入前面一个
-			mChilds.splice(i, 0, child);
+			var tIndex : int = mChilds.indexOf(child);
+			//比较的索引
+			var tSortIndex : int;
+			//区间A，A-B,默认0开始
+			var tStartSortIndex : int = 0;
+			//区间B，A-B，默认数组长度
+			var tEndSortIndex : int = mNumChildren - 1;
+			//计算次数
+			var tCount : int = 1;
+			//每次计算后，区间值
+			var tValue : int = tSortIndex = Math.ceil(mNumChildren - 1 >> tCount);
+			while (tValue > 0)
+			{
+				tValue = Math.ceil(mNumChildren - 1 >> ++tCount);
+				//如果是自己，则比较前后一个
+				if (tSortIndex == tIndex)
+				{
+					if (child.layer > mChilds[tSortIndex + 1].layer)
+						tSortIndex++;
+					else
+						tSortIndex--;
+				}
+				//向后查找
+				if (child.layer > mChilds[tSortIndex].layer)
+				{
+					tStartSortIndex = tSortIndex;
+					tSortIndex += tValue;
+				}
+				//向前查找
+				else
+				{
+					tEndSortIndex = tSortIndex;
+					tSortIndex -= tValue;
+				}
+			}
+			for (var i : int = tStartSortIndex; i <= tEndSortIndex; i++)
+			{
+				if (child.layer < mChilds[i].layer)
+				{
+					break;
+				}
+			}
+
 			//移除以前的
-			mChilds.splice(i > index ? index : index + 1, 1);
+			if (tIndex != -1)
+				mChilds.splice(tIndex, 1);
+			//插入
+			mChilds.splice(tIndex == -1 || tIndex > i ? i : i + 1, 0, child);
 			mContainer.addChildRender(child as SRender, child.parent.index + 1 + i);
 		}
 
-		public function removeChild(child : IRender) : IRender
+		public function removeChild(child : SRender) : SRender
 		{
 			return removeChildAt(childs.indexOf(child));
 		}
 
-		public function removeChildAt(index : int) : IRender
+		public function removeChildAt(index : int) : SRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
 			mNumChildren--;
-			var child : IRender = childs.splice(index, 1)[0];
+			var child : SRender = childs.splice(index, 1)[0];
 			child.notifyRemovedFromRender();
 			child.parent = null;
 			return child;
 		}
 
-		public function getChildAt(index : int) : IRender
+		public function getChildAt(index : int) : SRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
 			return childs[index];
 		}
 
-		public function getChildIndex(child : IRender) : int
+		public function getChildIndex(child : SRender) : int
 		{
 			return childs.indexOf(child);
 		}
 
-		public function getChildByName(name : String) : IRender
+		public function getChildByName(name : String) : SRender
 		{
-			var child : IRender;
+			var child : SRender;
 			for (var i : int = 0; i < mNumChildren; i++)
 			{
 				child = childs[i];
@@ -172,10 +208,10 @@ package hy.game.render
 			return null;
 		}
 
-		private function get childs() : Vector.<IRender>
+		private function get childs() : Vector.<SRender>
 		{
 			if (mChilds == null)
-				mChilds = new Vector.<IRender>();
+				mChilds = new Vector.<SRender>();
 			return mChilds;
 		}
 
@@ -192,12 +228,12 @@ package hy.game.render
 			return mNumChildren;
 		}
 
-		public function get parent() : IRender
+		public function get parent() : SRender
 		{
 			return mParent;
 		}
 
-		public function set parent(value : IRender) : void
+		public function set parent(value : SRender) : void
 		{
 			if (mParent == value)
 				return;
@@ -452,7 +488,7 @@ package hy.game.render
 			if (mLayer == value)
 				return;
 			mLayer = value;
-			mParent && mParent.updateChildIndex(this);
+			mParent && mParent.sort2Push(this);
 		}
 
 		public function get name() : String

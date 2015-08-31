@@ -2,7 +2,6 @@ package hy.game.core
 {
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IGameContainer;
-	import hy.game.core.interfaces.IRender;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SRender;
 
@@ -15,7 +14,7 @@ package hy.game.core
 		protected var mDepthSort : Boolean;
 		protected var mPrioritySort : Boolean;
 		protected var mObjects : Vector.<GameObject>;
-		protected var mRenders : Vector.<IRender>;
+		protected var mRenders : Vector.<SRender>;
 		protected var mNumRender : int;
 		protected var mContainer : IContainer;
 
@@ -23,7 +22,7 @@ package hy.game.core
 		{
 			super();
 			mObjects = new Vector.<GameObject>();
-			mRenders = new Vector.<IRender>();
+			mRenders = new Vector.<SRender>();
 			mNumRender = 0;
 			mContainer = container;
 		}
@@ -34,7 +33,7 @@ package hy.game.core
 		 * @param index
 		 *
 		 */
-		public function addChildRender(render : IRender, index : int) : void
+		public function addChildRender(render : SRender, index : int) : void
 		{
 			if (index > mContainer.numChildren)
 				index = mContainer.numChildren;
@@ -47,12 +46,12 @@ package hy.game.core
 		 * @return
 		 *
 		 */
-		public function getRenderIndex(render : IRender) : int
+		public function getRenderIndex(render : SRender) : int
 		{
 			return mContainer.getGameChildIndex(render.render);
 		}
 
-		public function setChildRenderIndex(render : IRender, index : int) : void
+		public function setChildRenderIndex(render : SRender, index : int) : void
 		{
 			if (getRenderIndex(render) == index)
 				return;
@@ -64,7 +63,7 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		public function addRender(render : IRender) : void
+		public function addRender(render : SRender) : void
 		{
 			if (mRenders.indexOf(render) != -1)
 				return;
@@ -80,7 +79,7 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		public function removeRender(render : IRender) : void
+		public function removeRender(render : SRender) : void
 		{
 			var index : int = mRenders.indexOf(render);
 			if (index == -1)
@@ -175,7 +174,7 @@ package hy.game.core
 		 *
 		 */
 		private var render_index : int;
-		private var mChild : IRender;
+		private var mChild : SRender;
 
 		protected function updateDepthSort() : void
 		{
@@ -195,7 +194,7 @@ package hy.game.core
 		 * @param render
 		 *
 		 */
-		protected function updateChildIndex(render : IRender) : void
+		protected function updateChildIndex(render : SRender) : void
 		{
 			render.index = render_index;
 			if (mContainer.getGameChildIndex(render.render) != render_index)
