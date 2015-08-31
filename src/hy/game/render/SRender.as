@@ -1,8 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-	import flash.geom.Matrix;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
@@ -13,7 +12,6 @@ package hy.game.render
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.interfaces.IDisplayObject;
 	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
-	import hy.rpg.utils.UtilsCommon;
 
 	use namespace name_part;
 
@@ -25,7 +23,6 @@ package hy.game.render
 	public class SRender implements IRender, IRecycle
 	{
 		private static var sIds : uint = 0;
-		private static var sMatrix : Matrix = new Matrix();
 		/**
 		 * 唯一id
 		 */
@@ -226,14 +223,6 @@ package hy.game.render
 			return mChilds;
 		}
 
-		public function removeAllChildren() : void
-		{
-			while (mNumChildren > 0)
-			{
-				removeChildAt(mNumChildren - 1);
-			}
-		}
-
 		public function get numChildren() : int
 		{
 			return mNumChildren;
@@ -249,24 +238,6 @@ package hy.game.render
 			if (mParent == value)
 				return;
 			mParent = value as IRender;
-		}
-
-		/**
-		 * 通过弧度旋转
-		 * @param rotate 相对于原矩阵要旋转的弧度值
-		 * @param pointX 旋转基点
-		 * @param pointY 旋转基点
-		 */
-		public function rotate(rotate : Number, pointX : int = 0, pointY : int = 0) : void
-		{
-			var angle : int = UtilsCommon.getAngleByRotate(rotate);
-			sMatrix.identity();
-			sMatrix.translate(-pointX, -pointY);
-			sMatrix.rotate(rotate);
-			sMatrix.translate(pointX, pointY);
-			mRender.rotation = angle;
-			x += sMatrix.tx;
-			y += sMatrix.ty;
 		}
 
 		public function get x() : Number

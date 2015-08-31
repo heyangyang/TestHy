@@ -12,7 +12,6 @@ package hy.game.core.interfaces
 		function addObject(object : GameObject) : void;
 		function removeObject(object : GameObject) : void;
 
-		function setChildRenderIndex(render : SRender, index : int) : void;
 		function addChildRender(render : SRender, index : int) : void;
 		function addRender(render : SRender) : void;
 		function removeRender(render : SRender) : void;
