@@ -3,7 +3,7 @@ package hy.game.core
 
 	import hy.game.core.interfaces.IComponent;
 	import hy.game.core.interfaces.IRecycle;
-	import hy.game.manager.SObjectManager;
+	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.utils.SDebug;
 
@@ -87,7 +87,7 @@ package hy.game.core
 		 */
 		public function recycle() : void
 		{
-			SObjectManager.recycleObject(this);
+			SMemeryManager.recycleObject(this);
 		}
 
 		public function print(... args) : void

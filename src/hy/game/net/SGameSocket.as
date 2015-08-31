@@ -3,7 +3,7 @@ package hy.game.net
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 
-	import hy.game.manager.SObjectManager;
+	import hy.game.manager.SMemeryManager;
 	import hy.game.net.interfaces.INotify;
 	import hy.game.utils.SDebug;
 
@@ -63,7 +63,7 @@ package hy.game.net
 		public function sendData(dataBase : SNetBaseData) : void
 		{
 			send(dataBase.cmdId, dataBase.serialize());
-			SObjectManager.recycleObject(dataBase);
+			SMemeryManager.recycleObject(dataBase);
 		}
 
 		private var mDataClass : Class
@@ -81,7 +81,7 @@ package hy.game.net
 			}
 
 			//取对象
-			mDataBase = SObjectManager.getObject(mDataClass);
+			mDataBase = SMemeryManager.getObject(mDataClass);
 			mDataBase.deSerialize(pack);
 			mNotify = mProtocolId_dic[module];
 
@@ -95,7 +95,7 @@ package hy.game.net
 			}
 			//用完立马回收
 			mDataBase.dispose();
-			SObjectManager.recycleObject(mDataBase);
+			SMemeryManager.recycleObject(mDataBase);
 		}
 	}
 }

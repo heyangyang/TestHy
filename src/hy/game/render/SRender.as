@@ -1,14 +1,14 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IBitmapData;
-	import hy.game.core.interfaces.IGameContainer;
+	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IRecycle;
 	import hy.game.core.interfaces.IRender;
-	import hy.game.manager.SObjectManager;
+	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.interfaces.IDisplayObject;
 	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
@@ -49,7 +49,7 @@ package hy.game.render
 		private var mTransform : ColorTransform
 		private var mFilters : Array;
 		private var mChilds : Vector.<IRender>;
-		private var mContainer : IGameContainer;
+		private var mContainer : IContainer;
 
 		public function SRender()
 		{
@@ -89,10 +89,10 @@ package hy.game.render
 			}
 		}
 
-		public function set container(value : IGameContainer) : void
+		public function set container(value : IContainer) : void
 		{
 			mContainer = value;
-			if (!mContainer)
+			if (mContainer == null)
 				notifyRemovedFromRender();
 		}
 
@@ -109,12 +109,17 @@ package hy.game.render
 		}
 
 
+		/**
+		 * 二分插入法
+		 * @param child
+		 *
+		 */
 		public function sort2Push(child : IRender) : void
 		{
 			if (mNumChildren == 0)
 			{
 				mChilds.push(child);
-				mContainer.addChildRender(child as SRender, child.parent.index + 1);
+				//mContainer.addChildRender(child as SRender, child.parent.index + 1);
 				return;
 			}
 			var tIndex : int = mChilds.indexOf(child);
@@ -152,9 +157,9 @@ package hy.game.render
 					tSortIndex -= tValue;
 				}
 			}
-			for (var i : int = tStartSortIndex; i <= tEndSortIndex; i++)
+			for (tSortIndex = tStartSortIndex; tSortIndex <= tEndSortIndex; tSortIndex++)
 			{
-				if (child.layer < mChilds[i].layer)
+				if (child.layer < mChilds[tSortIndex].layer)
 				{
 					break;
 				}
@@ -164,8 +169,8 @@ package hy.game.render
 			if (tIndex != -1)
 				mChilds.splice(tIndex, 1);
 			//插入
-			mChilds.splice(tIndex == -1 || tIndex > i ? i : i + 1, 0, child);
-			mContainer.addChildRender(child as SRender, child.parent.index + 1 + i);
+			mChilds.splice(tIndex == -1 || tIndex > tSortIndex ? tSortIndex : tSortIndex + 1, 0, child);
+			//mContainer.addChildRender(child as SRender, child.parent.index + 1 + tSortIndex);
 		}
 
 		public function removeChild(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
@@ -190,6 +195,7 @@ package hy.game.render
 				mParent.removeChild(this, dispose);
 			else if (dispose)
 				this.dispose();
+			mParent = null;
 		}
 
 		public function getChildAt(index : int) : IRender
@@ -437,22 +443,7 @@ package hy.game.render
 		name_part function set depth(value : int) : void
 		{
 			mDepth = value;
-			mContainer && mContainer.changeDepthSort();
-		}
-
-		/**
-		 * 所在容器中的索引
-		 * @return
-		 *
-		 */
-		public function get index() : int
-		{
-			return mIndex;
-		}
-
-		public function set index(value : int) : void
-		{
-			mIndex = value;
+			//mContainer && mContainer.changeDepthSort();
 		}
 
 		/**
@@ -473,24 +464,16 @@ package hy.game.render
 			mParent && mParent.sort2Push(this);
 		}
 
-		public function get name() : String
-		{
-			return mName;
-		}
-
-		public function set name(value : String) : void
-		{
-			mName = value;
-		}
-
-		public function get display() : IBitmap
-		{
-			return mRender;
-		}
-
 		public function render() : void
 		{
-
+			if (mNumChildren > 0)
+			{
+				for (var i : int = 0; i < mNumChildren; i++)
+				{
+					mChilds[i].render();
+				}
+			}
+			mRender.render();
 		}
 
 		public function set bitmapData(value : IBitmapData) : void
@@ -527,7 +510,7 @@ package hy.game.render
 		 */
 		public function recycle() : void
 		{
-			SObjectManager.recycleObject(this);
+			SMemeryManager.recycleObject(this);
 		}
 
 		/**
@@ -541,13 +524,39 @@ package hy.game.render
 
 		}
 
+		public function get name() : String
+		{
+			return mName;
+		}
+
+		public function set name(value : String) : void
+		{
+			mName = value;
+		}
+
+		public function get display() : IBitmap
+		{
+			return mRender;
+		}
+
+		/**
+		 * 所在容器中的索引
+		 * @return
+		 *
+		 */
+		public function get index() : int
+		{
+			return mIndex;
+		}
+
+		public function set index(value : int) : void
+		{
+			mIndex = value;
+		}
+
 		public function dispose() : void
 		{
-			if (parent)
-			{
-				parent.removeChild(this);
-				setParent(null);
-			}
+			removeFromParent();
 			while (mNumChildren > 0)
 				removeChildAt(0);
 			bitmapData = null;

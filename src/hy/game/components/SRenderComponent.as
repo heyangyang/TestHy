@@ -66,12 +66,12 @@ package hy.game.components
 
 		protected function addRender(render : SRender) : void
 		{
-			mOwner && mOwner.addRender(render);
+			error("必须重写此方法");
 		}
 
 		protected function removeRender(render : SRender) : void
 		{
-			mOwner && mOwner.removeRender(render);
+			error("必须重写此方法");
 		}
 
 		override public function dispose() : void

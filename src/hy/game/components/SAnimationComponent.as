@@ -4,7 +4,9 @@ package hy.game.components
 	import hy.game.aEffect.SEffectResource;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.core.STime;
+	import hy.game.manager.SLayerManager;
 	import hy.game.namespaces.name_part;
+	import hy.game.render.SRender;
 	import hy.rpg.enum.EnumLoadPriority;
 
 	use namespace name_part;
@@ -125,6 +127,21 @@ package hy.game.components
 			mEffect = effect;
 			mEffect.gotoEffect(mTransform.dir, 0, mLoops);
 			mRender.depth = mRender.y;
+		}
+		
+		/**
+		 * 不添加到父类，直接添加到name层
+		 * @param render
+		 *
+		 */
+		protected override function addRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
+		}
+		
+		protected override function removeRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
 		}
 
 		override public function dispose() : void

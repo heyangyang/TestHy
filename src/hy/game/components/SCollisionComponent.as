@@ -54,11 +54,11 @@ package hy.game.components
 		}
 
 		/**
-		 * 像素级检测 
+		 * 像素级检测
 		 * @param mouseX
 		 * @param mouseY
-		 * @return 
-		 * 
+		 * @return
+		 *
 		 */
 		public function checkPixelIn(mouseX : int, mouseY : int) : Boolean
 		{
@@ -90,7 +90,7 @@ package hy.game.components
 
 		public function get index() : int
 		{
-			return mOwner.render.index;
+			return mTransform.y;
 		}
 	}
 }

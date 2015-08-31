@@ -10,12 +10,12 @@ package hy.game.manager
 	 * @author yangyang
 	 *
 	 */
-	public class SObjectManager
+	public class SMemeryManager
 	{
 
 		private static var sMemory : Dictionary = new Dictionary();
 
-		public function SObjectManager()
+		public function SMemeryManager()
 		{
 		}
 

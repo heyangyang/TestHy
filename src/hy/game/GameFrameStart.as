@@ -7,10 +7,11 @@ package hy.game
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameDispatcher;
 	import hy.game.core.SMainGameFrame;
+	import hy.game.manager.GameObjectManager;
 	import hy.game.manager.SKeyboardManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
@@ -83,6 +84,7 @@ package hy.game
 			STimeControl.getInstance();
 			ManagerGameCreate.getInstance();
 			//添加序列渲染
+			SMainGameFrame.getInstance().addGameFrame(GameObjectManager.getInstance());
 			SMainGameFrame.getInstance().addGameFrame(SLayerManager.getInstance());
 			SMainGameFrame.getInstance().addGameFrame(SUpdateManager.getInstance());
 		}

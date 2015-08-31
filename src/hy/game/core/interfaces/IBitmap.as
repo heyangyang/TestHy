@@ -5,6 +5,8 @@ package hy.game.core.interfaces
 
 	public interface IBitmap extends IDisplay
 	{
+		function render() : void;
+			
 		function set data(value : IBitmapData) : void;
 		function get data() : IBitmapData;
 

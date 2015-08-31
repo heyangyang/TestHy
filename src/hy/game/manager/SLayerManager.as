@@ -1,15 +1,11 @@
 package hy.game.manager
 {
-	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
-	import hy.game.core.GameContainer;
-	import hy.game.core.GameObject;
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.core.interfaces.IEnterFrame;
-	import hy.game.core.interfaces.IGameContainer;
 	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
@@ -46,10 +42,9 @@ package hy.game.manager
 			return instance;
 		}
 
-		private var mList : Vector.<IGameContainer>;
-		private var mDictionary : Dictionary;
+		private var mList : Vector.<IContainer>;
+		private var mRenderDictionary : Dictionary;
 		private var mStage : Stage;
-		private var mNeedSort : Boolean;
 
 
 		public function SLayerManager()
@@ -63,8 +58,8 @@ package hy.game.manager
 			if (stage == null)
 				error("stage==null");
 			mStage = stage;
-			mList = new Vector.<IGameContainer>();
-			mDictionary = new Dictionary();
+			mList = new Vector.<IContainer>();
+			mRenderDictionary = new Dictionary();
 			//添加默认层级
 			addLayer(LAYER_MAP, EnumPriority.PRIORITY_9, createContainer());
 			addLayer(LAYER_EFFECT_BOTTOM, EnumPriority.PRIORITY_8, createContainer());
@@ -84,77 +79,50 @@ package hy.game.manager
 			}
 		}
 
-		private function addLayer(tag : String, priority : int, container : IContainer) : void
-		{
-			if (mDictionary[tag])
-				error(this, tag, "is exists");
-			var gameContainer : IGameContainer = new GameContainer(container);
-			gameContainer.tag = tag;
-			gameContainer.priority = priority;
-			if (gameContainer.container is SRenderContainer)
-				mStage.addChild(gameContainer.container as DisplayObject);
-			else
-				SStage3D.stage.addChild(gameContainer.container as SDirectContainer);
-			mList.push(gameContainer);
-			mDictionary[tag] = gameContainer;
-			mNeedSort = true;
-		}
-
 		public function update() : void
 		{
-			mNeedSort && onSort();
 			for (var i : int = mList.length - 1; i >= 0; i--)
 			{
 				mList[i].update();
 			}
 		}
 
-		private function onSort() : void
+		private function addLayer(tag : String, priority : int, container : IContainer) : void
 		{
-			mList.sort(onPrioritySortFun);
-			mNeedSort = false;
+			if (mRenderDictionary[tag])
+				error(this, tag, "is exists");
+			container.tag = tag;
+			container.priority = priority;
+			if (container is SRenderContainer)
+				mStage.addChild(container as SRenderContainer);
+			else
+				SStage3D.stage.addChild(container as SDirectContainer);
+			mList.push(container);
+			mRenderDictionary[tag] = container;
 		}
 
-		private function onPrioritySortFun(a : IGameContainer, b : IGameContainer) : int
+		public function push(type : String, render : SRender) : void
 		{
-			if (a.priority > b.priority)
-				return 1;
-			if (a.priority < b.priority)
-				return -1;
-			return 0;
-		}
-
-		public function addObjectByType(type : String, object : GameObject) : void
-		{
-			var gameContainer : IGameContainer = mDictionary[type];
+			var gameContainer : IContainer = mRenderDictionary[type];
 			if (!gameContainer)
 			{
 				error("layer is not find :" + type);
 				return;
 			}
-			object.owner = gameContainer;
+			render.container = gameContainer;
+			gameContainer.push(render);
 		}
 
-		public function addRenderByType(type : String, render : SRender) : void
+		public function remove(type : String, render : SRender) : void
 		{
-			var gameContainer : IGameContainer = mDictionary[type];
+			var gameContainer : IContainer = mRenderDictionary[type];
 			if (!gameContainer)
 			{
 				error("layer is not find :" + type);
 				return;
 			}
-			gameContainer.addRender(render);
-		}
-
-		public function removeRenderByType(type : String, render : SRender) : void
-		{
-			var gameContainer : IGameContainer = mDictionary[type];
-			if (!gameContainer)
-			{
-				error("layer is not find :" + type);
-				return;
-			}
-			gameContainer.removeRender(render);
+			render.container = null;
+			gameContainer.remove(render);
 		}
 	}
 }

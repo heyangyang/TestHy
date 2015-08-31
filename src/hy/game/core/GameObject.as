@@ -1,13 +1,12 @@
 package hy.game.core
 {
 	import flash.utils.Dictionary;
-
-	import hy.game.core.interfaces.IGameContainer;
+	
 	import hy.game.core.interfaces.IGameObject;
 	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
+	import hy.game.manager.GameObjectManager;
 	import hy.game.namespaces.name_part;
-	import hy.game.render.SRender;
 
 	use namespace name_part;
 
@@ -19,66 +18,6 @@ package hy.game.core
 	 */
 	public class GameObject extends SUpdate implements IGameObject
 	{
-		private static var sDic_name : Dictionary = new Dictionary();
-		private static var sDic_tag : Dictionary = new Dictionary();
-
-		public static function findGameObject(name : String) : GameObject
-		{
-			if (sDic_name[name] == null)
-				return null;
-			return sDic_name[name][0];
-		}
-
-		public static function findGameObjects(name : String) : GameObject
-		{
-			if (sDic_name[name] == null)
-				return null;
-			return sDic_name[name];
-		}
-
-		public static function findWithTag(name : String) : GameObject
-		{
-			if (sDic_tag[name] == null)
-				return null;
-			return sDic_tag[name][0];
-		}
-
-		public static function findWithTags(name : String) : Array
-		{
-			if (sDic_tag[name] == null)
-				return null;
-			return sDic_tag[name];
-		}
-
-		private static function addGameObject(name : String, gameObject : GameObject, dic : Dictionary) : void
-		{
-			if (!name)
-				return;
-			var list : Array;
-			if (dic[name] == null)
-				dic[name] = [];
-			list = dic[name];
-			if (list.indexOf(gameObject) == -1)
-				list.push(gameObject);
-		}
-
-		private static function removeGameObject(name : String, gameObject : GameObject, dic : Dictionary) : void
-		{
-			if (!name)
-				return;
-			var list : Array;
-			if (dic[name] == null)
-				dic[name] = [];
-			list = dic[name];
-			var index : int = list.indexOf(gameObject);
-			if (index != -1)
-				list.splice(index, 1);
-		}
-
-		/**
-		 * 是否需要排序组件
-		 */
-		protected var mPrioritySort : Boolean;
 		protected var mName : String;
 		protected var mTag : String;
 		protected var mId : int;
@@ -87,13 +26,17 @@ package hy.game.core
 		 */
 		protected var mComponents : Vector.<FrameComponent>;
 		/**
+		 * 更新组件数量
+		 */
+		protected var mNumChildren : int;
+		/**
 		 * 字典，根据类型储存
 		 */
 		protected var mComponentTypes : Dictionary;
 		/**
 		 * 容器
 		 */
-		private var mOwner : IGameContainer;
+		private var mOwner : GameObjectManager;
 		/**
 		 * 是否激活
 		 */
@@ -102,10 +45,6 @@ package hy.game.core
 		 * 显示状态的所有属性
 		 */
 		private var mTransform : STransform;
-		/**
-		 * 渲染容器
-		 */
-		protected var mRender : SRender;
 
 		public function GameObject()
 		{
@@ -117,7 +56,7 @@ package hy.game.core
 		{
 			mComponents = new Vector.<FrameComponent>();
 			mComponentTypes = new Dictionary(true);
-			mRender = new SRender();
+			mNumChildren = 0;
 			start();
 		}
 
@@ -146,14 +85,16 @@ package hy.game.core
 
 		}
 
+		/**
+		 * 必须在注册之前修改才有效
+		 * @return
+		 *
+		 */
 		public function set name(value : String) : void
 		{
-			if (mName == value)
-				return;
-			if (!mName)
-				removeGameObject(mName, this, sDic_tag);
 			mName = value;
-			addGameObject(mName, this, sDic_name);
+			if (isRegisterd)
+				error("必须在注册之前修改才有效 ");
 		}
 
 		public function get name() : String
@@ -161,24 +102,21 @@ package hy.game.core
 			return mName;
 		}
 
+		/**
+		 * 必须在注册之前修改才有效
+		 * @return
+		 *
+		 */
 		public function set tag(value : String) : void
 		{
-			if (mTag == value)
-				return;
-			if (!mTag)
-				removeGameObject(mTag, this, sDic_tag);
 			mTag = value;
-			addGameObject(mTag, this, sDic_tag);
+			if (isRegisterd)
+				error("必须在注册之前修改才有效 ");
 		}
 
 		public function get tag() : String
 		{
 			return mTag;
-		}
-
-		name_part function set owner(value : IGameContainer) : void
-		{
-			mOwner = value;
 		}
 
 		public function get depth() : int
@@ -219,29 +157,25 @@ package hy.game.core
 		{
 			mPriority = priority;
 			mRegisterd = true;
+			mOwner = GameObjectManager.getInstance();
 			if (!mOwner)
 				error(this, "mOwner=null");
 			mIsActive = true;
-			mOwner.changePrioritySort();
-			mOwner.addObject(this);
-			mOwner.addRender(mRender);
+			mOwner.push(this);
 		}
 
 		override public function unRegisterd() : void
 		{
+			mRegisterd = false;
+			mIsActive = false;
 			if (mOwner)
-			{
-				mIsActive = false;
-				mOwner.removeRender(mRender);
-				mOwner.removeObject(this);
-			}
+				mOwner.remove(this);
 		}
 
 		override public function update() : void
 		{
-			mPrioritySort && onSort();
 			var component : FrameComponent;
-			for (var i : int = mComponents.length - 1; i >= 0; i--)
+			for (var i : int = mNumChildren - 1; i >= 0; i--)
 			{
 				component = mComponents[i];
 				if (component.isDispose)
@@ -256,9 +190,9 @@ package hy.game.core
 		{
 			transform.x = transform.x;
 			transform.y = transform.y;
-			mRender.x = transform.screenX;
-			mRender.y = transform.screenY;
-			mRender.depth = transform.y;
+//			mRender.x = transform.screenX;
+//			mRender.y = transform.screenY;
+//			mRender.depth = transform.y;
 		}
 
 		/**
@@ -275,33 +209,66 @@ package hy.game.core
 			transform.excuteNotify();
 		}
 
-
 		/**
-		 * 组件排序
+		 * 2分插入法
+		 * @param child
 		 *
 		 */
-		protected function onSort() : void
+		public function sort2Push(child : FrameComponent) : void
 		{
-			mComponents.sort(onPrioritySortFun);
-			mPrioritySort = false;
-		}
+			if (mNumChildren == 0)
+			{
+				mComponents.push(child);
+				return;
+			}
+			var tIndex : int = mComponents.indexOf(child);
+			//比较的索引
+			var tSortIndex : int;
+			//区间A，A-B,默认0开始
+			var tStartSortIndex : int = 0;
+			//区间B，A-B，默认数组长度
+			var tEndSortIndex : int = mNumChildren - 1;
+			//计算次数
+			var tCount : int = 1;
+			//每次计算后，区间值
+			var tValue : int = tSortIndex = Math.ceil(mNumChildren - 1 >> tCount);
+			while (tValue > 0)
+			{
+				tValue = Math.ceil(mNumChildren - 1 >> ++tCount);
+				//如果是自己，则比较前后一个
+				if (tSortIndex == tIndex)
+				{
+					if (child.priority > mComponents[tSortIndex + 1].priority)
+						tSortIndex++;
+					else
+						tSortIndex--;
+				}
+				//向后查找
+				if (child.priority > mComponents[tSortIndex].priority)
+				{
+					tStartSortIndex = tSortIndex;
+					tSortIndex += tValue;
+				}
+				//向前查找
+				else
+				{
+					tEndSortIndex = tSortIndex;
+					tSortIndex -= tValue;
+				}
+			}
+			for (tSortIndex = tStartSortIndex; tSortIndex <= tEndSortIndex; tSortIndex++)
+			{
+				if (child.priority < mComponents[tSortIndex].priority)
+				{
+					break;
+				}
+			}
 
-		private function onPrioritySortFun(a : FrameComponent, b : FrameComponent) : int
-		{
-			if (a.priority > b.priority)
-				return 1;
-			if (a.priority < b.priority)
-				return -1;
-			return 0;
-		}
-
-		/**
-		 * 设置排序状态
-		 *
-		 */
-		public function updatePrioritySort() : void
-		{
-			mPrioritySort = true;
+			//移除以前的
+			if (tIndex != -1)
+				mComponents.splice(tIndex, 1);
+			//插入
+			mComponents.splice(tIndex == -1 || tIndex > tSortIndex ? tSortIndex : tSortIndex + 1, 0, child);
 		}
 
 		public function addComponent(component : Component, priority : int = 0) : void
@@ -311,9 +278,9 @@ package hy.game.core
 			var frameComponent : FrameComponent = component as FrameComponent;
 			if (frameComponent && mComponents.indexOf(frameComponent) == -1)
 			{
-				updatePrioritySort();
-				mComponents.push(component);
 				frameComponent.registerd(priority);
+				sort2Push(frameComponent);
+				mNumChildren++;
 			}
 
 			if (component.type == null)
@@ -334,16 +301,7 @@ package hy.game.core
 			if (index == -1)
 				return;
 			mComponents.splice(index, 1);
-		}
-
-		public function addRender(render : SRender) : void
-		{
-			mRender.addChild(render);
-		}
-
-		public function removeRender(render : SRender) : void
-		{
-			mRender && mRender.removeChild(render);
+			mNumChildren--;
 		}
 
 		public function removeComponentByType(type : *) : void
@@ -356,9 +314,14 @@ package hy.game.core
 			return mComponentTypes[type];
 		}
 
-		public function get render() : SRender
+		public function get id() : int
 		{
-			return mRender;
+			return mId;
+		}
+
+		public function set id(value : int) : void
+		{
+			mId = value;
 		}
 
 		private function clearComponents() : void
@@ -378,24 +341,11 @@ package hy.game.core
 			if (mIsDisposed)
 				return;
 			unRegisterd();
-			mRender && mRender.dispose();
-			mRender = null;
 			mOwner = null;
 			clearComponents();
 			tag = null;
 			name = null;
 			super.dispose();
 		}
-
-		public function get id() : int
-		{
-			return mId;
-		}
-
-		public function set id(value : int) : void
-		{
-			mId = value;
-		}
-
 	}
 }

@@ -1,24 +1,20 @@
 package hy.game.core.interfaces
 {
+	import hy.game.render.SRender;
 
 	public interface IContainer extends IDisplay
 	{
-		function set x(value : Number) : void;
-		function set y(value : Number) : void;
-		function get x() : Number;
-		function get y() : Number;
+		function set tag(value : String) : void;
+		function get tag() : String;
 
-		function set scaleX(value : Number) : void;
-		function set scaleY(value : Number) : void;
-		function get scaleX() : Number;
-		function get scaleY() : Number;
+		function set priority(value : int) : void;
+		function get priority() : int;
+
+		function update() : void;
 
 		function get numChildren() : int;
-		function removeGameChildAt(index : int) : void;
-		function removeGameChild(child : IDisplay) : void;
-		function addGameChild(child : IDisplay) : void;
-		function addGameChildAt(child : IDisplay, index : int) : void;
-		function getGameChildIndex(child : IDisplay) : int;
-		function setGameChildIndex(child : IDisplay, index : int) : void;
+
+		function push(render : SRender) : void;
+		function remove(render : SRender) : void;
 	}
 }

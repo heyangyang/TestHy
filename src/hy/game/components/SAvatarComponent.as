@@ -5,6 +5,8 @@ package hy.game.components
 	import hy.game.avatar.SAvatar;
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
+	import hy.game.manager.SLayerManager;
+	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
 
@@ -197,6 +199,21 @@ package hy.game.components
 				}
 			}
 			return false;
+		}
+		
+		/**
+		 * 不添加到父类，直接添加到name层
+		 * @param render
+		 *
+		 */
+		protected override function addRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
+		}
+		
+		protected override function removeRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
 		}
 
 		override public function dispose() : void

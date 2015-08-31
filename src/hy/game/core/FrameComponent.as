@@ -51,14 +51,13 @@ package hy.game.core
 			return mPriority;
 		}
 
-		public function registerd(priority : int = EnumPriority.PRIORITY_0) : void
+		name_part function registerd(priority : int = EnumPriority.PRIORITY_0) : void
 		{
 			mPriority = priority;
 			mRegisterd = true;
-			mOwner && mOwner.updatePrioritySort();
 		}
 
-		public function unRegisterd() : void
+		name_part function unRegisterd() : void
 		{
 			mRegisterd = false;
 		}

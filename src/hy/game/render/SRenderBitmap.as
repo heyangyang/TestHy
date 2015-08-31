@@ -76,6 +76,11 @@ package hy.game.render
 			super.y = value + mOffsetY;
 		}
 
+		public function render() : void
+		{
+			
+		}
+		
 		public function dispose() : void
 		{
 			if (bitmapData)

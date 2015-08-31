@@ -9,7 +9,7 @@
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 
-	import hy.game.manager.SObjectManager;
+	import hy.game.manager.SMemeryManager;
 
 	/**
 	 *
@@ -128,7 +128,7 @@
 				return;
 			}
 			//取对象
-			var sendBytes : SByteArray = SObjectManager.getObject(SByteArray);
+			var sendBytes : SByteArray = SMemeryManager.getObject(SByteArray);
 			sendBytes.writeShort(dataBytes.length); // 写入包长(不包括包头长度)
 			sendBytes.writeByte(mOrder);
 			sendBytes.writeShort(module);
@@ -141,8 +141,8 @@
 			else
 				mOrder++;
 			//用完立马回收
-			SObjectManager.recycleObject(sendBytes);
-			SObjectManager.recycleObject(dataBytes);
+			SMemeryManager.recycleObject(sendBytes);
+			SMemeryManager.recycleObject(dataBytes);
 		}
 
 		private function addListener() : void
