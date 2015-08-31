@@ -85,7 +85,6 @@ package hy.game
 			ManagerGameCreate.getInstance();
 			//添加序列渲染
 			SMainGameFrame.getInstance().addGameFrame(GameObjectManager.getInstance());
-			SMainGameFrame.getInstance().addGameFrame(SLayerManager.getInstance());
 			SMainGameFrame.getInstance().addGameFrame(SUpdateManager.getInstance());
 		}
 

@@ -42,12 +42,12 @@ package hy.game.render
 		 */
 		public function update() : void
 		{
-			
+
 		}
-		
-		public override function render():void
+
+		public override function render() : void
 		{
-			for (var i : int = 0; i < mNumRender; ++i)
+			for (var i : int = 0; i < mNumRender; i++)
 			{
 				mRenders[i].render();
 			}
@@ -108,6 +108,13 @@ package hy.game.render
 				}
 			}
 
+			var value : int = mRenders[0].layer;
+			for (var i : int = 1; i < mNumRender; i++)
+			{
+				if (value > mRenders[i].layer)
+					trace(1111);
+				value = mRenders[i].layer;
+			}
 			//移除以前的
 			if (tIndex != -1)
 				mRenders.splice(tIndex, 1);
@@ -127,7 +134,7 @@ package hy.game.render
 				sort2Push(render);
 				return;
 			}
-			mRenders.push(render);
+			sort2Push(render);
 			render.index = mNumRender++;
 			render.container = this;
 		}

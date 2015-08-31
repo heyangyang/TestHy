@@ -9,6 +9,7 @@ package hy.game.components
 	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
+	import hy.rpg.enum.EnumRenderLayer;
 
 	/**
 	 * 人物模型组件
@@ -70,6 +71,7 @@ package hy.game.components
 		{
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.ROLE;
+			mRender.layer = 0;
 			mDir = mAction = -1;
 			mUseCenterOffsetY = true;
 			needReversal = false;
@@ -86,6 +88,7 @@ package hy.game.components
 		{
 			super.onStart();
 			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
+			mTransform.addPositionChange(updatePosition);
 			if (mUseDefaultAvatar)
 			{
 				mAvatar.dirMode = default_avatar.dirMode;
@@ -104,6 +107,7 @@ package hy.game.components
 			mAvatar = null;
 			mData = null;
 		}
+
 		override public function update() : void
 		{
 			if (mResource.isChange)
@@ -152,11 +156,18 @@ package hy.game.components
 			}
 			mFrame.needReversal && mFrame.reverseData();
 			mRender.bitmapData = mFrame.frameData;
-			mRender.x = mFrame.x;
+			updatePosition();
+		}
+
+		protected function updatePosition() : void
+		{
+			if (!mFrame)
+				return;
+			mRender.x = mTransform.screenX + mFrame.x;
 			if (mUseCenterOffsetY)
-				mRender.y = mFrame.y + mTransform.centerOffsetY;
+				mRender.y = mTransform.screenX + mFrame.y + mTransform.centerOffsetY;
 			else
-				mRender.y = mFrame.y;
+				mRender.y = mTransform.screenX + mFrame.y;
 		}
 
 		/**
@@ -200,7 +211,7 @@ package hy.game.components
 			}
 			return false;
 		}
-		
+
 		/**
 		 * 不添加到父类，直接添加到name层
 		 * @param render
@@ -210,7 +221,7 @@ package hy.game.components
 		{
 			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
 		}
-		
+
 		protected override function removeRender(render : SRender) : void
 		{
 			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);

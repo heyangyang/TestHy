@@ -7,11 +7,6 @@ package hy.game.core.interfaces
 		function set tag(value : String) : void;
 		function get tag() : String;
 
-		function set priority(value : int) : void;
-		function get priority() : int;
-
-		function update() : void;
-
 		function get numChildren() : int;
 
 		function push(render : SRender) : void;

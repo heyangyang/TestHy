@@ -5,8 +5,6 @@ package hy.game.manager
 	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IContainer;
-	import hy.game.core.interfaces.IEnterFrame;
-	import hy.game.enum.EnumPriority;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
 	import hy.game.render.SRender;
@@ -20,7 +18,7 @@ package hy.game.manager
 	 * @author hyy
 	 *
 	 */
-	public class SLayerManager extends SBaseManager implements IEnterFrame
+	public class SLayerManager extends SBaseManager
 	{
 		public static const LAYER_MAP : String = "1_map";
 		public static const LAYER_EFFECT_BOTTOM : String = "2_effect_bottom";
@@ -42,7 +40,6 @@ package hy.game.manager
 			return instance;
 		}
 
-		private var mList : Vector.<IContainer>;
 		private var mRenderDictionary : Dictionary;
 		private var mStage : Stage;
 
@@ -58,18 +55,17 @@ package hy.game.manager
 			if (stage == null)
 				error("stage==null");
 			mStage = stage;
-			mList = new Vector.<IContainer>();
 			mRenderDictionary = new Dictionary();
 			//添加默认层级
-			addLayer(LAYER_MAP, EnumPriority.PRIORITY_9, createContainer());
-			addLayer(LAYER_EFFECT_BOTTOM, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_ENTITY, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_EFFECT_TOP, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_NAME, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_HP, EnumPriority.PRIORITY_8, createContainer());
-			addLayer(LAYER_OTHER, EnumPriority.PRIORITY_7, createContainer());
-			addLayer(LAYER_UI, EnumPriority.PRIORITY_6, new SRenderContainer());
-			addLayer(LAYER_ALERT, EnumPriority.PRIORITY_5, new SRenderContainer());
+			addLayer(LAYER_MAP, createContainer());
+			addLayer(LAYER_EFFECT_BOTTOM, createContainer());
+			addLayer(LAYER_ENTITY, createContainer());
+			addLayer(LAYER_EFFECT_TOP, createContainer());
+			addLayer(LAYER_NAME, createContainer());
+			addLayer(LAYER_HP, createContainer());
+			addLayer(LAYER_OTHER, createContainer());
+			addLayer(LAYER_UI, new SRenderContainer());
+			addLayer(LAYER_ALERT, new SRenderContainer());
 
 			function createContainer() : IContainer
 			{
@@ -79,25 +75,15 @@ package hy.game.manager
 			}
 		}
 
-		public function update() : void
-		{
-			for (var i : int = mList.length - 1; i >= 0; i--)
-			{
-				mList[i].update();
-			}
-		}
-
-		private function addLayer(tag : String, priority : int, container : IContainer) : void
+		private function addLayer(tag : String, container : IContainer) : void
 		{
 			if (mRenderDictionary[tag])
 				error(this, tag, "is exists");
 			container.tag = tag;
-			container.priority = priority;
 			if (container is SRenderContainer)
 				mStage.addChild(container as SRenderContainer);
 			else
 				SStage3D.stage.addChild(container as SDirectContainer);
-			mList.push(container);
 			mRenderDictionary[tag] = container;
 		}
 
