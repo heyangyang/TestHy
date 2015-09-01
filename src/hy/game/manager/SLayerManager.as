@@ -2,9 +2,9 @@ package hy.game.manager
 {
 	import flash.display.Stage;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IContainer;
+	import hy.game.interfaces.display.IDisplayRenderContainer;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
 	import hy.game.render.SRender;
@@ -67,7 +67,7 @@ package hy.game.manager
 			addLayer(LAYER_UI, new SRenderContainer());
 			addLayer(LAYER_ALERT, new SRenderContainer());
 
-			function createContainer() : IContainer
+			function createContainer() : IDisplayRenderContainer
 			{
 				if (Config.supportDirectX)
 					return new SDirectContainer();
@@ -75,11 +75,10 @@ package hy.game.manager
 			}
 		}
 
-		private function addLayer(tag : String, container : IContainer) : void
+		private function addLayer(tag : String, container : IDisplayRenderContainer) : void
 		{
 			if (mRenderDictionary[tag])
 				error(this, tag, "is exists");
-			container.tag = tag;
 			if (container is SRenderContainer)
 				mStage.addChild(container as SRenderContainer);
 			else
@@ -89,26 +88,26 @@ package hy.game.manager
 
 		public function push(type : String, render : SRender) : void
 		{
-			var gameContainer : IContainer = mRenderDictionary[type];
-			if (!gameContainer)
+			var parent : IDisplayRenderContainer = mRenderDictionary[type];
+			if (!parent)
 			{
 				error("layer is not find :" + type);
 				return;
 			}
-			render.container = gameContainer;
-			gameContainer.push(render);
+			parent.sort2Push(render);
+			render.setParent(parent);
 		}
 
 		public function remove(type : String, render : SRender) : void
 		{
-			var gameContainer : IContainer = mRenderDictionary[type];
-			if (!gameContainer)
+			var parent : IDisplayRenderContainer = mRenderDictionary[type];
+			if (!parent)
 			{
 				error("layer is not find :" + type);
 				return;
 			}
-			render.container = null;
-			gameContainer.remove(render);
+			parent.remove(render);
+			render.setParent(null);
 		}
 	}
 }

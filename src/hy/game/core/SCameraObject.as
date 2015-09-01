@@ -17,9 +17,24 @@ package hy.game.core
 		private static var instance : SCameraObject;
 		private static var sVisualRect : SRectangle = new SRectangle();
 		private static var sPoint : SPoint = new SPoint();
-		private static var sIsMoving : Boolean;
+		private static var sPositionCall : SCall = new SCall();
 		private static var sSceneX : Number = NaN;
 		private static var sSceneY : Number = NaN;
+
+		/**
+		 * 移动通知
+		 * @param fun
+		 *
+		 */
+		public static function moveNotify(fun : Function) : void
+		{
+			sPositionCall.push(fun);
+		}
+
+		public static function clearNotify(fun : Function) : void
+		{
+			sPositionCall.remove(fun);
+		}
 
 		/**
 		 * 物体在场景的位置X
@@ -35,16 +50,6 @@ package hy.game.core
 		public static function get sceneY() : Number
 		{
 			return sSceneY;
-		}
-
-		/**
-		 * 镜头是否移动
-		 * @return
-		 *
-		 */
-		public static function get isMoving() : Boolean
-		{
-			return sIsMoving;
 		}
 
 		/**
@@ -208,7 +213,6 @@ package hy.game.core
 
 		override public function update() : void
 		{
-			sIsMoving = false;
 			if (mTransform == null)
 				return;
 			if (!mUpdatable)
@@ -244,8 +248,7 @@ package hy.game.core
 //			}
 //
 //			mTransform.mAddY = mTransform.mAddX = 0.0;
-			sIsMoving = true;
-			
+
 			//绑定人物在屏幕中间
 			sSceneX = mTransform.x - (mScreenW >> 1);
 			sSceneY = mTransform.y - (mScreenH >> 1);
@@ -273,6 +276,7 @@ package hy.game.core
 			}
 			//更新可视范围
 			sVisualRect.updateRectangle(mPositionType & LEFT ? 0 : sSceneX + mVisualRange.x, mPositionType & TOP ? 0 : sSceneY + mVisualRange.y, mPositionType & RIGHT ? mSceneW - sSceneX - mVisualRange.x : mVisualRange.width, mPositionType & BOTTOM ? mSceneH - sSceneY - mVisualRange.y : mVisualRange.height);
+			sPositionCall.excute();
 		}
 
 		/**

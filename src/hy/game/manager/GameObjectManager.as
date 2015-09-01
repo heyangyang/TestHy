@@ -3,7 +3,7 @@ package hy.game.manager
 	import flash.utils.Dictionary;
 
 	import hy.game.core.GameObject;
-	import hy.game.core.interfaces.IEnterFrame;
+	import hy.game.interfaces.core.IEnterFrame;
 
 	/**
 	 * 游戏对象管理器
@@ -141,7 +141,7 @@ package hy.game.manager
 		 * @param child
 		 *
 		 */
-		public function sort2Push(child : GameObject) : void
+		private function sort2Push(child : GameObject) : void
 		{
 			if (mNumChildren == 0)
 			{
@@ -194,8 +194,12 @@ package hy.game.manager
 			//移除以前的
 			if (tIndex != -1)
 				mChilds.splice(tIndex, 1);
+			if (tIndex >= 0 && tIndex < tSortIndex)
+				tSortIndex--;
+			if (tSortIndex < 0)
+				tSortIndex = 0;
 			//插入
-			mChilds.splice(tIndex == -1 || tIndex > tSortIndex ? tSortIndex : tSortIndex + 1, 0, child);
+			mChilds.splice(tSortIndex, 0, child);
 		}
 
 		private function addGameObject(name : String, gameObject : GameObject, dic : Dictionary) : void

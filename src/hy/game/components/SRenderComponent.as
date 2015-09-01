@@ -2,6 +2,7 @@ package hy.game.components
 {
 	import hy.game.core.FrameComponent;
 	import hy.game.data.STransform;
+	import hy.game.manager.SLayerManager;
 	import hy.game.render.SRender;
 
 	/**
@@ -16,6 +17,7 @@ package hy.game.components
 		protected var mOffsetX : int;
 		protected var mOffsetY : int;
 		protected var mIsVisible : Boolean = true;
+		protected var mLayerType : String;
 
 		public function SRenderComponent(type : * = null)
 		{
@@ -38,7 +40,6 @@ package hy.game.components
 		override protected function onStart() : void
 		{
 			updateRenderVisible();
-			mRender.notifyAddedToRender();
 			mTransform = mOwner.transform;
 		}
 
@@ -55,28 +56,12 @@ package hy.game.components
 		override public function notifyRemoved() : void
 		{
 			removeRender(mRender);
-			mRender.notifyRemovedFromRender();
 			mTransform = null;
 		}
 
 		override public function update() : void
 		{
 
-		}
-
-		protected function addRender(render : SRender) : void
-		{
-			error("必须重写此方法");
-		}
-
-		protected function removeRender(render : SRender) : void
-		{
-			error("必须重写此方法");
-		}
-
-		override public function dispose() : void
-		{
-			super.dispose();
 		}
 
 		public function setOffsetXY(x : int, y : int) : void
@@ -101,12 +86,36 @@ package hy.game.components
 			updateRenderVisible();
 		}
 
+		/**
+		 * 不添加到父类，直接添加到name层
+		 * @param render
+		 *
+		 */
+		protected function addRender(render : SRender) : void
+		{
+			!mLayerType && error(this, "mLayerType is null！");
+			SLayerManager.getInstance().push(mLayerType, render);
+		}
+
+		protected function removeRender(render : SRender) : void
+		{
+			!mLayerType && error(this, "mLayerType is null！");
+			SLayerManager.getInstance().remove(mLayerType, render);
+		}
+
 		protected function updateRenderVisible() : void
 		{
 			if (mIsVisible)
 				addRender(mRender);
 			else
 				removeRender(mRender);
+		}
+
+		override public function dispose() : void
+		{
+			super.dispose();
+			mTransform = null;
+			removeRender(mRender);
 		}
 	}
 }

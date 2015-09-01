@@ -57,6 +57,7 @@ package hy.game.stage3D.texture
 
 				// Rectangle Textures are supported beginning with AIR 3.8. By calling the new
 				// methods only through those lookups, we stay compatible with older SDKs.
+				context.createRectangleTexture
 				nativeTexture = context["createRectangleTexture"](actualWidth, actualHeight, format, optimizeForRenderToTexture);
 			}
 			else

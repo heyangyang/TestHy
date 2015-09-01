@@ -4,9 +4,7 @@ package hy.game.components
 	import hy.game.aEffect.SEffectResource;
 	import hy.game.animation.SAnimationFrame;
 	import hy.game.core.STime;
-	import hy.game.manager.SLayerManager;
 	import hy.game.namespaces.name_part;
-	import hy.game.render.SRender;
 	import hy.rpg.enum.EnumLoadPriority;
 
 	use namespace name_part;
@@ -49,6 +47,7 @@ package hy.game.components
 		override protected function onStart() : void
 		{
 			super.onStart();
+			mTransform.addPositionChange(updatePosition);
 		}
 
 		/**
@@ -79,11 +78,6 @@ package hy.game.components
 			mY = y;
 		}
 
-		public function setLayer(value : int) : void
-		{
-			mRender.layer = value;
-		}
-
 		override public function update() : void
 		{
 			if (mResource.isChange)
@@ -99,12 +93,22 @@ package hy.game.components
 				return;
 			}
 			mUpdateFrame = mEffect.gotoNextFrame(STime.deltaTime);
-			if (!mUpdateFrame || mUpdateFrame == mCurrFrame)
+			if (!mUpdateFrame)
+				return;
+			if (mUpdateFrame == mCurrFrame)
 				return;
 			mCurrFrame = mUpdateFrame;
 			mRender.bitmapData = mCurrFrame.frameData;
-			mRender.x = mX + mCurrFrame.x + mOffsetX;
-			mRender.y = mY + mCurrFrame.y + mOffsetY;
+			updatePosition();
+		}
+
+		private function updatePosition() : void
+		{
+			if (!mCurrFrame)
+				return;
+			mRender.x = mX + mCurrFrame.x + mOffsetX + mTransform.screenX;
+			mRender.y = mY + mCurrFrame.y + mOffsetY + mTransform.screenY;
+			mRender.depth = mTransform.screenY;
 		}
 
 		/**
@@ -117,6 +121,11 @@ package hy.game.components
 			mResource.setEffectId(id);
 		}
 
+		public function setLayerType(value : String) : void
+		{
+			mLayerType = value;
+		}
+
 		/**
 		 * 加载完成
 		 * @param effect
@@ -126,28 +135,13 @@ package hy.game.components
 		{
 			mEffect = effect;
 			mEffect.gotoEffect(mTransform.dir, 0, mLoops);
-			mRender.depth = mRender.y;
-		}
-		
-		/**
-		 * 不添加到父类，直接添加到name层
-		 * @param render
-		 *
-		 */
-		protected override function addRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
-		}
-		
-		protected override function removeRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
+			mRender.layer = mRender.y;
 		}
 
 		override public function dispose() : void
 		{
 			super.dispose();
-			mResource && mResource.destroy();
+			mResource && mResource.dispose();
 			mResource = null;
 		}
 	}

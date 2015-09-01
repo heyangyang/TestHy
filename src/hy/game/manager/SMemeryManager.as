@@ -3,7 +3,7 @@ package hy.game.manager
 	import flash.utils.Dictionary;
 	
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IRecycle;
+	import hy.game.interfaces.core.IRecycle;
 
 	/**
 	 * 对象回收管理

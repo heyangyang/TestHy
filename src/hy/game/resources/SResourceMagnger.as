@@ -6,7 +6,7 @@ package hy.game.resources
 	import flash.system.LoaderContext;
 	import flash.utils.Dictionary;
 	
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectBitmapData;

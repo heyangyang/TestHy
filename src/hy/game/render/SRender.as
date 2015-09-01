@@ -3,15 +3,15 @@ package hy.game.render
 	import flash.geom.ColorTransform;
 
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IBitmap;
-	import hy.game.core.interfaces.IBitmapData;
-	import hy.game.core.interfaces.IContainer;
-	import hy.game.core.interfaces.IRecycle;
-	import hy.game.core.interfaces.IRender;
+	import hy.game.interfaces.core.IRecycle;
+	import hy.game.interfaces.display.IBitmap;
+	import hy.game.interfaces.display.IBitmapData;
+	import hy.game.interfaces.display.IDisplayBase;
+	import hy.game.interfaces.display.IDisplayObject;
+	import hy.game.interfaces.display.IDisplayObjectContainer;
+	import hy.game.interfaces.display.IDisplayRender;
 	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
-	import hy.game.stage3D.interfaces.IDisplayObject;
-	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
 
 	use namespace name_part;
 
@@ -20,9 +20,9 @@ package hy.game.render
 	 * @author hyy
 	 *
 	 */
-	public class SRender implements IRender, IRecycle
+	public class SRender implements IDisplayRender, IRecycle
 	{
-		private static var sIds : uint = 0;
+		private static var sIds : uint = 1000;
 		/**
 		 * 唯一id
 		 */
@@ -40,16 +40,25 @@ package hy.game.render
 		private var mNumChildren : int;
 		private var mAlpha : Number;
 		private var mRotation : Number;
-		private var mDepth : int;
-		private var mIndex : int;
+		/**
+		 * 层级
+		 */
 		private var mLayer : int;
+		/**
+		 * 深度+层级+mId ，用于深度排序
+		 * mId防止同一深度，层级混乱排序
+		 */
+		private var mIndex : int;
+		/**
+		 * 深度
+		 */
+		private var mDepth : int;
 		private var mVisible : Boolean;
 		private var mBlendMode : String;
-		private var mParent : IRender;
+		private var mParent : IDisplayRender;
 		private var mTransform : ColorTransform
 		private var mFilters : Array;
-		private var mChilds : Vector.<IRender>;
-		private var mContainer : IContainer;
+		private var mChilds : Vector.<IDisplayRender>;
 
 		public function SRender()
 		{
@@ -61,7 +70,7 @@ package hy.game.render
 				mRender = new SRenderBitmap();
 		}
 
-		public function notifyAddedToRender() : void
+		private function notifyAddedToRender() : void
 		{
 			if (mParent)
 			{
@@ -71,7 +80,6 @@ package hy.game.render
 				var oldAlpha : Number = mAlpha;
 				alpha = 0;
 				alpha = oldAlpha;
-				mDepth = mParent.zDepth;
 				var oldX : int = mX;
 				var oldY : int = mY;
 				mX = mY = int.MIN_VALUE;
@@ -80,7 +88,7 @@ package hy.game.render
 			}
 		}
 
-		public function notifyRemovedFromRender() : void
+		private function notifyRemovedFromRender() : void
 		{
 			mRender && mRender.removeFromParent();
 			for (var i : int = 0; i < mNumChildren; i++)
@@ -89,20 +97,12 @@ package hy.game.render
 			}
 		}
 
-		public function set container(value : IContainer) : void
-		{
-			mContainer = value;
-			if (mContainer == null)
-				notifyRemovedFromRender();
-		}
-
 		public function addChild(child : SRender) : SRender
 		{
 			if (childs.indexOf(child) == -1)
 			{
 				child.setParent(this);
 				sort2Push(child);
-				mNumChildren++;
 				child.notifyAddedToRender();
 			}
 			return child;
@@ -114,15 +114,16 @@ package hy.game.render
 		 * @param child
 		 *
 		 */
-		public function sort2Push(child : IRender) : void
+		public function sort2Push(child : IDisplayBase) : void
 		{
 			if (mNumChildren == 0)
 			{
 				mChilds.push(child);
-				//mContainer.addChildRender(child as SRender, child.parent.index + 1);
+				mNumChildren++;
+				mParent.sort2Push(child);
 				return;
 			}
-			var tIndex : int = mChilds.indexOf(child);
+			var tIndex : int = mChilds.indexOf(child as IDisplayRender);
 			//比较的索引
 			var tSortIndex : int;
 			//区间A，A-B,默认0开始
@@ -168,23 +169,28 @@ package hy.game.render
 			//移除以前的
 			if (tIndex != -1)
 				mChilds.splice(tIndex, 1);
+			else
+				mNumChildren++;
+			if (tIndex >= 0 && tIndex < tSortIndex)
+				tSortIndex--;
+			if (tSortIndex < 0)
+				tSortIndex = 0;
 			//插入
-			mChilds.splice(tIndex == -1 || tIndex > tSortIndex ? tSortIndex : tSortIndex + 1, 0, child);
-			//mContainer.addChildRender(child as SRender, child.parent.index + 1 + tSortIndex);
+			mChilds.splice(tSortIndex, 0, child);
+			mParent.sort2Push(child);
 		}
 
-		public function removeChild(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
+		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
-			return removeChildAt(childs.indexOf(child as IRender));
+			return removeChildAt(childs.indexOf(child as IDisplayRender));
 		}
 
-		public function removeChildAt(index : int) : IRender
+		public function removeChildAt(index : int) : IDisplayRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
 			mNumChildren--;
-			var child : IRender = childs.splice(index, 1)[0];
-			child.notifyRemovedFromRender();
+			var child : IDisplayRender = childs.splice(index, 1)[0];
 			child.setParent(null);
 			return child;
 		}
@@ -192,13 +198,13 @@ package hy.game.render
 		public function removeFromParent(dispose : Boolean = false) : void
 		{
 			if (mParent)
-				mParent.removeChild(this, dispose);
+				mParent.removeDisplay(this, dispose);
 			else if (dispose)
 				this.dispose();
 			mParent = null;
 		}
 
-		public function getChildAt(index : int) : IRender
+		public function getChildAt(index : int) : IDisplayRender
 		{
 			if (index < 0 || index >= mNumChildren)
 				return null;
@@ -210,9 +216,9 @@ package hy.game.render
 			return childs.indexOf(child);
 		}
 
-		public function getChildByName(name : String) : IRender
+		public function getChildByName(name : String) : IDisplayRender
 		{
-			var child : IRender;
+			var child : IDisplayRender;
 			for (var i : int = 0; i < mNumChildren; i++)
 			{
 				child = childs[i];
@@ -222,10 +228,10 @@ package hy.game.render
 			return null;
 		}
 
-		private function get childs() : Vector.<IRender>
+		private function get childs() : Vector.<IDisplayRender>
 		{
 			if (mChilds == null)
-				mChilds = new Vector.<IRender>();
+				mChilds = new Vector.<IDisplayRender>();
 			return mChilds;
 		}
 
@@ -243,7 +249,8 @@ package hy.game.render
 		{
 			if (mParent == value)
 				return;
-			mParent = value as IRender;
+			mParent = value as IDisplayRender;
+			mParent ? notifyAddedToRender() : notifyRemovedFromRender();
 		}
 
 		public function get x() : Number
@@ -297,6 +304,26 @@ package hy.game.render
 				mRender.y = mY + mParentY;
 				updateChildByField("parentY", mY);
 			}
+		}
+
+
+		/**
+		 * 赋值无效
+		 * @param value
+		 *
+		 */
+		public function set width(value : Number) : void
+		{
+		}
+
+
+		/**
+		 * 赋值无效
+		 * @param value
+		 *
+		 */
+		public function set height(value : Number) : void
+		{
 		}
 
 		public function get width() : Number
@@ -426,34 +453,13 @@ package hy.game.render
 		}
 
 		/**
-		 * 容器中的深度 （只读）
-		 * @param value
-		 *
-		 */
-		public function get zDepth() : int
-		{
-			return mDepth;
-		}
-
-		/**
-		 * 设置深度，用于深度排序
-		 * @param value
-		 *
-		 */
-		name_part function set depth(value : int) : void
-		{
-			mDepth = value;
-			//mContainer && mContainer.changeDepthSort();
-		}
-
-		/**
 		 * render中的层级
 		 * @return
 		 *
 		 */
 		public function get layer() : int
 		{
-			return mLayer;
+			return mIndex;
 		}
 
 		public function set layer(value : int) : void
@@ -461,18 +467,26 @@ package hy.game.render
 			if (mLayer == value)
 				return;
 			mLayer = value;
+			mIndex = mDepth + mLayer;
+			mParent && mParent.sort2Push(this);
+		}
+
+		/**
+		 * 深度，一般设置为场景坐标
+		 * @param value
+		 *
+		 */
+		public function set depth(value : int) : void
+		{
+			if (mDepth == value)
+				return;
+			mDepth = value;
+			mIndex = mDepth + mLayer;
 			mParent && mParent.sort2Push(this);
 		}
 
 		public function render() : void
 		{
-			if (mNumChildren > 0)
-			{
-				for (var i : int = 0; i < mNumChildren; i++)
-				{
-					mChilds[i].render();
-				}
-			}
 			mRender.render();
 		}
 
@@ -537,21 +551,6 @@ package hy.game.render
 		public function get display() : IBitmap
 		{
 			return mRender;
-		}
-
-		/**
-		 * 所在容器中的索引
-		 * @return
-		 *
-		 */
-		public function get index() : int
-		{
-			return mIndex;
-		}
-
-		public function set index(value : int) : void
-		{
-			mIndex = value;
 		}
 
 		public function dispose() : void

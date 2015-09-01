@@ -2,9 +2,9 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
-
-	import hy.game.core.interfaces.IBitmap;
-	import hy.game.core.interfaces.IBitmapData;
+	
+	import hy.game.interfaces.display.IBitmap;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.stage3D.display.SImage;
 	import hy.game.stage3D.texture.STexture;
 
@@ -40,7 +40,7 @@ package hy.game.render
 
 		public function removeChild() : void
 		{
-			parent && parent.removeChild(this);
+			parent && parent.removeDisplay(this);
 		}
 
 		public function set colorTransform(value : ColorTransform) : void

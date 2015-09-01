@@ -1,7 +1,7 @@
 package hy.game.core
 {
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IUpdate;
+	import hy.game.interfaces.core.IUpdate;
 	import hy.game.enum.EnumPriority;
 	import hy.game.manager.SUpdateManager;
 	import hy.game.utils.SDebug;

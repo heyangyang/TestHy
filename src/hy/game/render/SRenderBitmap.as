@@ -5,8 +5,8 @@ package hy.game.render
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 
-	import hy.game.core.interfaces.IBitmap;
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmap;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.rpg.utils.UtilsCommon;
 
 	public class SRenderBitmap extends Bitmap implements IBitmap
@@ -14,6 +14,7 @@ package hy.game.render
 		private static var sMatrix : Matrix = new Matrix();
 		private var mOffsetX : Number;
 		private var mOffsetY : Number;
+		private var mLayer : int;
 
 		public function SRenderBitmap(bitmapData : BitmapData = null, pixelSnapping : String = "auto", smoothing : Boolean = false)
 		{
@@ -78,9 +79,19 @@ package hy.game.render
 
 		public function render() : void
 		{
-			
+
+		}
+
+		public function get layer() : int
+		{
+			return mLayer;
 		}
 		
+		public function set layer(value : int) : void
+		{
+			mLayer = value;
+		}
+
 		public function dispose() : void
 		{
 			if (bitmapData)

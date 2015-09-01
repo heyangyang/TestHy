@@ -1,11 +1,11 @@
 package hy.game.stage3D.display
 {
 	import flash.geom.Matrix;
-	
+
 	import hy.game.core.event.SEventDispatcher;
+	import hy.game.interfaces.display.IDisplayObject;
+	import hy.game.interfaces.display.IDisplayObjectContainer;
 	import hy.game.stage3D.errors.AbstractMethodError;
-	import hy.game.stage3D.interfaces.IDisplayObject;
-	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
 	import hy.game.stage3D.texture.SBlendMode;
 	import hy.game.stage3D.utils.SMathUtil;
 
@@ -31,7 +31,7 @@ package hy.game.stage3D.display
 		/**
 		 * 记录索引位置
 		 */
-		private var mIndex : int;
+		private var mLayer : int;
 
 		public function SDisplayObject()
 		{
@@ -57,7 +57,7 @@ package hy.game.stage3D.display
 		public function removeFromParent(dispose : Boolean = false) : void
 		{
 			if (mParent)
-				mParent.removeChild(this, dispose);
+				mParent.removeDisplay(this, dispose);
 			else if (dispose)
 				this.dispose();
 		}
@@ -81,7 +81,6 @@ package hy.game.stage3D.display
 			if (mRotation == 0.0)
 			{
 				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, -mPivotX * mScaleX, -mPivotY * mScaleY);
-//				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, mX - mPivotX * mScaleX, mY - mPivotY * mScaleY);
 			}
 			else
 			{
@@ -93,8 +92,6 @@ package hy.game.stage3D.display
 				var d : Number = mScaleY * cos;
 				var tx : Number = -mPivotX * a - mPivotY * c;
 				var ty : Number = -mPivotX * b - mPivotY * d;
-//				var tx : Number = mX - mPivotX * a - mPivotY * c;
-//				var ty : Number = mY - mPivotX * b - mPivotY * d;
 
 				mTransformationMatrix.setTo(a, b, c, d, tx, ty);
 			}
@@ -102,9 +99,14 @@ package hy.game.stage3D.display
 			return mTransformationMatrix;
 		}
 
-		public function get index() : int
+		public function get layer() : int
 		{
-			return mIndex;
+			return mLayer;
+		}
+
+		public function set layer(value : int) : void
+		{
+			mLayer = value;
 		}
 
 		public function get x() : Number

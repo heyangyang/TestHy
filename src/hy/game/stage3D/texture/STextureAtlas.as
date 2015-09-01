@@ -3,7 +3,7 @@ package hy.game.stage3D.texture
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.utils.cleanMasterString;
 

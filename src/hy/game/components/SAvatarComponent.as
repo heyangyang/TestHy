@@ -6,7 +6,6 @@ package hy.game.components
 	import hy.game.avatar.SAvatarResource;
 	import hy.game.core.STime;
 	import hy.game.manager.SLayerManager;
-	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
@@ -70,8 +69,9 @@ package hy.game.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			mLayerType = SLayerManager.LAYER_ENTITY;
 			mResource.priority = EnumLoadPriority.ROLE;
-			mRender.layer = 0;
+			mRender.layer = EnumRenderLayer.BODY;
 			mDir = mAction = -1;
 			mUseCenterOffsetY = true;
 			needReversal = false;
@@ -165,9 +165,10 @@ package hy.game.components
 				return;
 			mRender.x = mTransform.screenX + mFrame.x;
 			if (mUseCenterOffsetY)
-				mRender.y = mTransform.screenX + mFrame.y + mTransform.centerOffsetY;
+				mRender.y = mTransform.screenY + mFrame.y + mTransform.centerOffsetY;
 			else
-				mRender.y = mTransform.screenX + mFrame.y;
+				mRender.y = mTransform.screenY + mFrame.y;
+			mRender.depth = mTransform.screenY;
 		}
 
 		/**
@@ -210,21 +211,6 @@ package hy.game.components
 				}
 			}
 			return false;
-		}
-
-		/**
-		 * 不添加到父类，直接添加到name层
-		 * @param render
-		 *
-		 */
-		protected override function addRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
-		}
-
-		protected override function removeRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
 		}
 
 		override public function dispose() : void

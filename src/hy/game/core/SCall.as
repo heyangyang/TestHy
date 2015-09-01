@@ -17,6 +17,11 @@ package hy.game.core
 			mParams = params;
 		}
 
+		/**
+		 * 参数
+		 * @param value
+		 *
+		 */
 		public function set data(value : Object) : void
 		{
 			mParams = value;
@@ -56,29 +61,31 @@ package hy.game.core
 		/**
 		 * 检测是否处理通知
 		 * @param update 是否强制更新
+		 * @param isClean是否清理通知
 		 *
 		 */
-		public function checkExcute(update : Boolean = false) : void
+		public function checkExcute(update : Boolean = false, isClean : Boolean = false) : void
 		{
 			if (!mIsUpdatable && !update)
 				return;
 			mIsUpdatable = false;
-			excute();
+			excute(isClean);
 		}
 
 		/**
 		 * 处理通知,无需检测
-		 *
+		 * @param isClean是否清理通知
 		 */
-		public function excute() : void
+		public function excute(isClean : Boolean = false) : void
 		{
 			for each (var fun : Function in mNotifyList)
 			{
 				if (mParams)
-					fun(mParams);
+					fun.length > 1 ? fun.apply(this, mParams) : fun(mParams);
 				else
 					fun();
 			}
+			isClean && clean();
 		}
 
 		/**
@@ -94,7 +101,7 @@ package hy.game.core
 		 * 清理通知列表
 		 *
 		 */
-		public function clear() : void
+		public function clean() : void
 		{
 			if (mNotifyList)
 				mNotifyList.length = 0;
@@ -102,7 +109,7 @@ package hy.game.core
 
 		public function dispose() : void
 		{
-			clear();
+			clean();
 			mParams = null;
 			mNotifyList = null;
 		}

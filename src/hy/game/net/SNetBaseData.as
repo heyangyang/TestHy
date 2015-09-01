@@ -2,7 +2,7 @@ package hy.game.net
 {
 	import flash.utils.ByteArray;
 
-	import hy.game.core.interfaces.IDispose;
+	import hy.game.interfaces.core.IDispose;
 	import hy.game.net.interfaces.IData;
 
 	public class SNetBaseData implements IData, IDispose

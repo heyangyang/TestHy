@@ -1,7 +1,7 @@
 package hy.game.animation
 {
-	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.data.SRectangle;
+	import hy.game.interfaces.display.IBitmapData;
 
 	/**
 	 *
@@ -40,14 +40,17 @@ package hy.game.animation
 		 */
 		public var frameY : int;
 
+		private var mX : int;
+		private var mY : int;
+
 		public function get x() : int
 		{
-			return frameX + offsetX;
+			return mX;
 		}
 
 		public function get y() : int
 		{
-			return frameY + offsetY;
+			return mY;
 		}
 
 		/**
@@ -92,6 +95,7 @@ package hy.game.animation
 				frameX = _originFrameX;
 				frameY = _originFrameY;
 			}
+			mX = mY = 0;
 			_isReversed = false;
 		}
 
@@ -108,6 +112,8 @@ package hy.game.animation
 			frameX = offsetX - frameX;
 			offsetX = -offsetX * 2;
 			_isReversed = true;
+			mX = frameX + offsetX;
+			mY = frameY + offsetY;
 		}
 
 		public function get frameData() : IBitmapData
@@ -120,7 +126,11 @@ package hy.game.animation
 			mFrameData = value;
 			_isReversed = false;
 			if (mFrameData)
+			{
+				mX = frameX + offsetX;
+				mY = frameY + offsetY;
 				mRect.updateRectangle(x, y, mFrameData.width, mFrameData.height);
+			}
 		}
 
 
@@ -135,6 +145,7 @@ package hy.game.animation
 			mFrameData = null;
 			mRect = null;
 			duration = 120;
+			mX = mY = 0;
 			offsetX = offsetY = frameX = frameY = 0;
 			_originOffsetX = _originOffsetY = _originFrameX = _originFrameY = 0;
 			needReversal = _isReversed = false;

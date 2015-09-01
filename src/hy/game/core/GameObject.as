@@ -1,8 +1,8 @@
 package hy.game.core
 {
 	import flash.utils.Dictionary;
-	
-	import hy.game.core.interfaces.IGameObject;
+
+	import hy.game.interfaces.core.IGameObject;
 	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
 	import hy.game.manager.GameObjectManager;
@@ -135,7 +135,7 @@ package hy.game.core
 			if (!mTransform)
 				return;
 			mTransform.clearCall();
-			mTransform.addPositionChange(positionChange);
+			mTransform.addPositionChange(updatePosition);
 		}
 
 		public function set activeStatus(value : Boolean) : void
@@ -183,30 +183,18 @@ package hy.game.core
 				!component.mIsStart && component.onInit();
 				component.update();
 			}
-			updateTransform();
-		}
-
-		protected function positionChange() : void
-		{
-			transform.x = transform.x;
-			transform.y = transform.y;
-//			mRender.x = transform.screenX;
-//			mRender.y = transform.screenY;
-//			mRender.depth = transform.y;
+			//检测是否需要通知更新
+			transform.excuteNotify();
 		}
 
 		/**
-		 * 更新transform的一些信息
+		 * 主要用来更新mScreenX，mScreenY属性
 		 *
 		 */
-		protected function updateTransform() : void
+		protected function updatePosition() : void
 		{
-			if (SCameraObject.isMoving)
-			{
-				positionChange();
-			}
-			//更新后，设置成为改变
-			transform.excuteNotify();
+			transform.x = transform.x;
+			transform.y = transform.y;
 		}
 
 		/**
@@ -214,7 +202,7 @@ package hy.game.core
 		 * @param child
 		 *
 		 */
-		public function sort2Push(child : FrameComponent) : void
+		private function sort2Push(child : FrameComponent) : void
 		{
 			if (mNumChildren == 0)
 			{
@@ -267,8 +255,12 @@ package hy.game.core
 			//移除以前的
 			if (tIndex != -1)
 				mComponents.splice(tIndex, 1);
+			if (tIndex >= 0 && tIndex < tSortIndex)
+				tSortIndex--;
+			if (tSortIndex < 0)
+				tSortIndex = 0;
 			//插入
-			mComponents.splice(tIndex == -1 || tIndex > tSortIndex ? tSortIndex : tSortIndex + 1, 0, child);
+			mComponents.splice(tSortIndex, 0, child);
 		}
 
 		public function addComponent(component : Component, priority : int = 0) : void

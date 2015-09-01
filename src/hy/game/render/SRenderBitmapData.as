@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.display.BitmapData;
 
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 
 	public class SRenderBitmapData extends BitmapData implements IBitmapData
 	{

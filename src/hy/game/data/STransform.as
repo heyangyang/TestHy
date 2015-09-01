@@ -58,7 +58,7 @@ package hy.game.data
 
 		public function set x(value : Number) : void
 		{
-			mScreenX = value - SCameraObject.sceneX;
+			screenX = Math.floor(value - SCameraObject.sceneX);
 			if (mX == value)
 				return;
 			if (value < 0)
@@ -74,7 +74,7 @@ package hy.game.data
 
 		public function set y(value : Number) : void
 		{
-			mScreenY = mY - SCameraObject.sceneY;
+			screenY = Math.floor(value - SCameraObject.sceneY);
 			if (mY == value)
 				return;
 			if (value < 0)
@@ -106,6 +106,14 @@ package hy.game.data
 			return mScreenX;
 		}
 
+		public function set screenX(value : Number) : void
+		{
+			if (mScreenX == value)
+				return;
+			mScreenX = value
+			mPositionCall.updateCallStatus();
+		}
+
 		/**
 		 * 相对于屏幕的位置Y
 		 * @return
@@ -114,6 +122,14 @@ package hy.game.data
 		public function get screenY() : Number
 		{
 			return mScreenY;
+		}
+
+		public function set screenY(value : Number) : void
+		{
+			if (mScreenY == value)
+				return;
+			mScreenY = value
+			mPositionCall.updateCallStatus();
 		}
 
 		/**
@@ -285,8 +301,8 @@ package hy.game.data
 
 		public function clearCall() : void
 		{
-			mPositionCall.clear();
-			mSizeCall.clear();
+			mPositionCall.clean();
+			mSizeCall.clean();
 		}
 	}
 }

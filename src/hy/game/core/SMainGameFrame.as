@@ -4,7 +4,7 @@ package hy.game.core
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import hy.game.core.interfaces.IEnterFrame;
+	import hy.game.interfaces.core.IEnterFrame;
 
 
 	public class SMainGameFrame

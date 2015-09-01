@@ -1,8 +1,8 @@
 package hy.game.stage3D.display
 {
 	import hy.game.core.event.SEvent;
-	import hy.game.stage3D.interfaces.IDisplayObject;
-	import hy.game.stage3D.interfaces.IDisplayObjectContainer;
+	import hy.game.interfaces.display.IDisplayObject;
+	import hy.game.interfaces.display.IDisplayObjectContainer;
 
 
 	public class SDisplayObjectContainer extends SDisplayObject implements IDisplayObjectContainer
@@ -26,7 +26,7 @@ package hy.game.stage3D.display
 		{
 			if (index >= 0 && index <= mNumChildren)
 			{
-				if (child.parent == this)
+				if (mChildren.indexOf(child) != -1)
 				{
 					setChildIndex(child, index);
 				}
@@ -49,7 +49,7 @@ package hy.game.stage3D.display
 			}
 		}
 
-		public function removeChild(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
+		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
 			var childIndex : int = getChildIndex(child);
 			if (childIndex != -1)
@@ -141,18 +141,6 @@ package hy.game.stage3D.display
 			var child2 : IDisplayObject = getChildAt(index2);
 			mChildren[index1] = child2;
 			mChildren[index2] = child1;
-		}
-
-		public function contains(child : IDisplayObject) : Boolean
-		{
-			while (child)
-			{
-				if (child == this)
-					return true;
-				else
-					child = child.parent;
-			}
-			return false;
 		}
 
 		protected function spliceChildren(startIndex : int, deleteCount : uint = uint.MAX_VALUE, insertee : IDisplayObject = null) : void

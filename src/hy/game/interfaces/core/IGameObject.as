@@ -1,4 +1,4 @@
-package hy.game.core.interfaces
+package hy.game.interfaces.core
 {
 	import hy.game.core.Component;
 	import hy.game.data.STransform;

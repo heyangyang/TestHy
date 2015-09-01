@@ -1,8 +1,8 @@
 package hy.game.core
 {
 
-	import hy.game.core.interfaces.IComponent;
-	import hy.game.core.interfaces.IRecycle;
+	import hy.game.interfaces.component.IComponent;
+	import hy.game.interfaces.core.IRecycle;
 	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.utils.SDebug;

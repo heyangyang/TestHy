@@ -2,8 +2,9 @@ package hy.game.aEffect
 {
 	import flash.system.System;
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.cfg.Config;
+	import hy.game.core.SCall;
 	import hy.game.data.SObject;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -13,7 +14,7 @@ package hy.game.aEffect
 		/**
 		 * 加载成功后回调
 		 */
-		protected var mNotifyCompleteds : Vector.<Function>;
+		protected var mCall : SCall
 		private var mPriority : int;
 		private var mChange : Boolean;
 		private var mEffectId : String;
@@ -64,7 +65,7 @@ package hy.game.aEffect
 				onLoadComplete(null);
 				return;
 			}
-			
+
 			var resource : SResource = SReferenceManager.getInstance().createResource(mEffectId + (Config.supportDirectX ? "_atf" : ""));
 			if (resource)
 			{
@@ -86,23 +87,22 @@ package hy.game.aEffect
 		public function addNotifyCompleted(notifyFunction : Function) : SEffectResource
 		{
 			if (notifyFunction == null)
+			{
+				error("notifyFunction is null");
 				return this;
-			if (!mNotifyCompleteds)
-				mNotifyCompleteds = new Vector.<Function>();
-			if (mNotifyCompleteds.indexOf(notifyFunction) == -1)
-				mNotifyCompleteds.push(notifyFunction);
+			}
+			if (mCall == null)
+				mCall = new SCall();
+			mCall.push(notifyFunction);
 			return this;
 		}
 
 		private function invokeNotifyByArray() : void
 		{
-			if (!mNotifyCompleteds)
+			if (!mCall)
 				return;
-			for each (var notify : Function in mNotifyCompleteds)
-			{
-				notify(mEffect);
-			}
-			mNotifyCompleteds.length = 0;
+			mCall.data = mEffect;
+			mCall.excute(true);
 		}
 
 		private function onLoadComplete(res : SResource) : void
@@ -151,14 +151,18 @@ package hy.game.aEffect
 		/**
 		 * 调用此方向可以清除构建器，如果正在构建中，则会取消操作
 		 */
-		public function destroy() : void
+		public function dispose() : void
 		{
 			if (mEffect)
 			{
 				mEffect.dispose();
 				mEffect = null;
 			}
-			mNotifyCompleteds = null;
+			if (mCall)
+			{
+				mCall.dispose();
+				mCall = null;
+			}
 		}
 	}
 }

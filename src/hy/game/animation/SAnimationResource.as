@@ -2,7 +2,7 @@ package hy.game.animation
 {
 	import flash.geom.Point;
 
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.parser.ParserAnimationResource;

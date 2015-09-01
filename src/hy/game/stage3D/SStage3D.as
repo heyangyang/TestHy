@@ -4,6 +4,7 @@ package hy.game.stage3D
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DRenderMode;
 	import flash.display3D.Context3DTriangleFace;
 	import flash.events.ErrorEvent;
@@ -15,7 +16,7 @@ package hy.game.stage3D
 	import hy.game.core.SMainGameFrame;
 	import hy.game.core.event.SEvent;
 	import hy.game.core.event.SEventDispatcher;
-	import hy.game.core.interfaces.IEnterFrame;
+	import hy.game.interfaces.core.IEnterFrame;
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.display.SDisplayObjectContainer;
 	import hy.game.stage3D.utils.SystemUtil;
@@ -58,7 +59,7 @@ package hy.game.stage3D
 		private var mPreviousViewPort : Rectangle;
 		private var mRenderSupport : SRenderSupport;
 
-		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = "baselineConstrained")
+		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = Context3DProfile.BASELINE)
 		{
 			mRenderSupport = SRenderSupport.getInstance();
 			viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -79,8 +80,9 @@ package hy.game.stage3D
 				else
 					mProfile = "profile" in mStage3D.context3D ? mStage3D.context3D["profile"] : profile as String;
 
-				setTimeout(initialize, 1); // we don't call it right away, because Starling should
-					// behave the same way with or without a shared context
+				// we don't call it right away, because Starling should
+				// behave the same way with or without a shared context
+				setTimeout(initialize, 1);
 			}
 			else
 			{
@@ -201,15 +203,14 @@ package hy.game.stage3D
 		{
 			if (!contextValid)
 				return;
-
 			updateViewPort();
 			mRenderSupport.reset();
-			mContext.clear(0, 0, 0);
 			mContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			mContext.setCulling(Context3DTriangleFace.NONE);
 			mContext.setStencilReferenceValue(0);
 			mContext.setScissorRectangle(null);
 			mContext.setRenderToBackBuffer();
+			mContext.clear(0, 0, 0);
 			mContainer.render();
 			mContext.present();
 			mRenderSupport.finishDraw();
@@ -235,7 +236,6 @@ package hy.game.stage3D
 		private function configureBackBuffer(width : int, height : int, antiAlias : int, enableDepthAndStencil : Boolean, wantsBestResolution : Boolean = false) : void
 		{
 			enableDepthAndStencil &&= SystemUtil.supportsDepthAndStencil;
-
 			var configureBackBuffer : Function = mContext.configureBackBuffer;
 			var methodArgs : Array = [width, height, antiAlias, enableDepthAndStencil];
 			if (configureBackBuffer.length > 4)

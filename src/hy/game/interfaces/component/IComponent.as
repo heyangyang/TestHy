@@ -1,5 +1,6 @@
-package hy.game.core.interfaces
+package hy.game.interfaces.component
 {
+	import hy.game.interfaces.core.IDispose;
 
 
 	public interface IComponent extends IDispose

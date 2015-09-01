@@ -1,7 +1,7 @@
 package hy.game.manager
 {
-	import hy.game.core.interfaces.IEnterFrame;
-	import hy.game.core.interfaces.IUpdate;
+	import hy.game.interfaces.core.IEnterFrame;
+	import hy.game.interfaces.core.IUpdate;
 
 	public class SUpdateManager extends SBaseManager implements IEnterFrame
 	{
