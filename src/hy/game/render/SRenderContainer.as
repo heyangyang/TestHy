@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.display.Sprite;
-	
+
 	import hy.game.interfaces.display.IDisplayBase;
 	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.interfaces.display.IDisplayObjectContainer;
@@ -29,6 +29,8 @@ package hy.game.render
 			if (mNumChildren == 0)
 			{
 				mChildren.push(child);
+				addChild((child as SRender).display as SRenderBitmap);
+				mNumChildren++;
 				return;
 			}
 			var tIndex : int = mChildren.indexOf(child as IDisplayObject);
@@ -51,7 +53,7 @@ package hy.game.render
 					if (child.layer > mChildren[tSortIndex + 1].layer)
 						tSortIndex++;
 					else
-					tSortIndex--;
+						tSortIndex--;
 				}
 				//向后查找
 				if (child.layer > mChildren[tSortIndex].layer)
@@ -59,7 +61,7 @@ package hy.game.render
 					tStartSortIndex = tSortIndex;
 					tSortIndex += tValue;
 				}
-					//向前查找
+				//向前查找
 				else
 				{
 					tEndSortIndex = tSortIndex;
@@ -73,19 +75,23 @@ package hy.game.render
 					break;
 				}
 			}
-			
+
 			//移除以前的
 			if (tIndex != -1)
 				mChildren.splice(tIndex, 1);
-				//新进来的则索引加1
+			//新进来的则索引加1
 			else
+			{
+				addChild((child as SRender).display as SRenderBitmap);
 				mNumChildren++;
+			}
 			if (tIndex >= 0 && tIndex < tSortIndex)
 				tSortIndex--;
 			if (tSortIndex < 0)
 				tSortIndex = 0;
 			//插入
 			mChildren.splice(tSortIndex, 0, child);
+			setChildIndex((child as SRender).display as SRenderBitmap, tSortIndex);
 		}
 
 
@@ -113,7 +119,7 @@ package hy.game.render
 		{
 			return mLayer;
 		}
-		
+
 		public function set layer(value : int) : void
 		{
 			mLayer = value;
@@ -136,7 +142,8 @@ package hy.game.render
 
 		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
-			return null;
+			remove(child as SRender);
+			return child;
 		}
 
 		public function dispose() : void

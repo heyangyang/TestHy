@@ -97,6 +97,11 @@ package hy.game.render
 			mNumChildren--;
 		}
 
+		public override function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
+		{
+			remove(child as SRender);
+			return child;
+		}
 
 	}
 }
