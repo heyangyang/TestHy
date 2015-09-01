@@ -2,7 +2,7 @@ package hy.game.manager
 {
 	import flash.display.Stage;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.interfaces.display.IDisplayRenderContainer;
 	import hy.game.namespaces.name_part;
@@ -106,7 +106,6 @@ package hy.game.manager
 				error("layer is not find :" + type);
 				return;
 			}
-			parent.remove(render);
 			render.setParent(null);
 		}
 	}

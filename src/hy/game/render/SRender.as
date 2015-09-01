@@ -191,7 +191,6 @@ package hy.game.render
 				return null;
 			mNumChildren--;
 			var child : IDisplayRender = childs.splice(index, 1)[0];
-			mParent && mParent.removeDisplay(child);
 			child.setParent(null);
 			return child;
 		}
@@ -250,6 +249,8 @@ package hy.game.render
 		{
 			if (mParent == value)
 				return;
+			if (value == null && mParent)
+				mParent.removeDisplay(this);
 			mParent = value as IDisplayRender;
 			mParent ? notifyAddedToRender() : notifyRemovedFromRender();
 		}
