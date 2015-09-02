@@ -148,7 +148,8 @@ package hy.game.render
 
 		public function dispose() : void
 		{
-
+			mChildren.length = 0;
+			mNumChildren = 0;
 		}
 
 	}

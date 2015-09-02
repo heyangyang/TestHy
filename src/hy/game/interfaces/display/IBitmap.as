@@ -22,7 +22,5 @@ package hy.game.interfaces.display
 		function set blendMode(value : String) : void;
 
 		function set scrollRect(rect : Rectangle) : void;
-
-		function set dropShadow(value : Boolean) : void;
 	}
 }

@@ -1,7 +1,7 @@
 package hy.game.stage3D
 {
 	import com.adobe.utils.AGALMiniAssembler;
-
+	
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTextureFormat;
@@ -13,7 +13,7 @@ package hy.game.stage3D
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.display.SImage;
@@ -69,8 +69,6 @@ package hy.game.stage3D
 		private var mIndexBuffer : IndexBuffer3D;
 		private var mMeshIndexData : Vector.<uint>;
 		private var mUpdateCameraMatrix3D : Boolean;
-		private var mVertexBufferList : Vector.<VertexBuffer3D>;
-		private var mVertexBufferNum : int;
 
 		public function SRenderSupport()
 		{
@@ -80,7 +78,6 @@ package hy.game.stage3D
 			mRenderAlpha.push(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 			mMatrixData = new Vector.<Number>();
 			mMatrixData.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-			mVertexBufferList = new Vector.<VertexBuffer3D>();
 		}
 
 		public function reset() : void
@@ -100,8 +97,6 @@ package hy.game.stage3D
 				mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mProjectionMatrix3D, true);
 			}
 			mVertexBuffer = image.vertexBuffer3D;
-			//创建网格
-			//createVertexBuffer(image.vertexData);
 			//xy坐标
 			mContext.setVertexBufferAt(0, mVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//纹理
@@ -125,38 +120,7 @@ package hy.game.stage3D
 		 */
 		public function finishDraw() : void
 		{
-			if (sDrawCount < mVertexBufferNum * 2)
-				return;
-			var deleteCount : int = mVertexBufferNum - sDrawCount;
-			while (deleteCount > 0)
-			{
-				mVertexBuffer = mVertexBufferList.pop();
-				mVertexBuffer.dispose();
-				deleteCount--;
-			}
 			mVertexBuffer = null;
-		}
-
-		/**
-		 * 创建网格
-		 * @param mRawData
-		 * @return
-		 *
-		 */
-		public function createVertexBuffer(vertexData : SVertexData) : VertexBuffer3D
-		{
-			if (sDrawCount >= mVertexBufferNum)
-			{
-				mVertexBuffer = mContext.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
-				mVertexBufferList.push(mVertexBuffer);
-				mVertexBufferNum++;
-			}
-			else
-			{
-				mVertexBuffer = mVertexBufferList[sDrawCount];
-			}
-			mVertexBuffer.uploadFromVector(vertexData.rawData, 0, vertexData.numVertices);
-			return mVertexBuffer;
 		}
 
 		/**

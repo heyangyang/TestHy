@@ -2,7 +2,7 @@ package hy.game.stage3D.display
 {
 	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
-
+	
 	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
@@ -12,7 +12,6 @@ package hy.game.stage3D.display
 	{
 		private var mTexture : STexture;
 		private var mSmoothing : String;
-		private var mDropShadow : Boolean;
 		private var mIsChange : Boolean;
 		private var mVertexBuffer3D : SVertexBuffer3D;
 
@@ -100,16 +99,6 @@ package hy.game.stage3D.display
 		public function get vertexBuffer3D() : VertexBuffer3D
 		{
 			return mVertexBuffer3D ? mVertexBuffer3D.data : mTexture.vertexBuffer3D;
-		}
-
-		public function get dropShadow() : Boolean
-		{
-			return mDropShadow;
-		}
-
-		public function set dropShadow(value : Boolean) : void
-		{
-			mDropShadow = value;
 		}
 
 		public override function dispose() : void

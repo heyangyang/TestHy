@@ -49,10 +49,6 @@ package hy.game.render
 			return transform.colorTransform;
 		}
 
-		public function set dropShadow(value : Boolean) : void
-		{
-		}
-
 		override public function set rotation(value : Number) : void
 		{
 			var angle : int = UtilsCommon.getAngleByRotate(value);

@@ -61,7 +61,6 @@ package hy.game.components
 		override protected function init() : void
 		{
 			super.init();
-			mRender.dropShadow = true;
 			mAvatar = new SAvatar();
 			mResource = new SAvatarResource(mAvatar);
 		}

@@ -7,7 +7,7 @@ package hy.game.update
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursorData;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.components.SCollisionComponent;
 	import hy.game.core.GameObject;
@@ -110,8 +110,8 @@ package hy.game.update
 				mUpdateComponent.isMouseOver = false;
 				if (!mUpdateComponent.checkIsMouseIn(mLastSceneMouseX, mLastSceneMouseY))
 					continue;
-				if (!mUpdateComponent.checkPixelIn(mLastSceneMouseX, mLastSceneMouseY))
-					continue;
+//				if (!Config.supportDirectX || !mUpdateComponent.checkPixelIn(mLastSceneMouseX, mLastSceneMouseY))
+//					continue;
 				if (mCurrComponent == null || mUpdateComponent.index > mCurrComponent.index)
 					mCurrComponent = mUpdateComponent;
 			}
@@ -119,13 +119,13 @@ package hy.game.update
 				mCurrComponent.isMouseOver = true;
 		}
 
-		public function get target():GameObject
+		public function get target() : GameObject
 		{
-			if(mCurrComponent==null)
+			if (mCurrComponent == null)
 				return null;
 			return mCurrComponent.gameObject;
 		}
-		
+
 		protected function onMouseMoveHandler(event : MouseEvent) : void
 		{
 			mStageX = event.stageX;

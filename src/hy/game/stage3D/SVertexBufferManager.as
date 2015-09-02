@@ -4,7 +4,7 @@ package hy.game.stage3D
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.utils.SMatrixUtil;
@@ -22,6 +22,12 @@ package hy.game.stage3D
 		private static var sVertexSubDictionary : Dictionary = new Dictionary();
 		private static var sTexCoords : Point = new Point();
 		private static var sMatrix : Matrix = new Matrix();
+		private static var sVertexCount : int = 0;
+
+		public static function get vertexCount() : int
+		{
+			return sVertexCount;
+		}
 
 		public static function createVertexBuffer3D(width : int, height : int) : SVertexBuffer3D
 		{
@@ -47,6 +53,7 @@ package hy.game.stage3D
 			tVertexBuffer3D = new SVertexBuffer3D();
 			tVertexBuffer3D.data = tBuffer3D;
 			sVertexDictionary[key] = tVertexBuffer3D;
+			sVertexCount++;
 			return tVertexBuffer3D;
 		}
 
@@ -96,6 +103,7 @@ package hy.game.stage3D
 			tVertexBuffer3D = new SVertexBuffer3D();
 			tVertexBuffer3D.data = tBuffer3D;
 			sVertexSubDictionary[key] = tVertexBuffer3D;
+			sVertexCount++;
 			return tVertexBuffer3D;
 		}
 

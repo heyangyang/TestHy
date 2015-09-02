@@ -10,6 +10,7 @@ package hy.game.render
 	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.interfaces.display.IDisplayObjectContainer;
 	import hy.game.interfaces.display.IDisplayRender;
+	import hy.game.interfaces.display.IDisplayRenderContainer;
 	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
 
@@ -119,8 +120,9 @@ package hy.game.render
 			if (mNumChildren == 0)
 			{
 				mChilds.push(child);
+				if (mParent is IDisplayRenderContainer)
+					mParent.sort2Push(child);
 				mNumChildren++;
-				mParent.sort2Push(child);
 				return;
 			}
 			var tIndex : int = mChilds.indexOf(child as IDisplayRender);
@@ -177,7 +179,8 @@ package hy.game.render
 				tSortIndex = 0;
 			//插入
 			mChilds.splice(tSortIndex, 0, child);
-			mParent.sort2Push(child);
+			if (mParent is IDisplayRenderContainer)
+				mParent.sort2Push(child);
 		}
 
 		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
@@ -191,6 +194,8 @@ package hy.game.render
 				return null;
 			mNumChildren--;
 			var child : IDisplayRender = childs.splice(index, 1)[0];
+			if (mParent is IDisplayRenderContainer)
+				mParent.removeDisplay(child);
 			child.setParent(null);
 			return child;
 		}
@@ -513,11 +518,6 @@ package hy.game.render
 			{
 				mChilds[i][field] = value;
 			}
-		}
-
-		public function set dropShadow(value : Boolean) : void
-		{
-			mRender.dropShadow = value;
 		}
 
 		/**
