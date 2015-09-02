@@ -138,6 +138,5 @@ package hy.game.data
 		{
 			return "[ x : " + mX + " y : " + mY + " width : " + mWidth + " height : " + mHeight + "]";
 		}
-
 	}
 }

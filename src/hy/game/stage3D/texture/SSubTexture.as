@@ -1,13 +1,14 @@
 package hy.game.stage3D.texture
 {
+	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	
 	import hy.game.data.SRectangle;
 	import hy.game.render.SDirectBitmapData;
-	import hy.game.stage3D.utils.SMatrixUtil;
-	import hy.game.stage3D.utils.SVertexData;
+	import hy.game.stage3D.SVertexBufferManager;
+	import hy.game.stage3D.utils.SVertexBuffer3D;
 
 
 	public class SSubTexture extends SDirectBitmapData
@@ -19,8 +20,7 @@ package hy.game.stage3D.texture
 		private var mParent : STexture;
 		private var mRegion : SRectangle;
 		private var mOffest : Point;
-		private var mTransformationMatrix : Matrix;
-		private var mVertexData : SVertexData;
+		private var mVertexBuffer3D : SVertexBuffer3D;
 
 		public function SSubTexture(parent : STexture, region : SRectangle, offest : Point = null)
 		{
@@ -28,51 +28,17 @@ package hy.game.stage3D.texture
 			mParent = parent;
 			mRegion = region;
 			mOffest = offest;
-			mTransformationMatrix = new Matrix();
-			mTransformationMatrix.scale(mRegion.width / mParent.width, mRegion.height / mParent.height);
-			mTransformationMatrix.translate(mRegion.x / mParent.width, mRegion.y / mParent.height);
-			mVertexData = new SVertexData(4);
-			mVertexData.setTexCoords(0, 0.0, 0.0);
-			mVertexData.setTexCoords(1, 1.0, 0.0);
-			mVertexData.setTexCoords(2, 0.0, 1.0);
-			mVertexData.setTexCoords(3, 1.0, 1.0);
-			mVertexData.setPosition(0, 0.0, 0.0);
-			mVertexData.setPosition(1, mRegion.width, 0.0);
-			mVertexData.setPosition(2, 0.0, mRegion.height);
-			mVertexData.setPosition(3, mRegion.width, mRegion.height);
-			adjustVertexData(mVertexData);
+			mVertexBuffer3D = SVertexBufferManager.createSubVertexBuffer3D(mRegion, mParent);
 		}
 
-		public override function adjustVertexData(vertexData : SVertexData) : void
+		public override function updateVertexBuffer3D(scaleX : Number = 1, rotation : Number = 0) : SVertexBuffer3D
 		{
-			var startIndex : int = SVertexData.TEXCOORD_OFFSET;
-			var stride : int = SVertexData.ELEMENTS_PER_VERTEX - 2;
-			adjustTexCoords(vertexData.rawData, startIndex, stride, 4);
+			return SVertexBufferManager.createSubVertexBuffer3D(mRegion, mParent, scaleX, rotation);
 		}
 
-		public override function adjustTexCoords(texCoords : Vector.<Number>, startIndex : int = 0, stride : int = 0, count : int = -1) : void
+		public override function get vertexBuffer3D() : VertexBuffer3D
 		{
-			var endIndex : int = startIndex + count * (2 + stride);
-			var u : Number, v : Number;
-
-			sMatrix.identity();
-			sMatrix.concat(mTransformationMatrix);
-
-			for (var i : int = startIndex; i < endIndex; i += 2 + stride)
-			{
-				u = texCoords[i];
-				v = texCoords[int(i + 1)];
-
-				SMatrixUtil.transformCoords(sMatrix, u, v, sTexCoords);
-
-				texCoords[i] = sTexCoords.x;
-				texCoords[int(i + 1)] = sTexCoords.y;
-			}
-		}
-
-		public override function get vertexData() : SVertexData
-		{
-			return mVertexData;
+			return mVertexBuffer3D.data;
 		}
 
 		public function get offest() : Point
@@ -117,12 +83,13 @@ package hy.game.stage3D.texture
 
 		public override function dispose() : void
 		{
+
 			super.dispose();
+			mVertexBuffer3D && mVertexBuffer3D.release();
+			mVertexBuffer3D = null;
 			mParent = null;
 			mRegion = null;
 			mOffest = null;
-			mTransformationMatrix = null;
-			mVertexData = null;
 		}
 	}
 }

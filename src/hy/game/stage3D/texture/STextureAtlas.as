@@ -2,10 +2,9 @@ package hy.game.stage3D.texture
 {
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
-
-	import hy.game.interfaces.display.IBitmapData;
+	
 	import hy.game.data.SRectangle;
-	import hy.game.stage3D.utils.cleanMasterString;
+	import hy.game.interfaces.display.IBitmapData;
 
 
 	public class STextureAtlas
@@ -33,6 +32,7 @@ package hy.game.stage3D.texture
 		protected function parseAtlasXml(atlasXml : XML) : void
 		{
 			var scale : Number = mAtlasTexture.scale;
+			var texture : SSubTexture;
 			var region : SRectangle;
 			var name : String;
 			var rx : Number;
@@ -44,7 +44,7 @@ package hy.game.stage3D.texture
 			var offest : Point;
 			for each (var subTexture : XML in atlasXml.SubTexture)
 			{
-				name = cleanMasterString(subTexture.@name);
+				name = subTexture.@name;
 				rx = parseFloat(subTexture.@rx) / scale;
 				ry = parseFloat(subTexture.@ry) / scale;
 				x = parseFloat(subTexture.@x) / scale;
@@ -53,14 +53,15 @@ package hy.game.stage3D.texture
 				height = parseFloat(subTexture.@height) / scale;
 				offest = new Point(rx, ry);
 				region = new SRectangle(x, y, width, height);
-				addRegion(name, region, offest);
+				texture = addRegion(name, region, offest);
 			}
 		}
 
-		public function addRegion(name : String, region : SRectangle, offest : Point) : void
+		public function addRegion(name : String, region : SRectangle, offest : Point) : SSubTexture
 		{
 			var subTexture : SSubTexture = new SSubTexture(mAtlasTexture, region, offest);
 			mSubTextures[name] = subTexture;
+			return subTexture;
 		}
 
 		public function removeRegion(name : String) : void

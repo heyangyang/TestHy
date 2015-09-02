@@ -3,6 +3,7 @@ package hy.game.stage3D.texture
 	import flash.display.BitmapData;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
+	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
 	import flash.utils.ByteArray;
@@ -10,7 +11,7 @@ package hy.game.stage3D.texture
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.errors.MissingContextError;
-	import hy.game.stage3D.utils.SVertexData;
+	import hy.game.stage3D.utils.SVertexBuffer3D;
 	import hy.game.stage3D.utils.getNextPowerOfTwo;
 
 
@@ -118,6 +119,11 @@ package hy.game.stage3D.texture
 			return false;
 		}
 
+		public function updateVertexBuffer3D(scaleX : Number = 1, rotation : Number = 0) : SVertexBuffer3D
+		{
+			return null;
+		}
+
 		public function get format() : String
 		{
 			return Context3DTextureFormat.BGRA;
@@ -128,17 +134,7 @@ package hy.game.stage3D.texture
 			return null;
 		}
 
-		public function adjustVertexData(vertexData : SVertexData) : void
-		{
-
-		}
-
-		public function adjustTexCoords(texCoords : Vector.<Number>, startIndex : int = 0, stride : int = 0, count : int = -1) : void
-		{
-
-		}
-
-		public function get vertexData() : SVertexData
+		public function get vertexBuffer3D() : VertexBuffer3D
 		{
 			return null;
 		}

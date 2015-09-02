@@ -2,28 +2,24 @@ package hy.game.stage3D.display
 {
 	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
-	import flash.geom.Matrix;
 
 	import hy.game.stage3D.SRenderSupport;
-	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
-	import hy.game.stage3D.utils.SVertexData;
+	import hy.game.stage3D.utils.SVertexBuffer3D;
 
 	public class SImage extends SDisplayObject
 	{
 		private var mTexture : STexture;
 		private var mSmoothing : String;
 		private var mDropShadow : Boolean;
-		private var mSupportVertexData : SVertexData;
-		private var mVertexBuffer : VertexBuffer3D;
+		private var mIsChange : Boolean;
+		private var mVertexBuffer3D : SVertexBuffer3D;
 
 		public function SImage(value : STexture = null)
 		{
 			if (value)
 				this.texture = value;
-			mSupportVertexData = new SVertexData(4);
-			mVertexBuffer = SStage3D.context.createVertexBuffer(vertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
 			super();
 		}
 
@@ -45,14 +41,8 @@ package hy.game.stage3D.display
 				return;
 			}
 			mTexture = value;
-			copyVertexDataTransformedTo(transformationMatrix);
-			mVertexBuffer.uploadFromVector(mSupportVertexData.rawData, 0, mSupportVertexData.numVertices);
 			mSmoothing = STextureSmoothing.BILINEAR;
-		}
-
-		public function copyVertexDataTransformedTo(matrix : Matrix = null) : void
-		{
-			mTexture.vertexData.copyTransformedTo(mSupportVertexData, 0, matrix, 0, 4);
+			isChange = mIsChange;
 		}
 
 		public function get smoothing() : String
@@ -73,16 +63,6 @@ package hy.game.stage3D.display
 			return true;
 		}
 
-		public override function get transformationMatrix() : Matrix
-		{
-			if (mOrientationChanged)
-			{
-				copyVertexDataTransformedTo(super.transformationMatrix);
-				mVertexBuffer.uploadFromVector(mSupportVertexData.rawData, 0, mSupportVertexData.numVertices);
-			}
-			return super.transformationMatrix;
-		}
-
 		public override function get width() : Number
 		{
 			return mTexture ? mTexture.width : 0;
@@ -93,23 +73,33 @@ package hy.game.stage3D.display
 			return mTexture ? mTexture.height : 0;
 		}
 
-
-		public function get vertexData() : SVertexData
-		{
-			return mSupportVertexData;
-		}
-
 		public override function render() : void
 		{
 			if (mTexture == null || mTexture.base == null)
 				return;
-			transformationMatrix;
+			if (mOrientationChanged)
+			{
+				isChange = scaleX != 1.0 || rotation != 0.0;
+				mOrientationChanged = false;
+			}
 			SRenderSupport.getInstance().supportImage(this);
+		}
+
+		private function set isChange(value : Boolean) : void
+		{
+			mIsChange = value;
+			if (mIsChange)
+				mVertexBuffer3D = mTexture.updateVertexBuffer3D(scaleX, rotation);
+			else
+			{
+				mVertexBuffer3D && mVertexBuffer3D.release();
+				mVertexBuffer3D = null;
+			}
 		}
 
 		public function get vertexBuffer3D() : VertexBuffer3D
 		{
-			return mVertexBuffer;
+			return mVertexBuffer3D ? mVertexBuffer3D.data : mTexture.vertexBuffer3D;
 		}
 
 		public function get dropShadow() : Boolean
@@ -125,12 +115,7 @@ package hy.game.stage3D.display
 		public override function dispose() : void
 		{
 			super.dispose();
-			if (mVertexBuffer)
-			{
-				mVertexBuffer.dispose();
-				mVertexBuffer = null;
-			}
-			mSupportVertexData = null;
+			isChange = false;
 			mTexture = null;
 		}
 

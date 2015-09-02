@@ -59,7 +59,7 @@ package hy.game.stage3D
 		private var mPreviousViewPort : Rectangle;
 		private var mRenderSupport : SRenderSupport;
 
-		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = Context3DProfile.BASELINE)
+		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = Context3DProfile.BASELINE_EXTENDED)
 		{
 			mRenderSupport = SRenderSupport.getInstance();
 			viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);

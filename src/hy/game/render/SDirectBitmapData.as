@@ -10,6 +10,16 @@ package hy.game.render
 	public class SDirectBitmapData extends STexture implements IBitmapData
 	{
 
+		/**
+		 * format强制设置为 Context3DTextureFormat.COMPRESSED_ALPHA
+		 * @param data
+		 * @param generateMipMaps
+		 * @param optimizeForRenderToTexture
+		 * @param scale
+		 * @param repeat
+		 * @return 
+		 * 
+		 */
 		public static function fromDirectBitmapData(data : BitmapData, generateMipMaps : Boolean = true, optimizeForRenderToTexture : Boolean = false, scale : Number = 1, repeat : Boolean = false) : SDirectBitmapData
 		{
 			return STexture.fromBitmapData(data, false, optimizeForRenderToTexture, scale, Context3DTextureFormat.COMPRESSED_ALPHA, repeat) as SDirectBitmapData;

@@ -1,6 +1,7 @@
 package hy.game.stage3D.texture
 {
 	import flash.display.BitmapData;
+	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
 	import flash.events.Event;
@@ -9,7 +10,8 @@ package hy.game.stage3D.texture
 	import flash.utils.ByteArray;
 	
 	import hy.game.render.SDirectBitmapData;
-	import hy.game.stage3D.utils.SVertexData;
+	import hy.game.stage3D.SVertexBufferManager;
+	import hy.game.stage3D.utils.SVertexBuffer3D;
 
 
 	public class SConcreteTexture extends SDirectBitmapData
@@ -24,7 +26,7 @@ package hy.game.stage3D.texture
 		private var mScale : Number;
 		private var mRepeat : Boolean;
 		private var mDataUploaded : Boolean;
-		private var mVertexData : SVertexData;
+		private var mVertexBuffer3D : SVertexBuffer3D;
 
 		public function SConcreteTexture(base : TextureBase, format : String, width : int, height : int, mipMapping : Boolean, premultipliedAlpha : Boolean, optimizedForRenderTexture : Boolean = false, scale : Number = 1, repeat : Boolean = false)
 		{
@@ -38,20 +40,12 @@ package hy.game.stage3D.texture
 			mOptimizedForRenderTexture = optimizedForRenderTexture;
 			mRepeat = repeat;
 			mDataUploaded = false;
-			mVertexData = new SVertexData(4);
-			mVertexData.setTexCoords(0, 0.0, 0.0);
-			mVertexData.setTexCoords(1, 1.0, 0.0);
-			mVertexData.setTexCoords(2, 0.0, 1.0);
-			mVertexData.setTexCoords(3, 1.0, 1.0);
-			mVertexData.setPosition(0, 0.0, 0.0);
-			mVertexData.setPosition(1, width, 0.0);
-			mVertexData.setPosition(2, 0.0, height);
-			mVertexData.setPosition(3, width, height);
+			mVertexBuffer3D = SVertexBufferManager.createVertexBuffer3D(width, height);
 		}
 
-		public override function get vertexData() : SVertexData
+		public override function get vertexBuffer3D() : VertexBuffer3D
 		{
-			return mVertexData;
+			return mVertexBuffer3D.data;
 		}
 
 		public function uploadAtfData(data : ByteArray, offset : int = 0) : void
@@ -145,7 +139,11 @@ package hy.game.stage3D.texture
 
 		public override function dispose() : void
 		{
-			mVertexData = null;
+			if (mVertexBuffer3D)
+			{
+				mVertexBuffer3D.release();
+				mVertexBuffer3D = null;
+			}
 			mBase && mBase.dispose();
 			mBase = null;
 			super.dispose();

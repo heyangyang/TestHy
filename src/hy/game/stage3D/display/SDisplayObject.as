@@ -1,7 +1,5 @@
 package hy.game.stage3D.display
 {
-	import flash.geom.Matrix;
-
 	import hy.game.core.event.SEventDispatcher;
 	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.interfaces.display.IDisplayObjectContainer;
@@ -15,8 +13,6 @@ package hy.game.stage3D.display
 	{
 		private var mX : Number;
 		private var mY : Number;
-		private var mPivotX : Number;
-		private var mPivotY : Number;
 		private var mScaleX : Number;
 		private var mScaleY : Number;
 		private var mRotation : Number;
@@ -26,7 +22,6 @@ package hy.game.stage3D.display
 		private var mBlendMode : String;
 		private var mName : String;
 		private var mParent : IDisplayObjectContainer;
-		private var mTransformationMatrix : Matrix;
 		protected var mOrientationChanged : Boolean;
 		/**
 		 * 记录索引位置
@@ -36,11 +31,10 @@ package hy.game.stage3D.display
 		public function SDisplayObject()
 		{
 			super();
-			mX = mY = mPivotX = mPivotY = mRotation = 0.0;
+			mX = mY = mRotation = 0.0;
 			mScaleX = mScaleY = mAlpha = 1.0;
 			mVisible = mTouchable = true;
 			mBlendMode = SBlendMode.AUTO;
-			mTransformationMatrix = new Matrix();
 			mOrientationChanged = false;
 		}
 
@@ -70,33 +64,6 @@ package hy.game.stage3D.display
 		public function get parent() : IDisplayObjectContainer
 		{
 			return mParent;
-		}
-
-		public function get transformationMatrix() : Matrix
-		{
-			if (!mOrientationChanged)
-				return mTransformationMatrix;
-			mOrientationChanged = false;
-
-			if (mRotation == 0.0)
-			{
-				mTransformationMatrix.setTo(mScaleX, 0.0, 0.0, mScaleY, -mPivotX * mScaleX, -mPivotY * mScaleY);
-			}
-			else
-			{
-				var cos : Number = Math.cos(mRotation);
-				var sin : Number = Math.sin(mRotation);
-				var a : Number = mScaleX * cos;
-				var b : Number = mScaleX * sin;
-				var c : Number = mScaleY * -sin;
-				var d : Number = mScaleY * cos;
-				var tx : Number = -mPivotX * a - mPivotY * c;
-				var ty : Number = -mPivotX * b - mPivotY * d;
-
-				mTransformationMatrix.setTo(a, b, c, d, tx, ty);
-			}
-
-			return mTransformationMatrix;
 		}
 
 		public function get layer() : int
@@ -135,33 +102,6 @@ package hy.game.stage3D.display
 			}
 		}
 
-		public function get pivotX() : Number
-		{
-			return mPivotX;
-		}
-
-		public function set pivotX(value : Number) : void
-		{
-			if (mPivotX != value)
-			{
-				mPivotX = value;
-				mOrientationChanged = true;
-			}
-		}
-
-		public function get pivotY() : Number
-		{
-			return mPivotY;
-		}
-
-		public function set pivotY(value : Number) : void
-		{
-			if (mPivotY != value)
-			{
-				mPivotY = value;
-				mOrientationChanged = true;
-			}
-		}
 
 		public function get scaleX() : Number
 		{
@@ -283,7 +223,6 @@ package hy.game.stage3D.display
 		public function dispose() : void
 		{
 			removeFromParent();
-			mTransformationMatrix = null;
 			mParent = null;
 		}
 	}
