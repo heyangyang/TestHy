@@ -16,7 +16,7 @@ package hy.game.stage3D
 	
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
-	import hy.game.stage3D.display.SImage;
+	import hy.game.render.SDirectBitmap;
 	import hy.game.stage3D.errors.MissingContextError;
 	import hy.game.stage3D.texture.SBlendMode;
 	import hy.game.stage3D.texture.STexture;
@@ -58,6 +58,7 @@ package hy.game.stage3D
 		private var mContextData : Dictionary = new Dictionary(true);
 		private var mAssembler : AGALMiniAssembler = new AGALMiniAssembler();
 		private var mRenderAlpha : Vector.<Number>;
+		private var mRenderAlpha1 : Vector.<Number>;
 		private var mMatrixData : Vector.<Number>;
 		private var mPoint3D : Vector3D = new Vector3D();
 		private var mCurProgram : Program3D;
@@ -76,6 +77,12 @@ package hy.game.stage3D
 				error("instance != null");
 			mRenderAlpha = new Vector.<Number>();
 			mRenderAlpha.push(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+			mRenderAlpha1 = new Vector.<Number>();
+			mRenderAlpha1.push(
+				1.4, 1.4,1.4, 1.0, 
+				1.4, 1.4,1.4, 1.0, 
+				1.4, 1.4,1.4, 1.0, 
+				1.4, 1.4,1.4, 1.0);
 			mMatrixData = new Vector.<Number>();
 			mMatrixData.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		}
@@ -85,7 +92,7 @@ package hy.game.stage3D
 			sDrawCount = 0;
 		}
 
-		public function supportImage(image : SImage) : void
+		public function supportImage(image : SDirectBitmap) : void
 		{
 			updateProgram(image.texture, image.tinted, image.smoothing);
 			//混合模式
@@ -107,7 +114,10 @@ package hy.game.stage3D
 			mPositionMatrix3D.copyFrom(mProjectionMatrix3D);
 			mPositionMatrix3D.prependTranslation(image.x, image.y, 0);
 			//透明度
-			setAlpha(image.alpha);
+			if (image.filters)
+				setAlpha(image.alpha, mRenderAlpha1);
+			else
+				setAlpha(image.alpha, mRenderAlpha);
 			mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mPositionMatrix3D, true);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();
@@ -146,13 +156,13 @@ package hy.game.stage3D
 		 * @param alpha
 		 *
 		 */
-		private function setAlpha(alpha : Number) : void
+		private function setAlpha(alpha : Number, alphaArray : Vector.<Number>) : void
 		{
-			if (mCurAlpha == alpha)
-				return;
+//			if (mCurAlpha == alpha)
+//				return;
 			mCurAlpha = alpha;
-			mRenderAlpha[3] = mRenderAlpha[7] = mRenderAlpha[11] = mRenderAlpha[15] = mCurAlpha;
-			mContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, mRenderAlpha);
+			alphaArray[3] = alphaArray[7] = alphaArray[11] = alphaArray[15] = mCurAlpha;
+			mContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, alphaArray);
 		}
 
 		/**

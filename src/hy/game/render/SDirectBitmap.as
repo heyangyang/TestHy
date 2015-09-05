@@ -2,14 +2,17 @@ package hy.game.render
 {
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
-	
+
 	import hy.game.interfaces.display.IBitmap;
 	import hy.game.interfaces.display.IBitmapData;
+	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.display.SImage;
 	import hy.game.stage3D.texture.STexture;
 
 	public class SDirectBitmap extends SImage implements IBitmap
 	{
+		private var mFilters : Array;
+
 		public function SDirectBitmap(texture : SDirectBitmapData = null)
 		{
 			super(texture);
@@ -30,12 +33,14 @@ package hy.game.render
 
 		public function set filters(value : Array) : void
 		{
-
+			if (value && value.length == 0)
+				value = null;
+			mFilters = value;
 		}
 
 		public function get filters() : Array
 		{
-			return null;
+			return mFilters;
 		}
 
 		public function removeChild() : void
@@ -59,9 +64,22 @@ package hy.game.render
 			this.y = rect.y;
 		}
 
+		public override function render() : void
+		{
+			if (mTexture == null || mTexture.base == null)
+				return;
+			if (mOrientationChanged)
+			{
+				isChange = scaleX != 1.0 || rotation != 0.0;
+				mOrientationChanged = false;
+			}
+			SRenderSupport.getInstance().supportImage(this);
+		}
+
 		public override function dispose() : void
 		{
 			super.dispose();
+			mFilters = null;
 		}
 
 	}

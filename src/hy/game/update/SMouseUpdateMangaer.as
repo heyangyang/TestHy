@@ -110,8 +110,8 @@ package hy.game.update
 				mUpdateComponent.isMouseOver = false;
 				if (!mUpdateComponent.checkIsMouseIn(mLastSceneMouseX, mLastSceneMouseY))
 					continue;
-//				if (!Config.supportDirectX || !mUpdateComponent.checkPixelIn(mLastSceneMouseX, mLastSceneMouseY))
-//					continue;
+				if (!Config.supportDirectX && !mUpdateComponent.checkPixelIn(mLastSceneMouseX, mLastSceneMouseY))
+					continue;
 				if (mCurrComponent == null || mUpdateComponent.index > mCurrComponent.index)
 					mCurrComponent = mUpdateComponent;
 			}

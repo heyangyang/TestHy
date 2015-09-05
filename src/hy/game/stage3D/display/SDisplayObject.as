@@ -1,6 +1,5 @@
 package hy.game.stage3D.display
 {
-	import hy.game.core.event.SEventDispatcher;
 	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.interfaces.display.IDisplayObjectContainer;
 	import hy.game.stage3D.errors.AbstractMethodError;
@@ -9,7 +8,7 @@ package hy.game.stage3D.display
 
 
 
-	public class SDisplayObject extends SEventDispatcher implements IDisplayObject
+	public class SDisplayObject implements IDisplayObject
 	{
 		private var mX : Number;
 		private var mY : Number;

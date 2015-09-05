@@ -39,7 +39,6 @@ package hy.game.stage3D.display
 						spliceChildren(index, 0, child);
 					mNumChildren++;
 					child.setParent(this);
-					child.dispatchEventWith(SEvent.ADDED, true);
 				}
 				return child;
 			}
@@ -63,7 +62,6 @@ package hy.game.stage3D.display
 			{
 				mNumChildren--;
 				var child : IDisplayObject = mChildren[index];
-				child.dispatchEventWith(SEvent.REMOVED, true);
 				child.setParent(null);
 				index = mChildren.indexOf(child);
 				if (index >= 0)

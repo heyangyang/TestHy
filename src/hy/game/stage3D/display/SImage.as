@@ -10,10 +10,10 @@ package hy.game.stage3D.display
 
 	public class SImage extends SDisplayObject
 	{
-		private var mTexture : STexture;
-		private var mSmoothing : String;
-		private var mIsChange : Boolean;
-		private var mVertexBuffer3D : SVertexBuffer3D;
+		protected var mTexture : STexture;
+		protected var mSmoothing : String;
+		protected var mIsChange : Boolean;
+		protected var mVertexBuffer3D : SVertexBuffer3D;
 
 		public function SImage(value : STexture = null)
 		{
@@ -72,19 +72,7 @@ package hy.game.stage3D.display
 			return mTexture ? mTexture.height : 0;
 		}
 
-		public override function render() : void
-		{
-			if (mTexture == null || mTexture.base == null)
-				return;
-			if (mOrientationChanged)
-			{
-				isChange = scaleX != 1.0 || rotation != 0.0;
-				mOrientationChanged = false;
-			}
-			SRenderSupport.getInstance().supportImage(this);
-		}
-
-		private function set isChange(value : Boolean) : void
+		protected function set isChange(value : Boolean) : void
 		{
 			mIsChange = value;
 			if (mIsChange)

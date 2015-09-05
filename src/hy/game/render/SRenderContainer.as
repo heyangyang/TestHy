@@ -135,11 +135,6 @@ package hy.game.render
 
 		}
 
-		public function dispatchEventWith(type : String, data : Object = null) : void
-		{
-
-		}
-
 		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
 		{
 			remove(child as SRender);

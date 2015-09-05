@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.interfaces.core.IRecycle;
 	import hy.game.interfaces.display.IBitmap;
@@ -10,7 +10,6 @@ package hy.game.render
 	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.interfaces.display.IDisplayObjectContainer;
 	import hy.game.interfaces.display.IDisplayRender;
-	import hy.game.interfaces.display.IDisplayRenderContainer;
 	import hy.game.manager.SMemeryManager;
 	import hy.game.namespaces.name_part;
 
@@ -120,7 +119,8 @@ package hy.game.render
 			if (mNumChildren == 0)
 			{
 				mChilds.push(child);
-				if (mParent is IDisplayRenderContainer)
+				//如果不用stage3d需要强制添加到父类操作
+				if (mParent is SRenderContainer)
 					mParent.sort2Push(child);
 				mNumChildren++;
 				return;
@@ -179,7 +179,8 @@ package hy.game.render
 				tSortIndex = 0;
 			//插入
 			mChilds.splice(tSortIndex, 0, child);
-			if (mParent is IDisplayRenderContainer)
+			//如果不用stage3d需要强制添加到父类操作
+			if (mParent is SRenderContainer)
 				mParent.sort2Push(child);
 		}
 
@@ -194,7 +195,8 @@ package hy.game.render
 				return null;
 			mNumChildren--;
 			var child : IDisplayRender = childs.splice(index, 1)[0];
-			if (mParent is IDisplayRenderContainer)
+			//如果不用stage3d需要强制添加到父类操作
+			if (mParent is SRenderContainer)
 				mParent.removeDisplay(child);
 			child.setParent(null);
 			return child;
@@ -494,6 +496,10 @@ package hy.game.render
 
 		public function render() : void
 		{
+			for (var i : int = 0; i < mNumChildren; i++)
+			{
+				mChilds[i].render();
+			}
 			mRender.render();
 		}
 
@@ -527,17 +533,6 @@ package hy.game.render
 		public function recycle() : void
 		{
 			SMemeryManager.recycleObject(this);
-		}
-
-		/**
-		 * 暂时没用到
-		 * @param type
-		 * @param data
-		 *
-		 */
-		public function dispatchEventWith(type : String, data : Object = null) : void
-		{
-
 		}
 
 		public function get name() : String
