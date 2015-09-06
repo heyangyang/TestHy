@@ -1,7 +1,7 @@
 package hy.game.stage3D
 {
 	import com.adobe.utils.AGALMiniAssembler;
-	
+
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTextureFormat;
@@ -13,7 +13,7 @@ package hy.game.stage3D
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectBitmap;
@@ -78,11 +78,7 @@ package hy.game.stage3D
 			mRenderAlpha = new Vector.<Number>();
 			mRenderAlpha.push(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 			mRenderAlpha1 = new Vector.<Number>();
-			mRenderAlpha1.push(
-				1.4, 1.4,1.4, 1.0, 
-				1.4, 1.4,1.4, 1.0, 
-				1.4, 1.4,1.4, 1.0, 
-				1.4, 1.4,1.4, 1.0);
+			mRenderAlpha1.push(1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0);
 			mMatrixData = new Vector.<Number>();
 			mMatrixData.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		}
@@ -180,6 +176,16 @@ package hy.game.stage3D
 			mCurProgram = program;
 			mUpdateCameraMatrix3D = true;
 			mContext.setProgram(mCurProgram);
+		}
+
+		public function hasProgram(name : String) : Boolean
+		{
+			return name in mContextData;
+		}
+
+		public function getProgramByName(name : String) : Program3D
+		{
+			return mContextData[name];
 		}
 
 		/**

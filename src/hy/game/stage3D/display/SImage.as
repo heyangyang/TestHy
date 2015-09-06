@@ -3,7 +3,6 @@ package hy.game.stage3D.display
 	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
 	
-	import hy.game.stage3D.SRenderSupport;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
 	import hy.game.stage3D.utils.SVertexBuffer3D;
