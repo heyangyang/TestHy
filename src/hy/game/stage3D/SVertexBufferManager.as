@@ -4,7 +4,7 @@ package hy.game.stage3D
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.utils.SMatrixUtil;
@@ -57,9 +57,9 @@ package hy.game.stage3D
 			return tVertexBuffer3D;
 		}
 
-		public static function createSubVertexBuffer3D(region : SRectangle, parent : STexture, scaleX : Number = 1, rotation : Number = 0) : SVertexBuffer3D
+		public static function createSubVertexBuffer3D(region : SRectangle, parent : STexture, scaleX : Number = 1.0, scaleY : Number = 1.0, rotation : Number = 0.0) : SVertexBuffer3D
 		{
-			var key : String = region.toString() + "," + parent.width + "," + parent.height + "," + scaleX + "," + rotation;
+			var key : String = region.toString() + "," + parent.width + "," + parent.height + "," + scaleX + "," + scaleY + "," + rotation;
 			var tVertexBuffer3D : SVertexBuffer3D = sVertexSubDictionary[key];
 			if (tVertexBuffer3D)
 			{
@@ -83,7 +83,7 @@ package hy.game.stage3D
 			sMatrix.identity();
 			if (rotation == 0.0)
 			{
-				sMatrix.setTo(scaleX, 0.0, 0.0, 1.0, 0.0, 0.0);
+				sMatrix.setTo(scaleX, 0.0, 0.0, scaleY, 0.0, 0.0);
 			}
 			else
 			{

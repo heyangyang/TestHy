@@ -2,7 +2,7 @@ package hy.game.stage3D.display
 {
 	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
-	
+
 	import hy.game.stage3D.texture.STexture;
 	import hy.game.stage3D.texture.STextureSmoothing;
 	import hy.game.stage3D.utils.SVertexBuffer3D;
@@ -18,6 +18,7 @@ package hy.game.stage3D.display
 		{
 			if (value)
 				this.texture = value;
+			mSmoothing = STextureSmoothing.BILINEAR;
 			super();
 		}
 
@@ -39,7 +40,6 @@ package hy.game.stage3D.display
 				return;
 			}
 			mTexture = value;
-			mSmoothing = STextureSmoothing.BILINEAR;
 			isChange = mIsChange;
 		}
 
@@ -75,7 +75,7 @@ package hy.game.stage3D.display
 		{
 			mIsChange = value;
 			if (mIsChange)
-				mVertexBuffer3D = mTexture.updateVertexBuffer3D(scaleX, rotation);
+				mVertexBuffer3D = mTexture.updateVertexBuffer3D(scaleX, scaleY, rotation);
 			else
 			{
 				mVertexBuffer3D && mVertexBuffer3D.release();
