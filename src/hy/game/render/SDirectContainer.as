@@ -1,16 +1,23 @@
 package hy.game.render
 {
-	import hy.game.interfaces.display.IDisplayBase;
+	import hy.game.interfaces.display.IDisplayContainer;
 	import hy.game.interfaces.display.IDisplayObject;
-	import hy.game.interfaces.display.IDisplayRenderContainer;
-	import hy.game.stage3D.display.SDisplayObjectContainer;
+	import hy.game.namespaces.name_part;
+	import hy.game.stage3D.display.SDisplayObject;
 
-	public class SDirectContainer extends SDisplayObjectContainer implements IDisplayRenderContainer
+	use namespace name_part;
+
+	public class SDirectContainer extends SDisplayObject implements IDisplayContainer
 	{
+		private var mChildren : Vector.<SDisplayObject>;
+		private var mNumChildren : int;
+		private var mFilters : Array;
 
 		public function SDirectContainer()
 		{
 			super();
+			mChildren = new Vector.<SDisplayObject>();
+			mNumChildren = 0;
 		}
 
 		/**
@@ -18,15 +25,16 @@ package hy.game.render
 		 * @param child
 		 *
 		 */
-		public function sort2Push(child : IDisplayBase) : void
+		public function addDisplay(child : IDisplayObject) : void
 		{
+			child.setParent(this);
 			if (mNumChildren == 0)
 			{
 				mChildren.push(child);
 				mNumChildren++;
 				return;
 			}
-			var tIndex : int = mChildren.indexOf(child as IDisplayObject);
+			var tIndex : int = mChildren.indexOf(child as SDisplayObject);
 			//比较的索引
 			var tSortIndex : int;
 			//区间A，A-B,默认0开始
@@ -83,25 +91,47 @@ package hy.game.render
 			mChildren.splice(tSortIndex, 0, child);
 		}
 
-		/**
-		 * 移除显示对象
-		 * @param render
-		 *
-		 */
-		public function remove(render : SRender) : void
+		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : void
 		{
-			var index : int = mChildren.indexOf(render);
+			child.setParent(null);
+			var index : int = mChildren.indexOf(child as SDisplayObject);
 			if (index == -1)
 				return;
 			mChildren.splice(index, 1);
 			mNumChildren--;
 		}
 
-		public override function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
+		public override function render() : void
 		{
-			remove(child as SRender);
-			return child;
+			var child : SDisplayObject;
+			for (var i : int = 0; i < mNumChildren; ++i)
+			{
+				child = mChildren[i];
+				child.mParentX = mParentX + mX;
+				child.mParentY = mParentY + mY;
+				child.mParentAlpha = mParentAlpha * mAlpha;
+				child.render();
+			}
 		}
 
+		public function get filters() : Array
+		{
+			return mFilters;
+		}
+
+		public function set filters(value : Array) : void
+		{
+			if (mFilters == value)
+				return;
+			mFilters = value;
+		}
+
+		public override function dispose() : void
+		{
+			super.dispose();
+			mChildren.length = 0;
+			mNumChildren = 0;
+			mFilters = null;
+		}
 	}
 }

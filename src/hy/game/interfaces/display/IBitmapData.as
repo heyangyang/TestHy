@@ -8,7 +8,6 @@ package hy.game.interfaces.display
 		function get height() : int;
 		function get rect() : Rectangle;
 		function getPixel(x : int, y : int) : uint;
-		function cloneData() : IBitmapData;
 		function dispose() : void;
 	}
 }

@@ -1,9 +1,12 @@
 package hy.game.components
 {
+	import hy.game.cfg.Config;
 	import hy.game.core.FrameComponent;
 	import hy.game.data.STransform;
+	import hy.game.interfaces.display.IBitmap;
 	import hy.game.manager.SLayerManager;
-	import hy.game.render.SRender;
+	import hy.game.render.SDirectBitmap;
+	import hy.game.render.SRenderBitmap;
 
 	/**
 	 * 渲染基本组件
@@ -12,7 +15,7 @@ package hy.game.components
 	 */
 	public class SRenderComponent extends FrameComponent
 	{
-		protected var mRender : SRender;
+		protected var mRender : IBitmap;
 		protected var mTransform : STransform;
 		protected var mOffsetX : int;
 		protected var mOffsetY : int;
@@ -30,7 +33,14 @@ package hy.game.components
 		 */
 		override protected function init() : void
 		{
-			mRender = new SRender();
+			mRender = new getContainerClass();
+		}
+
+		protected function get getContainerClass() : Class
+		{
+			if (Config.supportDirectX)
+				return SDirectBitmap;
+			return SRenderBitmap;
 		}
 
 		/**
@@ -91,16 +101,16 @@ package hy.game.components
 		 * @param render
 		 *
 		 */
-		protected function addRender(render : SRender) : void
+		protected function addRender(render : IBitmap) : void
 		{
 			!mLayerType && error(this, "mLayerType is null！");
-			SLayerManager.getInstance().push(mLayerType, render);
+			SLayerManager.getInstance().addChild(mLayerType, render);
 		}
 
-		protected function removeRender(render : SRender) : void
+		protected function removeRender(render : IBitmap) : void
 		{
 			!mLayerType && error(this, "mLayerType is null！");
-			SLayerManager.getInstance().remove(mLayerType, render);
+			render.removeFromParent();
 		}
 
 		protected function updateRenderVisible() : void

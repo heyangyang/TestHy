@@ -141,7 +141,7 @@ package hy.game.components
 			}
 			if (!tmp_frame || !tmp_frame.frameData)
 			{
-				mRender.bitmapData = null;
+				mRender.data = null;
 				return;
 			}
 			if (tmp_frame == mFrame)
@@ -154,7 +154,7 @@ package hy.game.components
 				mRender.scaleX = needReversal ? -1 : 1;
 			}
 			mFrame.needReversal && mFrame.reverseData();
-			mRender.bitmapData = mFrame.frameData;
+			mRender.data = mFrame.frameData;
 			updatePosition();
 		}
 

@@ -1,21 +1,21 @@
 package hy.game.render
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 
-	import hy.game.interfaces.display.IDisplayBase;
+	import hy.game.interfaces.display.IDisplayContainer;
 	import hy.game.interfaces.display.IDisplayObject;
-	import hy.game.interfaces.display.IDisplayObjectContainer;
-	import hy.game.interfaces.display.IDisplayRenderContainer;
 
-	public class SRenderContainer extends Sprite implements IDisplayRenderContainer
+	public class SRenderContainer extends Sprite implements IDisplayContainer
 	{
-		protected var mChildren : Vector.<IDisplayBase>;
+		protected var mChildren : Vector.<IDisplayObject>;
+		protected var mParent : IDisplayContainer;
 		protected var mNumChildren : int;
 		private var mLayer : int;
 
 		public function SRenderContainer()
 		{
-			mChildren = new Vector.<IDisplayBase>();
+			mChildren = new Vector.<IDisplayObject>();
 			mNumChildren = 0;
 		}
 
@@ -24,16 +24,17 @@ package hy.game.render
 		 * @param child
 		 *
 		 */
-		public function sort2Push(child : IDisplayBase) : void
+		public function addDisplay(child : IDisplayObject) : void
 		{
+			child.setParent(this);
 			if (mNumChildren == 0)
 			{
 				mChildren.push(child);
-				addChild((child as SRender).display as SRenderBitmap);
+				addChild(child as DisplayObject);
 				mNumChildren++;
 				return;
 			}
-			var tIndex : int = mChildren.indexOf(child as IDisplayObject);
+			var tIndex : int = mChildren.indexOf(child);
 			//比较的索引
 			var tSortIndex : int;
 			//区间A，A-B,默认0开始
@@ -82,7 +83,7 @@ package hy.game.render
 			//新进来的则索引加1
 			else
 			{
-				addChild((child as SRender).display as SRenderBitmap);
+				addChild(child as DisplayObject);
 				mNumChildren++;
 			}
 			if (tIndex >= 0 && tIndex < tSortIndex)
@@ -91,28 +92,31 @@ package hy.game.render
 				tSortIndex = 0;
 			//插入
 			mChildren.splice(tSortIndex, 0, child);
-			setChildIndex((child as SRender).display as SRenderBitmap, tSortIndex);
+			setChildIndex(child as DisplayObject, tSortIndex);
 		}
 
-
-		/**
-		 * 移除显示对象
-		 * @param render
-		 *
-		 */
-		public function remove(render : SRender) : void
+		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : void
 		{
-			var index : int = mChildren.indexOf(render);
+			child.setParent(null);
+			var index : int = mChildren.indexOf(child);
 			if (index == -1)
 				return;
 			mChildren.splice(index, 1);
-			removeChild(render.display as SRenderBitmap);
+			removeChild(child as DisplayObject);
 			mNumChildren--;
 		}
 
-		public function render() : void
+		public function removeFromParent(dispose : Boolean = false) : void
 		{
+			if (mParent)
+				mParent.removeDisplay(this, dispose);
+			else if (dispose)
+				this.dispose();
+		}
 
+		public function setParent(value : IDisplayContainer) : void
+		{
+			mParent = value;
 		}
 
 		public function get layer() : int
@@ -125,24 +129,19 @@ package hy.game.render
 			mLayer = value;
 		}
 
-		public function removeFromParent(dispose : Boolean = false) : void
+		/**
+		 * cpu渲染，方法暂时无用
+		 *
+		 */
+		public function render() : void
 		{
 
-		}
-
-		public function setParent(value : IDisplayObjectContainer) : void
-		{
-
-		}
-
-		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : IDisplayObject
-		{
-			remove(child as SRender);
-			return child;
 		}
 
 		public function dispose() : void
 		{
+			removeFromParent();
+			mParent = null;
 			mChildren.length = 0;
 			mNumChildren = 0;
 		}

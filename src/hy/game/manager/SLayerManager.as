@@ -4,10 +4,10 @@ package hy.game.manager
 	import flash.utils.Dictionary;
 	
 	import hy.game.cfg.Config;
-	import hy.game.interfaces.display.IDisplayRenderContainer;
+	import hy.game.interfaces.display.IDisplayContainer;
+	import hy.game.interfaces.display.IDisplayObject;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectContainer;
-	import hy.game.render.SRender;
 	import hy.game.render.SRenderContainer;
 	import hy.game.stage3D.SStage3D;
 
@@ -42,7 +42,7 @@ package hy.game.manager
 
 		private var mRenderDictionary : Dictionary;
 		private var mStage : Stage;
-
+		private var mIndex : int;
 
 		public function SLayerManager()
 		{
@@ -67,7 +67,7 @@ package hy.game.manager
 			addLayer(LAYER_UI, new SRenderContainer());
 			addLayer(LAYER_ALERT, new SRenderContainer());
 
-			function createContainer() : IDisplayRenderContainer
+			function createContainer() : IDisplayContainer
 			{
 				if (Config.supportDirectX)
 					return new SDirectContainer();
@@ -75,38 +75,44 @@ package hy.game.manager
 			}
 		}
 
-		private function addLayer(tag : String, container : IDisplayRenderContainer) : void
+		/**
+		 * 添加容器
+		 * @param tag
+		 * @param container
+		 *
+		 */
+		private function addLayer(tag : String, container : IDisplayContainer) : void
 		{
+			container.layer = mIndex++;
 			if (mRenderDictionary[tag])
 				error(this, tag, "is exists");
 			if (container is SRenderContainer)
 				mStage.addChild(container as SRenderContainer);
 			else
-				SStage3D.stage.addChild(container as SDirectContainer);
+				SStage3D.stage.addDisplay(container as SDirectContainer);
 			mRenderDictionary[tag] = container;
 		}
 
-		public function push(type : String, render : SRender) : void
+		public function getLayer(tag : String) : IDisplayContainer
 		{
-			var parent : IDisplayRenderContainer = mRenderDictionary[type];
-			if (!parent)
-			{
-				error("layer is not find :" + type);
-				return;
-			}
-			parent.sort2Push(render);
-			render.setParent(parent);
+			return mRenderDictionary[tag];
 		}
 
-		public function remove(type : String, render : SRender) : void
+		/**
+		 * 根据类型添加显示对象
+		 * @param type
+		 * @param render
+		 *
+		 */
+		public function addChild(type : String, render : IDisplayObject) : void
 		{
-			var parent : IDisplayRenderContainer = mRenderDictionary[type];
+			var parent : IDisplayContainer = mRenderDictionary[type];
 			if (!parent)
 			{
 				error("layer is not find :" + type);
 				return;
 			}
-			render.setParent(null);
+			parent.addDisplay(render);
 		}
 	}
 }

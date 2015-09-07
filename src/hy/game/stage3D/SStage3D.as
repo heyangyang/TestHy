@@ -12,13 +12,13 @@ package hy.game.stage3D
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
-
+	
 	import hy.game.core.SMainGameFrame;
 	import hy.game.core.event.SEvent;
 	import hy.game.core.event.SEventDispatcher;
 	import hy.game.interfaces.core.IEnterFrame;
 	import hy.game.namespaces.name_part;
-	import hy.game.stage3D.display.SDisplayObjectContainer;
+	import hy.game.render.SDirectContainer;
 	import hy.game.stage3D.utils.SystemUtil;
 
 	use namespace name_part;
@@ -39,14 +39,14 @@ package hy.game.stage3D
 			return sCurrent.context;
 		}
 
-		public static function get stage() : SDisplayObjectContainer
+		public static function get stage() : SDirectContainer
 		{
 			return sCurrent.mContainer;
 		}
 
 		private var mStage3D : Stage3D;
 		private var mStage : Stage;
-		private var mContainer : SDisplayObjectContainer;
+		private var mContainer : SDirectContainer;
 		private var mProfile : String;
 		private var mStageWidth : int;
 		private var mStageHeight : int;
@@ -57,15 +57,15 @@ package hy.game.stage3D
 		private var mStarted : Boolean;
 		private var mViewPort : Rectangle;
 		private var mPreviousViewPort : Rectangle;
-		private var mRenderSupport : SRenderSupport;
+		private var mRenderSupport : STextureSupport;
 
 		public function SStage3D(stage : Stage, renderMode : String = "auto", profile : Object = Context3DProfile.BASELINE_EXTENDED)
 		{
-			mRenderSupport = SRenderSupport.getInstance();
+			mRenderSupport = STextureSupport.getInstance();
 			viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			mStage = stage;
 			mStage3D = stage.stage3Ds[0];
-			mContainer = new SDisplayObjectContainer();
+			mContainer = new SDirectContainer();
 			mStageWidth = mViewPort.width;
 			mStageHeight = mViewPort.height;
 			mPreviousViewPort = new Rectangle();

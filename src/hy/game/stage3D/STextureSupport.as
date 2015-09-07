@@ -30,14 +30,14 @@ package hy.game.stage3D
 	 * @author hyy
 	 *
 	 */
-	public class SRenderSupport extends SBaseManager
+	public class STextureSupport extends SBaseManager
 	{
-		private static var instance : SRenderSupport;
+		private static var instance : STextureSupport;
 
-		public static function getInstance() : SRenderSupport
+		public static function getInstance() : STextureSupport
 		{
 			if (instance == null)
-				instance = new SRenderSupport();
+				instance = new STextureSupport();
 			return instance;
 		}
 		private static var sDrawCount : int;
@@ -71,7 +71,7 @@ package hy.game.stage3D
 		private var mMeshIndexData : Vector.<uint>;
 		private var mUpdateCameraMatrix3D : Boolean;
 
-		public function SRenderSupport()
+		public function STextureSupport()
 		{
 			if (instance)
 				error("instance != null");
@@ -108,12 +108,12 @@ package hy.game.stage3D
 			mContext.setVertexBufferAt(2, mVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			//设置xy
 			mPositionMatrix3D.copyFrom(mProjectionMatrix3D);
-			mPositionMatrix3D.prependTranslation(image.x, image.y, 0);
+			mPositionMatrix3D.prependTranslation(image.x + image.mParentX, image.y + image.mParentY, 0);
 			//透明度
 			if (image.filters)
-				setAlpha(image.alpha, mRenderAlpha1);
+				setAlpha(image.alpha * image.mParentAlpha, mRenderAlpha1);
 			else
-				setAlpha(image.alpha, mRenderAlpha);
+				setAlpha(image.alpha * image.mParentAlpha, mRenderAlpha);
 			mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mPositionMatrix3D, true);
 			//创建索引，并且提交索引，开始绘制
 			createMeshIndexBuffer();

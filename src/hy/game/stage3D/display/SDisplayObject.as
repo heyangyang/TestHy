@@ -1,7 +1,8 @@
 package hy.game.stage3D.display
 {
+	import hy.game.interfaces.display.IDisplayContainer;
 	import hy.game.interfaces.display.IDisplayObject;
-	import hy.game.interfaces.display.IDisplayObjectContainer;
+	import hy.game.namespaces.name_part;
 	import hy.game.stage3D.errors.AbstractMethodError;
 	import hy.game.stage3D.texture.SBlendMode;
 	import hy.game.stage3D.utils.SMathUtil;
@@ -10,22 +11,25 @@ package hy.game.stage3D.display
 
 	public class SDisplayObject implements IDisplayObject
 	{
-		private var mX : Number;
-		private var mY : Number;
+		name_part var mParentX : Number = 0.0;
+		name_part var mParentY : Number = 0.0;
+		name_part var mParentAlpha : Number = 1.0;
+		protected var mX : Number;
+		protected var mY : Number;
 		private var mScaleX : Number;
 		private var mScaleY : Number;
 		private var mRotation : Number;
-		private var mAlpha : Number;
+		protected var mAlpha : Number;
 		private var mVisible : Boolean;
 		private var mTouchable : Boolean;
 		private var mBlendMode : String;
 		private var mName : String;
-		private var mParent : IDisplayObjectContainer;
+		protected var mParent : IDisplayContainer;
 		protected var mOrientationChanged : Boolean;
 		/**
 		 * 记录索引位置
 		 */
-		private var mLayer : int;
+		protected var mLayer : int;
 
 		public function SDisplayObject()
 		{
@@ -55,12 +59,12 @@ package hy.game.stage3D.display
 				this.dispose();
 		}
 
-		public function setParent(value : IDisplayObjectContainer) : void
+		public function setParent(value : IDisplayContainer) : void
 		{
 			mParent = value;
 		}
 
-		public function get parent() : IDisplayObjectContainer
+		public function get parent() : IDisplayContainer
 		{
 			return mParent;
 		}

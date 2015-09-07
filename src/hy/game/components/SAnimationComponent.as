@@ -98,7 +98,7 @@ package hy.game.components
 			if (mUpdateFrame == mCurrFrame)
 				return;
 			mCurrFrame = mUpdateFrame;
-			mRender.bitmapData = mCurrFrame.frameData;
+			mRender.data = mCurrFrame.frameData;
 			updatePosition();
 		}
 
