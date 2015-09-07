@@ -31,7 +31,7 @@ package hy.game.data
 
 		private var mAlpha : Number;
 
-		private var mFilters : Array;
+		private var mFilters : *;
 		private var mTransform : ColorTransform;
 		private var mBlendMode : String;
 
@@ -185,12 +185,12 @@ package hy.game.data
 			mAlpha = value;
 		}
 
-		public function get filters() : Array
+		public function get filters() : *
 		{
 			return mFilters;
 		}
 
-		public function set filters(value : Array) : void
+		public function set filters(value : *) : void
 		{
 			if (mFilters == value)
 				return;

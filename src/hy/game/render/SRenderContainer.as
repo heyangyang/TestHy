@@ -26,12 +26,12 @@ package hy.game.render
 		 */
 		public function addDisplay(child : IDisplayObject) : void
 		{
-			child.setParent(this);
 			if (mNumChildren == 0)
 			{
 				mChildren.push(child);
 				addChild(child as DisplayObject);
 				mNumChildren++;
+				child.setParent(this);
 				return;
 			}
 			var tIndex : int = mChildren.indexOf(child);
@@ -84,6 +84,7 @@ package hy.game.render
 			else
 			{
 				addChild(child as DisplayObject);
+				child.setParent(this);
 				mNumChildren++;
 			}
 			if (tIndex >= 0 && tIndex < tSortIndex)
@@ -97,10 +98,10 @@ package hy.game.render
 
 		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : void
 		{
-			child.setParent(null);
 			var index : int = mChildren.indexOf(child);
 			if (index == -1)
 				return;
+			child.setParent(null);
 			mChildren.splice(index, 1);
 			removeChild(child as DisplayObject);
 			mNumChildren--;

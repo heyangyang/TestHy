@@ -141,6 +141,18 @@ package hy.game.render
 			return mDepth;
 		}
 
+		public function set colorFilter(value : *) : void
+		{
+			if (value && value.length == 0)
+				value = null;
+			filters = value;
+		}
+
+		public function get colorFilter() : *
+		{
+			return filters;
+		}
+
 		public function dispose() : void
 		{
 			if (bitmapData)

@@ -58,7 +58,7 @@ package hy.game.stage3D
 		private var mContextData : Dictionary = new Dictionary(true);
 		private var mAssembler : AGALMiniAssembler = new AGALMiniAssembler();
 		private var mRenderAlpha : Vector.<Number>;
-		private var mRenderAlpha1 : Vector.<Number>;
+		private var mCurrAlpha : Vector.<Number>;
 		private var mMatrixData : Vector.<Number>;
 		private var mPoint3D : Vector3D = new Vector3D();
 		private var mCurProgram : Program3D;
@@ -77,8 +77,6 @@ package hy.game.stage3D
 				error("instance != null");
 			mRenderAlpha = new Vector.<Number>();
 			mRenderAlpha.push(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-			mRenderAlpha1 = new Vector.<Number>();
-			mRenderAlpha1.push(1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0);
 			mMatrixData = new Vector.<Number>();
 			mMatrixData.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		}
@@ -110,8 +108,8 @@ package hy.game.stage3D
 			mPositionMatrix3D.copyFrom(mProjectionMatrix3D);
 			mPositionMatrix3D.prependTranslation(image.x + image.mParentX, image.y + image.mParentY, 0);
 			//透明度
-			if (image.filters)
-				setAlpha(image.alpha * image.mParentAlpha, mRenderAlpha1);
+			if (image.colorFilter)
+				setAlpha(image.alpha * image.mParentAlpha, image.colorFilter);
 			else
 				setAlpha(image.alpha * image.mParentAlpha, mRenderAlpha);
 			mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mPositionMatrix3D, true);
@@ -154,8 +152,9 @@ package hy.game.stage3D
 		 */
 		private function setAlpha(alpha : Number, alphaArray : Vector.<Number>) : void
 		{
-//			if (mCurAlpha == alpha)
-//				return;
+			if (mCurAlpha == alpha && mCurrAlpha == alphaArray)
+				return;
+			mCurrAlpha = alphaArray;
 			mCurAlpha = alpha;
 			alphaArray[3] = alphaArray[7] = alphaArray[11] = alphaArray[15] = mCurAlpha;
 			mContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, alphaArray);

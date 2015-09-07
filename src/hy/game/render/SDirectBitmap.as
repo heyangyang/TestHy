@@ -13,7 +13,7 @@ package hy.game.render
 
 	public class SDirectBitmap extends SImage implements IBitmap
 	{
-		private var mFilters : Array;
+		private var mFilters : Vector.<Number>;
 		/**
 		 * 深度+层级+mId ，用于深度排序
 		 * mId防止同一深度，层级混乱排序
@@ -54,14 +54,12 @@ package hy.game.render
 			return texture as IBitmapData;
 		}
 
-		public function set filters(value : Array) : void
+		public function set colorFilter(value : *) : void
 		{
-			if (value && value.length == 0)
-				value = null;
 			mFilters = value;
 		}
 
-		public function get filters() : Array
+		public function get colorFilter() : *
 		{
 			return mFilters;
 		}
@@ -74,6 +72,11 @@ package hy.game.render
 		public function get colorTransform() : ColorTransform
 		{
 			return null;
+		}
+		
+		public override function get layer() : int
+		{
+			return mIndex;
 		}
 
 		public override function set layer(value : int) : void

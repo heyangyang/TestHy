@@ -43,7 +43,7 @@ package hy.game.components
 		/**
 		 * 当前滤镜
 		 */
-		protected var mFilters : Array;
+		protected var mFilters : *;
 		/**
 		 * 是否使用默认模型
 		 */
@@ -132,7 +132,7 @@ package hy.game.components
 			if (mIsUseFilters && mFilters != mTransform.filters)
 			{
 				mFilters = mTransform.filters;
-				mRender.filters = mFilters;
+				mRender.colorFilter = mFilters;
 			}
 
 			if (mUseDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))

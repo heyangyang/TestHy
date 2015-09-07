@@ -27,11 +27,11 @@ package hy.game.render
 		 */
 		public function addDisplay(child : IDisplayObject) : void
 		{
-			child.setParent(this);
 			if (mNumChildren == 0)
 			{
 				mChildren.push(child);
 				mNumChildren++;
+				child.setParent(this);
 				return;
 			}
 			var tIndex : int = mChildren.indexOf(child as SDisplayObject);
@@ -82,7 +82,10 @@ package hy.game.render
 				mChildren.splice(tIndex, 1);
 			//新进来的则索引加1
 			else
+			{
+				child.setParent(this);
 				mNumChildren++;
+			}
 			if (tIndex >= 0 && tIndex < tSortIndex)
 				tSortIndex--;
 			if (tSortIndex < 0)
@@ -93,10 +96,10 @@ package hy.game.render
 
 		public function removeDisplay(child : IDisplayObject, dispose : Boolean = false) : void
 		{
-			child.setParent(null);
 			var index : int = mChildren.indexOf(child as SDisplayObject);
 			if (index == -1)
 				return;
+			child.setParent(null);
 			mChildren.splice(index, 1);
 			mNumChildren--;
 		}
@@ -107,6 +110,7 @@ package hy.game.render
 			for (var i : int = 0; i < mNumChildren; ++i)
 			{
 				child = mChildren[i];
+				//父类的坐标。透明度
 				child.mParentX = mParentX + mX;
 				child.mParentY = mParentY + mY;
 				child.mParentAlpha = mParentAlpha * mAlpha;

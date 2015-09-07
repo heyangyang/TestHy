@@ -18,6 +18,18 @@ package hy.game.components
 		private static var sMouseOverGlowFilters : Array = [new GlowFilter(0xffff00, 1, 6, 6, 2)];
 		private static var sNullFilters : Array = [];
 
+		private static var sDirectMouseOverGlowFilters : Vector.<Number> = new <Number>[1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4, 1.0];
+		private static var sDirectNullFilters : Vector.<Number> = null;
+
+		private static var sCurrFilters : *;
+		private static var sCurrNull : *;
+
+		public static function init(direct : Boolean) : void
+		{
+			sCurrFilters = direct ? sDirectMouseOverGlowFilters : sMouseOverGlowFilters;
+			sCurrNull = direct ? sDirectNullFilters : sNullFilters;
+		}
+
 		protected var mTransform : STransform;
 		private var mIsMouseOver : Boolean;
 		private var mAvatar : SAvatarComponent;
@@ -85,7 +97,7 @@ package hy.game.components
 				return;
 			mIsMouseOver = value;
 			mTransform.isMouseOver = value;
-			mTransform.filters = value ? sMouseOverGlowFilters : sNullFilters;
+			mTransform.filters = value ? sCurrFilters : sCurrNull;
 		}
 
 		public function get index() : int
