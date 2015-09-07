@@ -130,6 +130,36 @@ package hy.game.render
 			mFilters = value;
 		}
 
+		/**
+		 * 容器暂不能旋转 
+		 * @param value
+		 * 
+		 */
+		public override function set rotation(value : Number) : void
+		{
+			
+		}
+		
+		/**
+		 * 容器暂不能缩放 
+		 * @param value
+		 * 
+		 */
+		public override function set scaleX(value:Number):void
+		{
+			
+		}
+		
+		/**
+		 * 容器暂不能缩放 
+		 * @param value
+		 * 
+		 */
+		public override function set scaleY(value:Number):void
+		{
+			
+		}
+		
 		public override function dispose() : void
 		{
 			super.dispose();

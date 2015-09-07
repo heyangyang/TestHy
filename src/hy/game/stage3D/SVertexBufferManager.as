@@ -52,6 +52,7 @@ package hy.game.stage3D
 			tBuffer3D.uploadFromVector(tVertexData.rawData, 0, tVertexData.numVertices);
 			tVertexBuffer3D = new SVertexBuffer3D();
 			tVertexBuffer3D.data = tBuffer3D;
+			tVertexBuffer3D.vertexData = tVertexData;
 			sVertexDictionary[key] = tVertexBuffer3D;
 			sVertexCount++;
 			return tVertexBuffer3D;
@@ -101,6 +102,7 @@ package hy.game.stage3D
 			var tBuffer3D : VertexBuffer3D = SStage3D.context.createVertexBuffer(sNewData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
 			tBuffer3D.uploadFromVector(sNewData.rawData, 0, sNewData.numVertices);
 			tVertexBuffer3D = new SVertexBuffer3D();
+			tVertexBuffer3D.vertexData = sNewData;
 			tVertexBuffer3D.data = tBuffer3D;
 			sVertexSubDictionary[key] = tVertexBuffer3D;
 			sVertexCount++;

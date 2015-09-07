@@ -1,7 +1,7 @@
 package hy.game.stage3D
 {
 	import com.adobe.utils.AGALMiniAssembler;
-
+	
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTextureFormat;
@@ -13,10 +13,11 @@ package hy.game.stage3D
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.manager.SBaseManager;
 	import hy.game.namespaces.name_part;
 	import hy.game.render.SDirectBitmap;
+	import hy.game.stage3D.display.SQuadBath;
 	import hy.game.stage3D.errors.MissingContextError;
 	import hy.game.stage3D.texture.SBlendMode;
 	import hy.game.stage3D.texture.STexture;
@@ -86,6 +87,35 @@ package hy.game.stage3D
 			sDrawCount = 0;
 		}
 
+		public function supportQuadBath(quadBath : SQuadBath) : void
+		{
+			updateProgram(quadBath.texture, quadBath.tinted, quadBath.smoothing);
+			//混合模式
+			setBlendFactors(!quadBath.tinted, quadBath.blendMode);
+			//投影矩阵
+			if (mUpdateCameraMatrix3D)
+			{
+				mUpdateCameraMatrix3D = false;
+				mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mProjectionMatrix3D, true);
+			}
+			mVertexBuffer = quadBath.vertexBuffer3D;
+			//xy坐标
+			mContext.setVertexBufferAt(0, mVertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			//纹理
+			mContext.setTextureAt(0, quadBath.base);
+			//uv坐标
+			mContext.setVertexBufferAt(2, mVertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			//设置xy
+			mPositionMatrix3D.copyFrom(mProjectionMatrix3D);
+			mPositionMatrix3D.prependTranslation(quadBath.x + quadBath.mParentX, quadBath.y + quadBath.mParentY, 0);
+			//透明度
+			setAlpha(quadBath.alpha * quadBath.mParentAlpha, mRenderAlpha);
+			mContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mPositionMatrix3D, true);
+			//开始绘制
+			mContext.drawTriangles(quadBath.indexBuffer3d);
+			sDrawCount++;
+		}
+
 		public function supportImage(image : SDirectBitmap) : void
 		{
 			updateProgram(image.texture, image.tinted, image.smoothing);
@@ -141,7 +171,7 @@ package hy.game.stage3D
 				mIndexBuffer = mContext.createIndexBuffer(mMeshIndexData.length);
 				mIndexBuffer.uploadFromVector(mMeshIndexData, 0, mMeshIndexData.length);
 			}
-			mContext.drawTriangles(mIndexBuffer, 0, 2);
+			mContext.drawTriangles(mIndexBuffer);
 			return null;
 		}
 

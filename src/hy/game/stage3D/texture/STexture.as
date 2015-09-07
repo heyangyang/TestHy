@@ -3,11 +3,10 @@ package hy.game.stage3D.texture
 	import flash.display.BitmapData;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
-	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.data.SRectangle;
 	import hy.game.stage3D.SStage3D;
 	import hy.game.stage3D.errors.MissingContextError;
@@ -134,7 +133,7 @@ package hy.game.stage3D.texture
 			return null;
 		}
 
-		public function get vertexBuffer3D() : VertexBuffer3D
+		public function get vertexBufferData() : SVertexBuffer3D
 		{
 			return null;
 		}

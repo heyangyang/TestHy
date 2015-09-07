@@ -1,10 +1,9 @@
 package hy.game.stage3D.texture
 {
-	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-
+	
 	import hy.game.data.SRectangle;
 	import hy.game.render.SDirectBitmapData;
 	import hy.game.stage3D.SVertexBufferManager;
@@ -31,14 +30,14 @@ package hy.game.stage3D.texture
 			mVertexBuffer3D = SVertexBufferManager.createSubVertexBuffer3D(mRegion, mParent);
 		}
 
+		public override function get vertexBufferData() : SVertexBuffer3D
+		{
+			return mVertexBuffer3D;
+		}
+
 		public override function updateVertexBuffer3D(scaleX : Number = 1.0, scaleY : Number = 1.0, rotation : Number = 0.0) : SVertexBuffer3D
 		{
 			return SVertexBufferManager.createSubVertexBuffer3D(mRegion, mParent, scaleX, scaleY, rotation);
-		}
-
-		public override function get vertexBuffer3D() : VertexBuffer3D
-		{
-			return mVertexBuffer3D.data;
 		}
 
 		public function get offest() : Point

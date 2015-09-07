@@ -1,7 +1,6 @@
 package hy.game.stage3D.texture
 {
 	import flash.display.BitmapData;
-	import flash.display3D.VertexBuffer3D;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.textures.TextureBase;
 	import flash.events.Event;
@@ -43,11 +42,11 @@ package hy.game.stage3D.texture
 			mVertexBuffer3D = SVertexBufferManager.createVertexBuffer3D(width, height);
 		}
 
-		public override function get vertexBuffer3D() : VertexBuffer3D
+		public override function get vertexBufferData() : SVertexBuffer3D
 		{
-			return mVertexBuffer3D.data;
+			return mVertexBuffer3D;
 		}
-
+		
 		public function uploadAtfData(data : ByteArray, offset : int = 0) : void
 		{
 			var potTexture : Texture = mBase as Texture;

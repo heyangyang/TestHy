@@ -85,7 +85,7 @@ package hy.game.stage3D.display
 
 		public function get vertexBuffer3D() : VertexBuffer3D
 		{
-			return mVertexBuffer3D ? mVertexBuffer3D.data : mTexture.vertexBuffer3D;
+			return mVertexBuffer3D ? mVertexBuffer3D.data : mTexture.vertexBufferData.data;
 		}
 
 		public override function dispose() : void
