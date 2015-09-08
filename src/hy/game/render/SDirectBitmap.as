@@ -1,7 +1,7 @@
 package hy.game.render
 {
 	import flash.geom.ColorTransform;
-
+	
 	import hy.game.interfaces.display.IBitmap;
 	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.namespaces.name_part;
@@ -24,7 +24,7 @@ package hy.game.render
 		 */
 		private var mDepth : int;
 
-		public function SDirectBitmap(texture : SDirectBitmapData = null)
+		public function SDirectBitmap(texture : STexture = null)
 		{
 			super(texture);
 		}

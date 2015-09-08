@@ -56,13 +56,11 @@ package hy.game.stage3D.display
 				SDebug.error(this, "texture is not same");
 				return;
 			}
-			mSyncRequired = true;
-			mVertexData.append(child.texture.vertexBufferData.vertexData);
-			updateOrientation();
-			sMatrix.translate(child.x, child.y);
-			mVertexData.copyTransformedTo(mVertexData, mNumChildren, sMatrix, mNumChildren);
-			mChildren.push(child);
+			child.layer = mNumChildren;
 			mNumChildren++;
+			mVertexData.numVertices = mNumChildren * 4;
+			updateImage(child);
+			mChildren.push(child);
 		}
 
 		public function get smoothing() : String
@@ -93,9 +91,13 @@ package hy.game.stage3D.display
 			return true;
 		}
 
-		public function updateImage(child : STexture, x : Number, y : Number) : void
+		public function updateImage(child : SImage) : void
 		{
-
+			mSyncRequired = true;
+			updateOrientation();
+			sMatrix.identity();
+			sMatrix.translate(child.x, child.y);
+			child.texture.vertexBufferData.vertexData.copyTransformedTo(mVertexData, child.layer * 4, sMatrix, 0, 4);
 		}
 
 		private function updateOrientation() : void
@@ -123,13 +125,16 @@ package hy.game.stage3D.display
 
 		public override function render() : void
 		{
+			if (mNumChildren == 0)
+				return;
 			if (mSyncRequired)
 			{
+				mSyncRequired = false;
+				capacity = mNumChildren;
 				destroyBuffers();
 				mBuffer3D = SStage3D.context.createVertexBuffer(mVertexData.numVertices, SVertexData.ELEMENTS_PER_VERTEX);
 				mBuffer3D.uploadFromVector(mVertexData.rawData, 0, mVertexData.numVertices);
 
-				capacity = mNumChildren;
 				mIndexBuffer = SStage3D.context.createIndexBuffer(mIndexData.length);
 				mIndexBuffer.uploadFromVector(mIndexData, 0, mIndexData.length)
 			}
@@ -153,19 +158,14 @@ package hy.game.stage3D.display
 
 		private function set capacity(value : int) : void
 		{
-			var oldCapacity : int = mVertexData.numVertices / 4;
-
-			if (value == oldCapacity)
-				return;
-			else if (value == 0)
+			if (value == 0)
 				throw new Error("Capacity must be > 0");
 			else if (value > MAX_NUM_QUADS)
 				value = MAX_NUM_QUADS;
-
-			mVertexData.numVertices = value * 4;
+			var start : int = mIndexData.length / 6;
 			mIndexData.length = value * 6;
 
-			for (var i : int = oldCapacity; i < value; ++i)
+			for (var i : int = start; i < value; ++i)
 			{
 				mIndexData[int(i * 6)] = i * 4;
 				mIndexData[int(i * 6 + 1)] = i * 4 + 1;
@@ -176,7 +176,6 @@ package hy.game.stage3D.display
 			}
 
 			destroyBuffers();
-			mSyncRequired = true;
 		}
 
 		public function get vertexBuffer3D() : VertexBuffer3D

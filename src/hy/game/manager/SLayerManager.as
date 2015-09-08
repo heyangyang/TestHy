@@ -64,6 +64,7 @@ package hy.game.manager
 			addLayer(LAYER_NAME, createContainer());
 			addLayer(LAYER_HP, createContainer());
 			addLayer(LAYER_OTHER, createContainer());
+			addLayer(LAYER_WEATHER, createContainer());
 			addLayer(LAYER_UI, new SRenderContainer());
 			addLayer(LAYER_ALERT, new SRenderContainer());
 
