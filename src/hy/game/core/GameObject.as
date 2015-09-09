@@ -134,7 +134,7 @@ package hy.game.core
 			mTransform = value;
 			if (!mTransform)
 				return;
-			mTransform.clearCall();
+			mTransform.cleanCall();
 			mTransform.addPositionChange(updatePosition);
 		}
 

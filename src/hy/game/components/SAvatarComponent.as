@@ -20,34 +20,20 @@ package hy.game.components
 		/**
 		 * 默认模型
 		 */
-		public static var default_avatar : SAvatar;
+		public static var sDefaultAvatar : SAvatar;
 
 		protected var mResource : SAvatarResource;
 		protected var mAvatar : SAvatar;
 		protected var mFrame : SAnimationFrame;
-		protected var tmp_frame : SAnimationFrame;
+		private var tFrame : SAnimationFrame;
+		private var needReversal : Boolean;
 		protected var mData : DataComponent;
-		protected var mDir : int;
-		protected var mAction : int;
-		protected var mHeight : int;
-		protected var mIsRide : Boolean;
-		protected var needReversal : Boolean;
-		/**
-		 * 是否使用人物中心Y便宜点
-		 */
-		protected var mUseCenterOffsetY : Boolean;
-		/**
-		 * 是否使用滤镜
-		 */
-		protected var mIsUseFilters : Boolean;
-		/**
-		 * 当前滤镜
-		 */
-		protected var mFilters : *;
-		/**
-		 * 是否使用默认模型
-		 */
-		protected var mUseDefaultAvatar : Boolean;
+
+		private var mUseCenterOffsetY : Boolean;
+		private var mIsUseFilters : Boolean;
+		private var mUseDefaultAvatar : Boolean;
+		private var mLastFrameIndex : int;
+		private var mAutoUpdateFrame : Boolean;
 
 		public function SAvatarComponent(type : * = null)
 		{
@@ -71,12 +57,8 @@ package hy.game.components
 			mLayerType = SLayerManager.LAYER_ENTITY;
 			mResource.priority = EnumLoadPriority.ROLE;
 			mRender.layer = EnumRenderLayer.BODY;
-			mDir = mAction = -1;
-			mUseCenterOffsetY = true;
 			needReversal = false;
-			mIsRide = false;
-			mIsUseFilters = true;
-			mUseDefaultAvatar = true;
+			mLastFrameIndex = -1;
 		}
 
 		/**
@@ -87,13 +69,15 @@ package hy.game.components
 		{
 			super.onStart();
 			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
+			mTransform.addAavatarChange(changeAvatarAction);
+			mTransform.addColorTransformChange(changeColorTransform);
 			mTransform.addPositionChange(updatePosition);
 			if (mUseDefaultAvatar)
 			{
-				mAvatar.dirMode = default_avatar.dirMode;
+				mAvatar.dirMode = sDefaultAvatar.dirMode;
 				//自增下，以免被垃圾回收
-				default_avatar.animationsByParts.retain();
-				mAvatar.animationsByParts = default_avatar.animationsByParts;
+				sDefaultAvatar.animationsByParts.retain();
+				mAvatar.animationsByParts = sDefaultAvatar.animationsByParts;
 				onLoadAvatarComplete();
 			}
 			setAvatarId(mData.avatarId);
@@ -102,51 +86,57 @@ package hy.game.components
 		override public function notifyRemoved() : void
 		{
 			super.notifyRemoved();
-			tmp_frame = mFrame = null;
+			tFrame = mFrame = null;
 			mAvatar = null;
 			mData = null;
 		}
 
 		override public function update() : void
 		{
+			//加载资源
 			if (mResource.isChange)
 			{
 				mResource.addNotifyCompleted(onLoadAvatarComplete);
 				mResource.loadResource();
 			}
-			if (mDir != mTransform.dir || mAction != mData.action || mIsRide != mData.isRide)
-			{
-				mDir = mTransform.dir;
-				mAction = mData.action;
-				if (mIsRide != mData.isRide)
-				{
-					mIsRide = mData.isRide;
-					if (mHeight > 0)
-						mTransform.height = mHeight - (mIsRide ? 30 : 0);
-				}
-				changeAnimation();
-			}
-			else
-				tmp_frame = mAvatar.gotoNextFrame(STime.deltaTime);
 
-			if (mIsUseFilters && mFilters != mTransform.filters)
+			if (mAutoUpdateFrame)
 			{
-				mFilters = mTransform.filters;
-				mRender.colorFilter = mFilters;
+				tFrame = mAvatar.gotoNextFrame(STime.deltaTime);
+				mTransform.frameIndex = mAvatar.curFrameIndex;
+			}
+			else if (mTransform.frameIndex != mLastFrameIndex)
+			{
+				mLastFrameIndex = mTransform.frameIndex;
+				tFrame = mAvatar.gotoFrame(mTransform.frameIndex);
 			}
 
-			if (mUseDefaultAvatar && (!tmp_frame || !tmp_frame.frameData))
+			//使用默认模型
+			if (mUseDefaultAvatar && (!tFrame || !tFrame.frameData))
 			{
-				tmp_frame = default_avatar.gotoAnimation(mAction, mDir, mAvatar.curFrameIndex, 0);
+				tFrame = sDefaultAvatar.gotoAnimation(mTransform.action, mTransform.dir, mAvatar.curFrameIndex, 0);
 			}
-			if (!tmp_frame || !tmp_frame.frameData)
+
+			updateAnimationFrame();
+			updatePosition();
+		}
+
+		/**
+		 * 更新动画帧
+		 *
+		 */
+		protected function updateAnimationFrame() : void
+		{
+			//图片为空
+			if (!tFrame || !tFrame.frameData)
 			{
 				mRender.data = null;
 				return;
 			}
-			if (tmp_frame == mFrame)
+			//相同图片
+			if (tFrame == mFrame)
 				return;
-			mFrame = tmp_frame;
+			mFrame = tFrame;
 			mTransform.rectangle.contains(mFrame.rect);
 			if (needReversal != mFrame.needReversal)
 			{
@@ -155,9 +145,12 @@ package hy.game.components
 			}
 			mFrame.needReversal && mFrame.reverseData();
 			mRender.data = mFrame.frameData;
-			updatePosition();
 		}
 
+		/**
+		 * 位置更新
+		 *
+		 */
 		protected function updatePosition() : void
 		{
 			if (!mFrame)
@@ -174,12 +167,23 @@ package hy.game.components
 		 * 转换动作的一些操作
 		 *
 		 */
-		protected function changeAnimation() : void
+		protected function changeAvatarAction() : void
 		{
-			if (mIsRide)
-				tmp_frame = mAvatar.gotoAnimation(SActionType.SIT, mDir, 0, 0);
+			mTransform.height = mTransform.height - (mTransform.isRide ? 30 : 0);
+
+			if (mTransform.isRide)
+				mAvatar.gotoAnimation(SActionType.SIT, mTransform.dir, 0, 0);
 			else
-				tmp_frame = mAvatar.gotoAnimation(mAction, mDir, 0, 0);
+				mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
+		}
+
+		/**
+		 * 滤镜变换
+		 *
+		 */
+		protected function changeColorTransform() : void
+		{
+			mRender.colorFilter = mTransform.filters;
 		}
 
 		public function setAvatarId(avatarId : String) : void
@@ -189,10 +193,9 @@ package hy.game.components
 
 		protected function onLoadAvatarComplete() : void
 		{
-			mOwner.transform.width = mAvatar.width;
-			mHeight = mOwner.transform.height = mAvatar.height;
-			mDir = mAction = -1;
-			mIsRide = !mData.isRide;
+			mTransform.width = mAvatar.width;
+			mTransform.height = mAvatar.height;
+			changeAvatarAction();
 		}
 
 		public function isRolePickable(mouseX : int, mouseY : int) : Boolean
@@ -212,11 +215,48 @@ package hy.game.components
 			return false;
 		}
 
+		/**
+		 * 是否使用默认模型
+		 * @param value
+		 *
+		 */
+		public function set useDefaultAvatar(value : Boolean) : void
+		{
+			mUseDefaultAvatar = value;
+		}
+
+		/**
+		 * 是否使用滤镜
+		 */
+		public function set isUseFilters(value : Boolean) : void
+		{
+			mIsUseFilters = value;
+		}
+
+		/**
+		 * 是否使用人物中心Y便偏移点
+		 */
+		public function set useCenterOffsetY(value : Boolean) : void
+		{
+			mUseCenterOffsetY = value;
+		}
+
+		/**
+		 * 自动更新动画
+		 * @param value
+		 *
+		 */
+		public function set autoUpdateFrame(value : Boolean) : void
+		{
+			mAutoUpdateFrame = value;
+		}
+
 		override public function dispose() : void
 		{
 			super.dispose();
 			mResource && mResource.dispose();
 			mResource = null;
 		}
+
 	}
 }

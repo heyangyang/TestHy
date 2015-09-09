@@ -63,9 +63,9 @@ package hy.game.state
 		 */
 		public function update() : void
 		{
-			if (mAction != mData.action)
+			if (mAction != mTransform.action)
 			{
-				mData.action = mAction;
+				mTransform.action = mAction;
 			}
 		}
 

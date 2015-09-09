@@ -1,7 +1,5 @@
 package hy.game.data
 {
-	import flash.geom.ColorTransform;
-
 	import hy.game.core.SCall;
 	import hy.game.core.SCameraObject;
 	import hy.game.namespaces.name_part;
@@ -15,6 +13,11 @@ package hy.game.data
 	 */
 	public class STransform extends SObject
 	{
+		private var mPositionCall : SCall;
+		private var mSizeCall : SCall;
+		private var mAvatarCall : SCall;
+		private var mColorTransformCall : SCall;
+
 		private var mScreenX : Number;
 		private var mScreenY : Number;
 
@@ -22,30 +25,32 @@ package hy.game.data
 		private var mY : Number;
 		private var mZ : Number = 0;
 		private var mCenterOffsetY : int;
-		private var mPositionCall : SCall;
 
 		private var mWidth : int;
 		private var mHeight : int;
 		private var mScale : Number;
-		private var mSizeCall : SCall;
 
 		private var mAlpha : Number;
 
 		private var mFilters : *;
-		private var mTransform : ColorTransform;
 		private var mBlendMode : String;
 
-		public var dir : int;
+		private var mRectangle : SRectangle;
 
-		private var mMouseRectangle : SRectangle;
+		private var mDir : int;
+		private var mAction : int;
+		private var mIsRide : Boolean;
+		public var frameIndex : int;
 
 		public var isMouseOver : Boolean;
 
 		public function STransform()
 		{
-			mMouseRectangle = new SRectangle();
+			mRectangle = new SRectangle();
 			mPositionCall = new SCall();
 			mSizeCall = new SCall();
+			mAvatarCall = new SCall();
+			mColorTransformCall = new SCall();
 		}
 
 		public function get x() : Number
@@ -192,18 +197,7 @@ package hy.game.data
 			if (mFilters == value)
 				return;
 			mFilters = value;
-		}
-
-		public function get transform() : ColorTransform
-		{
-			return mTransform;
-		}
-
-		public function set transform(value : ColorTransform) : void
-		{
-			if (mTransform == value)
-				return;
-			mTransform = value;
+			mColorTransformCall.updateCallStatus();
 		}
 
 		/**
@@ -249,9 +243,53 @@ package hy.game.data
 			return mHeight;
 		}
 
+		public function get dir() : int
+		{
+			return mDir;
+		}
+
+		public function set dir(value : int) : void
+		{
+			if (mDir == value)
+				return;
+			mDir = value;
+			mAvatarCall.updateCallStatus();
+		}
+
+		public function get action() : int
+		{
+			return mAction;
+		}
+
+		public function set action(value : int) : void
+		{
+			if (mAction == value)
+				return;
+			mAction = value;
+			mAvatarCall.updateCallStatus();
+		}
+
+		public function get isRide() : Boolean
+		{
+			return mIsRide;
+		}
+
+		public function set isRide(value : Boolean) : void
+		{
+			if (mIsRide == value)
+				return;
+			mIsRide = value;
+			mAvatarCall.updateCallStatus();
+		}
+
+		/**
+		 * 显示区域大小,用于鼠标碰撞检测
+		 * @return
+		 *
+		 */
 		public function get rectangle() : SRectangle
 		{
-			return mMouseRectangle;
+			return mRectangle;
 		}
 
 		/**
@@ -263,9 +301,9 @@ package hy.game.data
 		 */
 		public function contains(x : int, y : int) : Boolean
 		{
-			if (x < mX + mMouseRectangle.x || x > mX + mMouseRectangle.right)
+			if (x < mX + mRectangle.x || x > mX + mRectangle.right)
 				return false;
-			if (y < mY + mMouseRectangle.y || y > mY + mMouseRectangle.bottom)
+			if (y < mY + mRectangle.y || y > mY + mRectangle.bottom)
 				return false;
 			return true;
 		}
@@ -274,6 +312,8 @@ package hy.game.data
 		{
 			mPositionCall.checkExcute(update);
 			mSizeCall.checkExcute(update);
+			mAvatarCall.checkExcute(update);
+			mColorTransformCall.checkExcute(update);
 		}
 
 		/**
@@ -296,10 +336,33 @@ package hy.game.data
 			mSizeCall.push(fun);
 		}
 
-		public function clearCall() : void
+		/**
+		 * 人物动作，方向有改变的时候
+		 * @param fun
+		 *
+		 */
+		public function addAavatarChange(fun : Function) : void
+		{
+			mAvatarCall.push(fun);
+		}
+
+		/**
+		 * 颜色，滤镜 改变
+		 * @param fun
+		 *
+		 */
+		public function addColorTransformChange(fun : Function) : void
+		{
+			mColorTransformCall.push(fun);
+		}
+
+		public function cleanCall() : void
 		{
 			mPositionCall.clean();
 			mSizeCall.clean();
+			mAvatarCall.clean();
+			mColorTransformCall.clean();
 		}
+
 	}
 }
