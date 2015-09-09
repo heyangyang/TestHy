@@ -2,7 +2,7 @@ package hy.game.render
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-
+	
 	import hy.game.interfaces.display.IDisplayContainer;
 	import hy.game.interfaces.display.IDisplayObject;
 

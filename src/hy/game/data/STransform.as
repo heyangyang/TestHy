@@ -39,9 +39,6 @@ package hy.game.data
 
 		private var mMouseRectangle : SRectangle;
 
-		name_part var mAddX : Number;
-		name_part var mAddY : Number;
-
 		public var isMouseOver : Boolean;
 
 		public function STransform()
