@@ -24,13 +24,18 @@ package hy.game.components
 
 		protected var mResource : SAvatarResource;
 		protected var mAvatar : SAvatar;
-		protected var mFrame : SAnimationFrame;
+		private var mFrame : SAnimationFrame;
 		private var tFrame : SAnimationFrame;
 		private var needReversal : Boolean;
 		protected var mData : DataComponent;
+		/**
+		 * 更新矩形大小
+		 */
+		protected var mUpdateRectangle : Boolean;
 
+		private var mHeight : int;
 		private var mUseCenterOffsetY : Boolean;
-		private var mIsUseFilters : Boolean;
+		private var mIsUseFilters : Boolean = true;
 		private var mUseDefaultAvatar : Boolean;
 		private var mLastFrameIndex : int;
 		private var mAutoUpdateFrame : Boolean;
@@ -136,8 +141,14 @@ package hy.game.components
 			//相同图片
 			if (tFrame == mFrame)
 				return;
+			if (mUpdateRectangle)
+			{
+				if (mAutoUpdateFrame)
+					mTransform.rectangle.setEmpty();
+				mUpdateRectangle = false;
+				mTransform.rectangle.contains(tFrame.rect);
+			}
 			mFrame = tFrame;
-			mTransform.rectangle.contains(mFrame.rect);
 			if (needReversal != mFrame.needReversal)
 			{
 				needReversal = mFrame.needReversal;
@@ -169,12 +180,14 @@ package hy.game.components
 		 */
 		protected function changeAvatarAction() : void
 		{
-			mTransform.height = mTransform.height - (mTransform.isRide ? 30 : 0);
+			if (mHeight > 0)
+				mTransform.height = mHeight - (mTransform.isRide ? 30 : 0);
 
 			if (mTransform.isRide)
 				mAvatar.gotoAnimation(SActionType.SIT, mTransform.dir, 0, 0);
 			else
 				mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
+			mUpdateRectangle = true;
 		}
 
 		/**
@@ -191,10 +204,14 @@ package hy.game.components
 			mResource.setAvatarId(avatarId);
 		}
 
+		/**
+		 * 加载完毕
+		 *
+		 */
 		protected function onLoadAvatarComplete() : void
 		{
 			mTransform.width = mAvatar.width;
-			mTransform.height = mAvatar.height;
+			mHeight = mTransform.height = mAvatar.height;
 			changeAvatarAction();
 		}
 
