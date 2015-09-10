@@ -10,8 +10,8 @@ package hy.game.core
 	{
 		private var mAllowDestroy : Boolean;
 		private var mIsDisposed : Boolean;
-		private var mReferenceCount : uint;
-		public var lastUseTime : uint;
+		private var mReferenceCount : int;
+		public var lastUseTime : int;
 
 		public function SReference()
 		{
@@ -73,7 +73,7 @@ package hy.game.core
 			return mAllowDestroy;
 		}
 
-		public function get isDestroy() : Boolean
+		public function get isDispose() : Boolean
 		{
 			return mIsDisposed;
 		}

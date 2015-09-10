@@ -2,8 +2,6 @@ package hy.game.utils
 {
 	import flash.utils.ByteArray;
 
-	import hy.game.crypto.STeaEncrypt;
-
 	/**
 	 * 一个字节数组工具
 	 *

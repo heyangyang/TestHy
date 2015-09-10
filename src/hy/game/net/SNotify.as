@@ -35,7 +35,7 @@ package hy.game.net
 		 */
 		public function sendData(dataBase : SNetBaseData) : void
 		{
-			SGameSocket.instance.sendData(dataBase);
+			SGameSocket.getInstance().sendData(dataBase);
 		}
 	}
 }

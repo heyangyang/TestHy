@@ -17,8 +17,8 @@ package hy.game.render
 		 * @param optimizeForRenderToTexture
 		 * @param scale
 		 * @param repeat
-		 * @return 
-		 * 
+		 * @return
+		 *
 		 */
 		public static function fromDirectBitmapData(data : BitmapData, generateMipMaps : Boolean = true, optimizeForRenderToTexture : Boolean = false, scale : Number = 1, repeat : Boolean = false) : SDirectBitmapData
 		{
@@ -49,9 +49,5 @@ package hy.game.render
 			return 0;
 		}
 
-		public function cloneData() : IBitmapData
-		{
-			return null;
-		}
 	}
 }

@@ -37,7 +37,7 @@ package hy.game.resources
 
 		override name_part function startLoad(context : LoaderContext = null) : void
 		{
-			if (isLoading || isLoaded || isDestroy)
+			if (isLoading || isLoaded || isDispose)
 				return;
 			super.startLoad(context);
 
